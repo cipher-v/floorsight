@@ -1,5 +1,9 @@
 # Floorsight videos
 
+**▶ Watch them all in your browser: https://tonystark101-debug.github.io/floorsight/** (GitHub cannot play videos
+stored in a repository; that page can). Moving previews of every video are on the [main page](../README.md) and in
+[`previews/`](previews/).
+
 Every video below was made by this project: on AWS (Graviton4, COOL OpenCV build) unless noted. Real footage is from
 Önal & Dandıl (2024), CC BY 4.0, trimmed, with heads and faces pixelated before anything was stored or shown. The
 simulated warehouse is our own renderer; its people are not real.
