@@ -13,8 +13,8 @@ from scripts import acquire_real_clip as acquire
 
 
 @pytest.fixture
-def preserved_path():
-    root = Path(os.environ["FLOORSIGHT_TEST_ARTIFACT_ROOT"])
+def preserved_path(tmp_path_factory):
+    root = Path(os.environ.get("FLOORSIGHT_TEST_ARTIFACT_ROOT") or tmp_path_factory.mktemp("acquisition"))
     root.mkdir(parents=True, exist_ok=True)
     return Path(tempfile.mkdtemp(prefix="acquisition-", dir=root))
 

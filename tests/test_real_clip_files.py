@@ -10,9 +10,9 @@ from floorsight.real_clip_files import verify_file_bindings
 
 
 @pytest.fixture
-def tmp_path():
+def tmp_path(tmp_path_factory):
     # Deliberately override pytest's cleanup-managed fixture. Preserve every file.
-    root = Path(os.environ["FLOORSIGHT_TEST_ARTIFACT_ROOT"])
+    root = Path(os.environ.get("FLOORSIGHT_TEST_ARTIFACT_ROOT") or tmp_path_factory.mktemp("file-bindings"))
     root.mkdir(parents=True, exist_ok=True)
     return Path(tempfile.mkdtemp(prefix="file-bindings-", dir=root))
 
@@ -66,16 +66,25 @@ def test_hardlink_cannot_relabel_raw_as_filtered(tmp_path):
 @pytest.mark.parametrize("target", ["quarantine/raw.mp4", "../outside.mp4"])
 def test_symlink_rejected_even_inside_root(tmp_path, target):
     manifest = fixture(tmp_path)
-    (tmp_path / "link.webm").symlink_to(target)
+    make_symlink(tmp_path / "link.webm", target)
     manifest["privacy"]["filtered"] = dict(path="link.webm", sha256=manifest["original"]["sha256"])
     assert "privacy.filtered:symlink" in verify_file_bindings(tmp_path, manifest).reasons
 
 
 def test_parent_symlink_rejected(tmp_path):
     manifest = fixture(tmp_path)
-    (tmp_path / "alias").symlink_to("filtered", target_is_directory=True)
+    make_symlink(tmp_path / "alias", "filtered", target_is_directory=True)
     manifest["privacy"]["filtered"]["path"] = "alias/clip.webm"
     assert "privacy.filtered:symlink" in verify_file_bindings(tmp_path, manifest).reasons
+
+
+def make_symlink(path, target, **kwargs):
+    try:
+        path.symlink_to(target, **kwargs)
+    except OSError as exc:
+        if getattr(exc, "winerror", None) == 1314:
+            pytest.skip("Windows account cannot create symlinks; covered by Linux CI")
+        raise
 
 
 def test_directory_not_accepted_as_media(tmp_path):

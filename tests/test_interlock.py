@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import math
 
+import pytest
+
 from floorsight.contracts import FloorAlert, FloorHazards, Track, TrackClass, TrackState, WorldState
 from floorsight.interlock import RESUME_CLEAR_S, ForkliftInterlock, stopping_distance
 from floorsight.sim.live import FPS, ClosedLoopSim
@@ -87,6 +89,52 @@ def test_an_unconfirmed_warning_does_nothing():
     a = _alert("warning")
     a.confirmed = False
     assert lock.update(_world(1.0, [fork], FloorHazards(alerts=[a]))) == []
+
+
+@pytest.mark.parametrize("state", [None, TrackState.lost, TrackState.estimated])
+def test_missing_or_unobserved_forklift_never_releases_a_floor_stop(state):
+    lock = ForkliftInterlock()
+    fork = _track("F1", TrackClass.forklift, 0, 0, vx=2)
+    person = _track("P1", TrackClass.person, 4, 0)
+    lock.update(_world(1, [fork, person], FloorHazards(alerts=[_alert("danger")])))
+    clear = _track("P1", TrackClass.person, 4, 3)
+    for t in (2, 4, 8, 30):
+        tracks = [] if state is None else [fork.model_copy(update={"state": state})]
+        assert lock.update(_world(t, tracks + [clear], FloorHazards())) == []
+    assert lock.vehicles["F1"]["state"] == "stop"
+    # Reacquisition starts a new clear interval, rather than inheriting stale time.
+    assert lock.update(_world(31, [fork, clear], FloorHazards())) == []
+    assert [c["command"] for c in lock.update(_world(34, [fork, clear], FloorHazards()))] == ["resume"]
+
+
+def test_lost_slowed_track_holds_beyond_reidentification_window():
+    lock = ForkliftInterlock()
+    for t in (0, 0.1, 0.2, 0.3):
+        lock.update(_world(t, [_track("F1", TrackClass.forklift, 0, 0, vx=2, t=t),
+                              _track("P1", TrackClass.person, 5, 1, t=t)]))
+    assert lock.counts["slow"] == 1
+    for t in (1, 6, 8, 20):
+        assert lock.update(_world(t, [])) == []
+    assert next(iter(lock.vehicles.values()))["state"] == "slow"
+
+
+@pytest.mark.parametrize("applied", [False, True])
+def test_missing_stopped_truck_requires_acknowledgement_and_a_clear_path(applied):
+    lock = ForkliftInterlock()
+    out = []
+    for k in range(4):
+        t = k / FPS
+        out += lock.update(_world(t, [_track("T1", TrackClass.forklift, 2 * t, 5, vx=2, t=t),
+                                     _track("P1", TrackClass.person, 3.5, 5, t=t)]))
+    assert [c["command"] for c in out] == ["stop"]
+    out[0]["applied"] = applied
+    # A visible person still in the lane must block release even without a truck track.
+    for t in (1, 4, 8):
+        assert lock.update(_world(t, [_track("P1", TrackClass.person, 3.5, 5, t=t)])) == []
+    for t in (9, 10):
+        assert lock.update(_world(t, [_track("P1", TrackClass.person, 3.5, 6.4, t=t)])) == []
+    commands = lock.update(_world(12, [_track("P1", TrackClass.person, 3.5, 6.4, t=12)]))
+    assert [c["command"] for c in commands] == (["resume"] if applied else [])
 
 
 # ------------------------------------------------------------------ track input (simulated warehouse)

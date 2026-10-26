@@ -1,5 +1,7 @@
 # Floorsight — technical report
 
+> Historical methods and results, retained for traceability. Start with the [current concise report](../TECHNICAL_REPORT.md). Braking was applied only in simulation; real clips were processed offline. The recorded reviewer was scripted and the planner used the local policy. Current setup instructions are in the [development guide](../DEVELOPMENT.md).
+
 **Version 0.5, 24 October 2026 (numbers from the 23-24 Oct AWS runs; receipts in `docs/receipts/`). New in 0.5: motion smoothing (section 4b), the forklift interlock that slows or stops the truck itself, tested in a closed loop in the simulated warehouse (section 4c), and the runs that use them.** OpenCV AI Competition 2026 (Devpost).
 Status markers used throughout: **[real]** built and run on real factory footage; **[sim]** built and run on the
 simulated warehouse only; **[planned]** not built. Every number below links to an evidence file in the repository.

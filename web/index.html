@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Floorsight - live floor map</title>
-  <meta name="description" content="Live, privacy-safe map of everything moving on the warehouse floor.">
+  <meta name="description" content="Floor measurements, camera evidence and reviewable forklift warnings.">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27%3E%3Ccircle cx=%2712%27 cy=%2712%27 r=%279%27 fill=%27none%27 stroke=%27%235aaeff%27 stroke-width=%273%27/%3E%3Ccircle cx=%2712%27 cy=%2712%27 r=%273.5%27 fill=%27%235aaeff%27/%3E%3C/svg%3E">
   <link rel="stylesheet" href="/static/styles.css">
 </head>
@@ -32,7 +32,7 @@
 
     <dl class="stats" aria-label="Pipeline speed">
       <div><dt>Speed</dt><dd id="stat-fps">-- fps</dd></div>
-      <div><dt>Delay</dt><dd id="stat-latency">-- ms</dd></div>
+      <div><dt>Processing</dt><dd id="stat-latency">-- ms</dd></div>
     </dl>
 
     <dl class="counts" aria-label="Tracked on the floor now">
@@ -91,13 +91,13 @@
       <section id="approvals-section" class="approvals-section" aria-labelledby="approvals-heading">
         <h2 id="approvals-heading" class="section-title">Needs your decision <span id="approvals-count" class="count-badge" hidden>0</span></h2>
         <div id="approvals" class="approvals"></div>
-        <p id="no-approvals" class="calm">Nothing needs you right now. The agent only alerts on its own; anything more waits for your OK here.</p>
+        <p id="no-approvals" class="calm">No decisions pending. Forklift alerts wait for approval; simulated braking runs separately.</p>
       </section>
 
       <section class="events-section" aria-labelledby="events-heading">
         <h2 id="events-heading" class="section-title">Events <span id="events-count" class="muted-count"></span></h2>
         <ol id="events" class="events" aria-live="off"></ol>
-        <p id="no-events" class="calm">No events yet. Anything the cameras flag shows up here, and the agent checks it before anyone is bothered.</p>
+        <p id="no-events" class="calm">No events yet. Detected incidents and their review evidence appear here.</p>
       </section>
 
       <section class="rule-section" aria-labelledby="rule-heading">

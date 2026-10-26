@@ -53,7 +53,7 @@ RESUME_CLEAR_S = 2.0     # no condition for this long -> the next lower state
 HORN_REPEAT_S = 3.0      # one horn per person/forklift pair in this time
 SLOW_MPS = 0.7           # "walking pace" speed limit sent with SLOW
 REIDENT_M = 2.0          # a forklift track that appears this close to where a forklift was just lost is the same truck
-LOST_HOLD_S = 5.0        # a slowed/stopped truck the cameras lose keeps its state this long (absent is not clear)
+LOST_HOLD_S = 5.0        # maximum gap for associating a new track with a recently lost truck
 BLOCKER_NEAR_M = 1.5     # the person a truck stopped for counts as seen again if a person track is this close to them
 LATENCY_S = 0.3          # camera + processing + radio + brake actuation, from the frame to the brakes acting
 BRAKE_MPS2 = (1.5, 3.0)  # forklift braking range (the floor stage's prior); the worst case is used for "would stop short"
@@ -157,7 +157,7 @@ class ForkliftInterlock:
         forks = [tr for tr in world.tracks if tr.cls == TrackClass.forklift and tr.state in live]
         people = [tr for tr in world.tracks if tr.cls == TrackClass.person and tr.state in live]
         keys = self._vehicle_keys(forks, world.t)
-        self._present = set(keys.values())
+        self._present = {keys[f.track_id] for f in forks if f.state == TrackState.seen}
         out = []
         for f in forks:
             key = keys[f.track_id]
@@ -225,7 +225,8 @@ class ForkliftInterlock:
         self._floor = world.hazards is not None
         if world.hazards is not None:
             conds = self._from_hazards(world)
-            self._present = {tr.track_id for tr in world.tracks if tr.cls == TrackClass.forklift}
+            self._present = {tr.track_id for tr in world.tracks
+                             if tr.cls == TrackClass.forklift and tr.state == TrackState.seen}
         else:
             conds = self._from_tracks(world)
         conds = self._confirm(conds, t)
@@ -258,16 +259,27 @@ class ForkliftInterlock:
                     d = stopping_distance(min(sp, c.get("speed_mps") or sp), decel=sum(BRAKE_MPS2) / 2)
                     st["stop_xy"] = [c["xy"][0] + d * math.cos(h), c["xy"][1] + d * math.sin(h)]
                 st.update(state=NAME[target], since=t, clear_since=None, reason=c["reason"], person=c["person"])
-                cmds.append(self._cmd(t, NAME[target], c))
+                cmd = self._cmd(t, NAME[target], c)
+                if target == LEVEL["stop"]:
+                    st["stop_command"] = cmd  # the receiver records its acknowledgement on this object
+                cmds.append(cmd)
             elif target < cur:
+                # A disappearing track alone cannot release a limit. A receiver
+                # that actually applied STOP lets us retain the stopped pose;
+                # the person's clearance must still pass _blocker_seen below.
+                stopped_by_us = (st["state"] == "stop" and st.get("stop_xy") is not None
+                                 and st.get("blocker") is not None
+                                 and (st.get("stop_command") or {}).get("applied") is True)
+                if vid not in present and not stopped_by_us:
+                    st["clear_since"], st["waiting"] = None, "waiting to see the forklift again"
+                    continue
                 if st["state"] == "stop" and not self._blocker_seen(st.get("blocker"), world, vid, st):
                     st["clear_since"], st["waiting"] = None, "waiting to see the person clear of its path"
                     continue
+                if vid not in present and not self._stopped_path_clear(st, world):
+                    st["clear_since"], st["waiting"] = None, "waiting for the stopped forklift's path to clear"
+                    continue
                 st["waiting"] = None
-                if vid not in present:
-                    lost_t = self.vmeta.get(vid, {}).get("t")
-                    if st["state"] == "normal" or (lost_t is not None and t - lost_t <= LOST_HOLD_S):
-                        continue  # out of view is not "clear": a lost slowed/stopped truck keeps its state a while
                 if st["clear_since"] is None:
                     st["clear_since"] = t
                 elif t - st["clear_since"] >= RESUME_CLEAR_S - 1e-6:
@@ -279,6 +291,17 @@ class ForkliftInterlock:
             else:
                 st["clear_since"] = None
         return cmds
+
+    def _stopped_path_clear(self, st: dict, world: WorldState) -> bool:
+        """Check the retained pose when an applied stop has faded from motion detection."""
+        h, speed = st["intent"]
+        fork = SimpleNamespace(x=st["stop_xy"][0], y=st["stop_xy"][1],
+                               vx=speed * math.cos(h), vy=speed * math.sin(h))
+        people = [tr for tr in world.tracks if tr.cls == TrackClass.person
+                  and tr.state in (TrackState.seen, TrackState.estimated)]
+        blocker = st["blocker"]
+        people.append(SimpleNamespace(x=blocker["xy"][0], y=blocker["xy"][1], vx=0.0, vy=0.0))
+        return all(predict(person, fork, h)[0] is None for person in people)
 
     def _blocker_seen(self, blocker: dict | None, world: WorldState, vid: str, st: dict) -> bool:
         """May the truck stopped for this person resume? Yes if the person is in view now (the normal conditions then

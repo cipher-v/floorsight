@@ -1,0 +1,242 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:03.178
+Floorsight measures how close forklifts come to people,
+slows or stops the forklift in time, and
+
+2
+00:00:03.228 --> 00:00:06.406
+lets a person review.
+
+3
+00:00:07.067 --> 00:00:12.273
+Forklifts and people share the same floor. Most
+factories already record CCTV, but nobody
+
+4
+00:00:12.323 --> 00:00:17.529
+watches it live, and a camera image cannot tell you how
+far a person really is from a forklift.
+
+5
+00:00:18.179 --> 00:00:23.337
+On screen, this seated operator seems to touch the
+forklift. On the floor map they are about
+
+6
+00:00:23.387 --> 00:00:28.545
+three metres away. A pixel rule would alarm all day.
+Floorsight measures in metres.
+
+7
+00:00:29.212 --> 00:00:34.018
+OpenCV 5's line-segment detector finds the floor's main
+directions. Their vanishing points and
+
+8
+00:00:34.068 --> 00:00:38.874
+two size references turn one ordinary camera into a
+floor map in metres, with its error: the
+
+9
+00:00:38.924 --> 00:00:43.730
+camera sits 3.56 metres up, plus or minus five percent.
+
+10
+00:00:44.380 --> 00:00:48.326
+Every moving forklift carries its danger zone: where it
+travels before it can stop, where its
+
+11
+00:00:48.376 --> 00:00:52.322
+rear swings, and what a tall load hides, each drawn from
+sixty-four sampled variations. If it
+
+12
+00:00:52.372 --> 00:00:56.318
+will pass within 0.8 metres of a person in the next
+three seconds on its course, Floorsight
+
+13
+00:00:56.368 --> 00:01:00.314
+warns.
+
+14
+00:01:01.647 --> 00:01:05.683
+The detectors redraw every outline from scratch, so the
+raw zones jittered. A Kalman filter on
+
+15
+00:01:05.733 --> 00:01:09.769
+every track, and a second one on the turn rate, now hold
+them steady: the outline's jump between
+
+16
+00:01:09.819 --> 00:01:13.855
+frames fell from about 43 centimetres to about 12, and
+false turns that bent the zone toward
+
+17
+00:01:13.905 --> 00:01:17.941
+people are gone.
+
+18
+00:01:21.413 --> 00:01:25.815
+This is the app, on an AWS Graviton4 instance with the
+Cloud Optimized OpenCV build. Six real
+
+19
+00:01:25.865 --> 00:01:30.267
+clips replay as a live feed onto the floor map.
+
+20
+00:01:31.413 --> 00:01:36.051
+When a warning is confirmed, the machine acts first:
+Floorsight slows the forklift to walking
+
+21
+00:01:36.101 --> 00:01:40.739
+pace, or stops it if the person is in its path. Then the
+agent replays the last one and a half
+
+22
+00:01:40.789 --> 00:01:45.427
+seconds, takes a close-up, measures again, and
+recommends in one line.
+
+23
+00:01:50.413 --> 00:01:53.507
+A person approves or rejects afterwards. Only approved
+warnings reach the floor lead, through
+
+24
+00:01:53.557 --> 00:01:56.651
+Amazon SNS.
+
+25
+00:01:57.301 --> 00:02:00.923
+On the third warning, the forklift pulled away from a
+stop in a new direction; the agent
+
+26
+00:02:00.973 --> 00:02:04.595
+recognises that as real motion, not a tracking glitch.
+
+27
+00:02:07.301 --> 00:02:10.227
+In this run: 3 warnings, each saved with every step to a
+trace, and the morning report sums up
+
+28
+00:02:10.277 --> 00:02:13.203
+the shift.
+
+29
+00:02:13.868 --> 00:02:18.750
+Recorded video cannot show a forklift being stopped, so
+we built a simulated warehouse whose
+
+30
+00:02:18.800 --> 00:02:23.682
+forklift obeys Floorsight. Without the interlock, it
+hits the picker who steps into its path.
+
+31
+00:02:26.001 --> 00:02:30.241
+With it, the same vision pipeline sees the picker, the
+forklift stops, waits until the picker is
+
+32
+00:02:30.291 --> 00:02:34.531
+seen clear of its path, then drives on, slowing as it
+passes. Both people who stepped into its
+
+33
+00:02:34.581 --> 00:02:38.821
+path were passed without contact. It costs time: in
+forty seconds it drove 27 metres instead of
+
+34
+00:02:38.871 --> 00:02:43.111
+80.
+
+35
+00:02:46.668 --> 00:02:51.826
+It is the same app and the same stop logic. Braking
+cannot help someone who walks into the back
+
+36
+00:02:51.876 --> 00:02:57.034
+of a forklift driving away, and nothing can stop for a
+person no camera sees. We report both.
+
+37
+00:03:02.668 --> 00:03:07.538
+Our hardest real case: on the twentieth of October the
+forklift's outline swerved toward this
+
+38
+00:03:07.588 --> 00:03:12.458
+operator in its last forty milliseconds, 0.67 metres,
+and the warning came too late.
+
+39
+00:03:13.108 --> 00:03:18.080
+Measured again with the publishable detectors and
+smoothed tracks, the same clip never comes
+
+40
+00:03:18.130 --> 00:03:23.102
+closer than 1.55 metres. Our earlier warnings here came
+from a turn the new filter shows was
+
+41
+00:03:23.152 --> 00:03:28.124
+noise. With one camera we cannot say which outline is
+right; at that moment they disagree by
+
+42
+00:03:28.174 --> 00:03:33.146
+about 1.2 metres, and no warning based on a forklift's
+course can foresee a real swerve.
+
+43
+00:03:33.808 --> 00:03:38.486
+On the same Graviton4 instance, the COOL build runs
+adaptive threshold seven times as fast and
+
+44
+00:03:38.536 --> 00:03:43.214
+one stream of our OpenCV chain ten percent faster, but
+resize and four parallel processes are
+
+45
+00:03:43.264 --> 00:03:47.942
+slower, and our whole perception stage, spent in neural
+detectors, was three percent slower. We
+
+46
+00:03:47.992 --> 00:03:52.670
+also reproduced a crash in COOL's polygon fill.
+
+47
+00:03:53.320 --> 00:03:59.222
+Everything runs in one private AWS deployment, built
+with Terraform: evidence in S3, track
+
+48
+00:03:59.272 --> 00:04:05.174
+history in DynamoDB, alerts through SNS, metrics in
+CloudWatch, and no open inbound port.
+
+49
+00:04:05.824 --> 00:04:10.118
+Privacy runs first and fails closed: heads and faces are
+pixelated before anything is stored or
+
+50
+00:04:10.168 --> 00:04:14.462
+shown, covering 98 percent of the heads the earlier
+detectors found.
+

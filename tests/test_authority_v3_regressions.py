@@ -14,10 +14,10 @@ def test_second_view_presence_cannot_override_missing_pair_geometry():
     assert has_support(view)
 
 
-def test_temporal_clearance_requires_recent_observed_displacement():
+def test_temporal_clearance_requires_recent_observed_displacement(demo_plan):
     from floorsight.agent.rules import RulesEngine
     from floorsight.contracts import Track, WorldState
-    engine = RulesEngine(load_site('data/sim/demo_001/site.json'))
+    engine = RulesEngine(demo_plan)
     def sample(t, x, state=TrackState.seen, person=False):
         tracks = [Track(track_id='fork', cls=TrackClass.forklift, x=x, y=5., vx=1.5, vy=0.,
                         sigma_m=.1, camera_ids=['a'], first_seen_t=0., last_seen_t=t, state=state)]
@@ -35,7 +35,6 @@ def test_temporal_clearance_requires_recent_observed_displacement():
 from floorsight.contracts import TrackClass, TrackState
 from floorsight.server import components
 from floorsight.server.runtime import Runtime
-from floorsight.site import load_site
 from floorsight.vision.tracker import Tracker, _Track, FloorDet, cluster
 
 
@@ -113,9 +112,9 @@ def test_person_beside_vehicle_does_not_inherit_vehicle_fusion_radius():
     assert vehicle.sigma < .35
 
 
-def test_real_vision_failure_never_falls_back_to_truth(monkeypatch):
+def test_real_vision_failure_never_falls_back_to_truth(monkeypatch, demo_plan):
     monkeypatch.setattr(components, "_try_import", lambda *a: (None, "deliberate failure"))
-    site = load_site("data/sim/demo_001/site.json")
+    site = demo_plan
     vision, label, warnings = components.build_vision("real", site, None, fake_feed=object())
     assert label == "none" and isinstance(vision, components.NullVision) and warnings
 
@@ -135,11 +134,11 @@ def test_owner_hold_never_enters_retention_paths():
     assert rt._purge()["preserved"] is True
 
 
-def test_closed_case_expires_operational_approval_and_ignores_late_click():
+def test_closed_case_expires_operational_approval_and_ignores_late_click(demo_plan):
     from floorsight.agent.runtime import FloorsightAgent, Case
     from floorsight.agent.planner import Action
     from floorsight.contracts import Event, EventStatus, EventType, ApprovalRequest, ApprovalStatus
-    site = load_site("data/sim/demo_001/site.json")
+    site = demo_plan
     agent = FloorsightAgent(site, components.NullVision(site))
     event = Event(event_id="E1", type=EventType.unseen_in_zone, rule_id=None,
                   t_start=0., t_detect=10., location=(1., 8.), severity="warning", status=EventStatus.verifying, summary="Unseen person")
@@ -155,11 +154,11 @@ def test_closed_case_expires_operational_approval_and_ignores_late_click():
     assert agent.decide("A1", True, 26.) == []
 
 
-def test_missing_camera_loses_coverage_and_stale_frames_cannot_revive_it(monkeypatch):
+def test_missing_camera_loses_coverage_and_stale_frames_cannot_revive_it(monkeypatch, demo_plan):
     from floorsight.vision.pipeline import RealVision
     from floorsight.contracts import FrameMeta, CameraStatus
     from floorsight.interfaces import FramePacket
-    site = load_site("data/sim/demo_001/site.json")
+    site = demo_plan
     vision = RealVision(site, workers=1)
     # Exercise lifecycle independently of image detectors and calibration compute.
     vision._plates_checked = True
