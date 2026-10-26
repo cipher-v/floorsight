@@ -110,10 +110,9 @@ def test_rules_and_approvals_with_stub(sim_truth_dir, tmp_path):
         assert r.json() == {"ok": True, "agent": "stub", "messages": []}
         assert client.post("/api/rules", json={"text": ""}).status_code == 422
         assert client.post("/api/rules", json={"text": "   "}).status_code == 422
+        # the stub has no approvals: an id it never issued is unknown, not a silent success
         r = client.post("/api/approvals/AP-1", json={"approved": True})
-        assert r.status_code == 200
-        body = r.json()
-        assert body["ok"] is True and body["approved"] is True and body["messages"] == []
+        assert r.status_code == 404
         assert client.post("/api/approvals/AP-1", json={}).status_code == 422
 
 
@@ -173,8 +172,8 @@ def test_token_enforcement(sim_truth_dir, tmp_path):
             with client.websocket_connect("/ws") as ws:
                 ws.receive_json()
 
-        r = client.get("/api/site", params={"token": "judge-123"})
-        assert r.status_code == 200
+        r = client.get("/api/site", params={"token": "judge-123"}, follow_redirects=False)
+        assert r.status_code == 303 and r.headers["location"] == "/api/site"  # token leaves the URL at once
         assert "floorsight_token" in r.headers.get("set-cookie", "")
         # the cookie set above now authorises plain requests and the websocket
         assert client.get("/api/state").status_code == 200

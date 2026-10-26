@@ -45,7 +45,11 @@ def mm_to_px(mm: float, dpi: int) -> int:
 
 
 def get_dictionary(name: str = DICT_NAME):
-    return cv2.aruco.getPredefinedDictionary(getattr(cv2.aruco, name))
+    """Predefined ArUco dictionary by name ("DICT_4X4_50", "DICT_5X5_100", ...); an unknown name is refused, never guessed."""
+    value = getattr(cv2.aruco, name, None) if isinstance(name, str) and name.startswith("DICT_") else None
+    if not isinstance(value, int):
+        raise ValueError(f"unknown ArUco dictionary {name!r}: use a cv2.aruco predefined name such as {DICT_NAME!r}")
+    return cv2.aruco.getPredefinedDictionary(value)
 
 
 def marker_image(marker_id: int, size_px: int, name: str = DICT_NAME) -> np.ndarray:

@@ -469,6 +469,8 @@ locals {
     FLOORSIGHT_LLM              = var.agent_llm # "bedrock" switches floorsight.llm to Claude on Bedrock
     FLOORSIGHT_TOKEN            = var.judge_token
     FLOORSIGHT_ORIGIN_SECRET    = var.public_endpoint ? random_password.origin_secret.result : ""
+    # same hold for the app's local history/evidence purge as for S3 expiry, DynamoDB TTL and log expiry
+    FLOORSIGHT_PRESERVATION_HOLD = var.preservation_hold ? "on" : "off"
   }
   app_host    = var.public_endpoint ? "0.0.0.0" : "127.0.0.1" # private: only an SSM port-forward reaches it
   app_command = var.app_start_command == "" ? "" : "${var.app_start_command} --host ${local.app_host} --port ${var.app_port}"
@@ -525,6 +527,12 @@ resource "aws_instance" "app" {
     precondition {
       condition     = length(data.aws_subnets.app.ids) > 0
       error_message = "No default subnet in an AZ that offers ${var.instance_type} in ${var.region}."
+    }
+    precondition {
+      # the origin secret only proves a request came through CloudFront; without a token anyone with the link
+      # could read evidence and approve, reject or add rules
+      condition     = !var.public_endpoint || length(var.judge_token) >= 20
+      error_message = "public_endpoint = true needs judge_token set to a random string of at least 20 characters (e.g. openssl rand -hex 16)."
     }
   }
 }

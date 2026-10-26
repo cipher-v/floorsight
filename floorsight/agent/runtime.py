@@ -50,6 +50,7 @@ HOTSPOT_RADIUS_M = 3.0
 MIN_TRACK_AGE_S = 1.0
 MAX_TRACK_SIGMA_M = 0.35
 SLOW_ZONE_DISTANCE_M = 5.0
+ALERT_RETRY_S = 5.0  # an alert the notifier failed to deliver is sent again (same alert id) after this long
 
 
 @dataclass
@@ -65,7 +66,9 @@ class Case:
     step_n: int = 0
     done: list[str] = field(default_factory=list)
     facts: dict = field(default_factory=dict)
-    alerted: set[str] = field(default_factory=set)
+    alerted: set[str] = field(default_factory=set)  # audiences the notifier has delivered to
+    undelivered: dict[str, Alert] = field(default_factory=dict)  # audience -> recorded alert whose delivery failed
+    next_delivery_t: float = 0.0
     follow_up_t: float | None = None
     follow_up_fired: bool = False
     absent_since: float | None = None
@@ -159,6 +162,7 @@ class FloorsightAgent:
             out += self._open_case(c)
         for case in list(self.cases.values()):
             out += self._monitor(case)
+            out += self._retry_delivery(case)
         return out
 
     def add_rule_from_text(self, text: str, t: float) -> list[LiveMessage]:
@@ -243,6 +247,7 @@ class FloorsightAgent:
             "events": [_dump(c.event) for c in self.cases.values()],
             "approvals": [_dump(a) for a in self.approvals.values()],
             "alerts": [_dump(a) for a in self.alerts],
+            "alerts_undelivered": sorted(a.alert_id for c in self.cases.values() for a in c.undelivered.values()),
             "trace": [_dump(s) for s in self.trace],
             "remembered_spots": [vars(s) | {"xy": list(s.xy)} for s in self.engine.spots],
         }
@@ -377,12 +382,15 @@ class FloorsightAgent:
         facts = {
             "detect_cameras": case.detect_cams,
             "zone_name": zone.name if zone else None,
-            "alerted": sorted(case.alerted),
+            # an alert waiting for redelivery counts as sent for planning: the outbox retries it, never a second alert
+            "alerted": sorted(case.alerted | set(case.undelivered)),
             "follow_up_s": self.follow_up_s,
             "follow_up_t": case.follow_up_t,
             **{k: v for k, v in case.facts.items() if not k.startswith("_")},
             **{k: v for k, v in case.data.items() if k in ("distance_m", "min_distance_m", "closing_mps", "static_s", "threshold_s", "unseen_s", "dwell_s")},
         }
+        if case.undelivered:
+            facts["alert_undelivered"] = sorted(case.undelivered)
         if ev.type == EventType.blocked_exit:
             facts["still_present"] = self._object_present(case)
             facts["absent_s"] = round(self.t - case.absent_since, 2) if case.absent_since is not None else 0.0
@@ -610,23 +618,51 @@ class FloorsightAgent:
 
     def _do_send_alert(self, case, a, extra):
         audience = a.input.get("audience", "floor_lead")
-        self._n["alert"] += 1
-        alert = Alert(
-            alert_id=f"AL-{self._n['alert']:04d}",
-            event_id=case.event.event_id,
-            t=self.t,
-            channel="dashboard",
-            audience=audience,
-            message=a.input.get("message") or case.event.summary,
-        )
-        self.alerts.append(alert)
-        case.alerted.add(audience)
-        if self.notifier is not None:
-            self.notifier.send(alert)
+        alert = case.undelivered.get(audience)
+        if alert is None:  # a retry re-sends the recorded alert (same id); it never records a second one
+            self._n["alert"] += 1
+            alert = Alert(
+                alert_id=f"AL-{self._n['alert']:04d}",
+                event_id=case.event.event_id,
+                t=self.t,
+                channel="dashboard",
+                audience=audience,
+                message=a.input.get("message") or case.event.summary,
+            )
+            self.alerts.append(alert)
+            extra.append(LiveMessage(kind="alert", data=_dump(alert)))  # the dashboard gets it even if delivery fails
+        error = self._deliver(case, alert)
         if audience == "manager":
             case.event.status = EventStatus.escalated
-        extra.append(LiveMessage(kind="alert", data=_dump(alert)))
-        return {"alert": _dump(alert)}, f"alerted {audience.replace('_', ' ')}" + (" - escalated" if audience == "manager" else "")
+        decision = f"alerted {audience.replace('_', ' ')}" + (" - escalated" if audience == "manager" else "")
+        if error is None:
+            return {"alert": _dump(alert)}, decision
+        return {"alert": _dump(alert), "delivered": False, "error": error}, f"{decision} on the dashboard; delivery failed ({error}), will retry"
+
+    def _deliver(self, case: Case, alert: Alert) -> str | None:
+        """Hands an alert to the notifier. The audience counts as alerted only once that succeeds; on failure the
+        alert stays queued on the case (``_retry_delivery`` re-sends it) and the error text is returned."""
+        if self.notifier is not None:
+            try:
+                self.notifier.send(alert)
+            except Exception as exc:  # noqa: BLE001 - SNS outage, throttling, network: the alert must not be lost
+                case.undelivered[alert.audience] = alert
+                case.next_delivery_t = self.t + ALERT_RETRY_S
+                return f"{type(exc).__name__}: {exc}"
+        case.undelivered.pop(alert.audience, None)
+        case.alerted.add(alert.audience)
+        return None
+
+    def _retry_delivery(self, case: Case) -> list[LiveMessage]:
+        """Outbox: alerts whose delivery failed are re-sent every ALERT_RETRY_S (also after the case closed)."""
+        if not case.undelivered or self.t < case.next_delivery_t:
+            return []
+        out: list[LiveMessage] = []
+        for audience, alert in list(case.undelivered.items()):
+            if self._deliver(case, alert) is None:
+                out.append(self._step(case, Action("deliver_alert", {"alert_id": alert.alert_id, "audience": audience}), {"delivered": True},
+                                      f"alert {alert.alert_id} delivered to {audience.replace('_', ' ')}", "retry of an alert whose delivery had failed"))
+        return out
 
     def _do_request_approval(self, case, a, extra):
         act = a.input["action"]

@@ -1,5 +1,10 @@
 # Floorsight — project overview and build guide (start here)
 
+> **Historical design proposal.** This is the original plan, written before the build. Parts of it were never
+> built or changed on the way (for example, there is no Cognito sign-in: the built app uses a judge token), and its
+> test counts and targets are from that date. For what was actually built and measured, read the
+> [README](../README.md) and the [technical report](report/Floorsight-Technical-Report-v0.5-20261024.md).
+
 Written 19 October 2026 for anyone joining the project with no prior context.
 Facts are verified from the sources linked at the end. Plans, targets and estimates are labelled
 as such. Prices and licenses were read on 19 October 2026; recheck before paying or submitting.

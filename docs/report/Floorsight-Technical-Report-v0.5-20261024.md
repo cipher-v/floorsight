@@ -452,6 +452,16 @@ Infrastructure: `infra/terraform` (plan/apply logs kept). Scripts: `scripts/real
 `floorsight/sim/live.py`, `scripts/interlock_sim.py`,
 `scripts/benchmark/cool_bench.py`, `scripts/benchmark/bench_chart.py`, `scripts/video/build_video.py`.
 
+**Addendum, 27 Oct: independent code review.** An outside reviewer reported 8 bugs and 6 risks; we found all of them
+real and fixed them in code r56 (full suite on AWS with the COOL build: 275 passed, 2 skipped, 0 failed). The list is in
+the README section "Independent code review". One fix touches a result in this report. The interlock's resume rule
+(section 4c) now also holds for the real-camera floor stage: a stop waits until the person it was for is seen out of
+the truck's path. Before, the stop could end 2 s after the floor warnings stopped, and they stop once the truck
+stands. Replaying the recorded floor data (`docs/receipts/interlock-replay-check-20261027.txt`) gives the same slow
+(37.6 s) and stop (38.0 s) on clip-dev-002. The resume at 40.4 s no longer happens, because the person was still in
+the path the truck had been driving on. The app recording was made before the fix. The simulated-warehouse results
+(section 9) are unchanged.
+
 ## 13. Credits and licences
 
 Footage: Önal, O. & Dandıl, E. (2024), "Video Dataset for Safe and Unsafe Behaviours", Mendeley Data, V1,

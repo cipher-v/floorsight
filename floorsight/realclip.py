@@ -14,6 +14,10 @@ record into a ``WorldState`` (tracks + ``hazards``) and gives the agent three se
 ``sharper_crop`` (full-resolution close-up), ``short_replay`` (was it sustained, or a one-frame dip / tracking jump?)
 and ``redetect`` (detectors run again on the crop; optional, configured with FLOORSIGHT_REDETECT_CMD).
 No raw video is read here: frames are filtered upstream and fail closed there (black, withheld frames).
+
+Admission (opt-in, FLOORSIGHT_REPLAY_ADMISSION=enforce): every clip must carry a reviewed floorsight.real-clip.v1
+manifest whose file hashes check out (``admit_replay``), or the folder is refused before anything is played. Off by
+default because export_app_replay.py does not write manifests yet.
 """
 
 from __future__ import annotations
@@ -50,6 +54,8 @@ from floorsight.contracts import (
     WorldState,
 )
 from floorsight.interfaces import FramePacket
+from floorsight.real_clip_contract import assess
+from floorsight.real_clip_files import _bound_file, _digest, verify_file_bindings
 from floorsight.site import load_site
 
 log = logging.getLogger("floorsight.realclip")
@@ -60,11 +66,83 @@ MIN_RUN_FRAMES = 3  # same 3-frame rule as the perception stage
 HEADING_JUMP_DEG = 35.0
 SPEED_JUMP_RATIO = 1.6
 GAP_FRAMES = 3  # vehicle not measured for >= this many frames just before onset = tracking gap
+ADMISSION_ENV = "FLOORSIGHT_REPLAY_ADMISSION"  # unset / 0 / false / off: no admission check; anything else enforces it
 
 
-def load_playlist(replay_dir: str | os.PathLike) -> dict:
+class ReplayNotAdmitted(RuntimeError):
+    """The replay folder failed admission (metadata, privacy review or file hashes); nothing from it is played."""
+
+    def __init__(self, replay_dir, reasons):
+        self.reasons = tuple(reasons)
+        super().__init__(f"replay folder {replay_dir} refused: {', '.join(self.reasons)}")
+
+
+def _clip_manifest(root: Path, reference) -> dict:
+    """The clip's admission manifest, bound to the playlist by path + sha256; ValueError(reason) otherwise."""
+    try:
+        path = _bound_file(root, reference)
+        if _digest(path) != reference["sha256"]:
+            raise ValueError("hash_mismatch")
+    except FileNotFoundError:
+        raise ValueError("missing_file") from None
+    except OSError:
+        raise ValueError("unreadable_file") from None
+    try:
+        manifest = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        raise ValueError("not_json") from None
+    if not isinstance(manifest, dict):
+        raise ValueError("not_json")
+    return manifest
+
+
+def admit_replay(replay_dir: str | os.PathLike, playlist: dict) -> tuple[str, ...]:
+    """Reasons to refuse this replay folder ("<clip>:<reason>"); empty means every clip is admitted.
+
+    Each playlist clip needs "manifest": {"path", "sha256"} naming a floorsight.real-clip.v1 manifest in the folder that
+    passes the source/privacy admission (real_clip_contract.assess), names this clip's video as its privacy-filtered file,
+    binds the same source clip the floor records came from (original.sha256 == clipSha256), and whose filtered video and
+    privacy-review evidence match their sha256 on disk (real_clip_files). The raw original never sits in a replay folder,
+    so it is bound by hash only. Unvalidated metric geometry is logged, not refused.
+    """
+    root = Path(replay_dir).resolve(strict=True)
+    reasons: list[str] = []
+    for clip in playlist.get("clips", []):
+        name = clip.get("name", "?")
+        if clip.get("manifest") is None:
+            reasons.append(f"{name}:metadata_missing")
+            continue
+        try:
+            manifest = _clip_manifest(root, clip["manifest"])
+        except ValueError as error:
+            reasons.append(f"{name}:manifest:{error}")
+            continue
+        admission = assess(manifest)
+        reasons += [f"{name}:{r}" for r in admission.reasons if r != "metric_geometry_not_validated"]
+        if not admission.metric_events:
+            log.warning("replay clip %s: floor geometry is not validated for metric events", name)
+        privacy = manifest.get("privacy") if isinstance(manifest.get("privacy"), dict) else {}
+        filtered = privacy.get("filtered") if isinstance(privacy.get("filtered"), dict) else {}
+        if filtered.get("path") != clip.get("video"):
+            reasons.append(f"{name}:video_is_not_the_reviewed_file")
+        original = manifest.get("original") if isinstance(manifest.get("original"), dict) else {}
+        if not clip.get("clipSha256") or original.get("sha256") != clip.get("clipSha256"):
+            reasons.append(f"{name}:records_not_from_the_reviewed_source")
+        reasons += [f"{name}:{r}" for r in verify_file_bindings(root, manifest, skip=("original",)).reasons]
+    return tuple(reasons)
+
+
+def load_playlist(replay_dir: str | os.PathLike, admission: bool | None = None) -> dict:
+    """playlist.json. With admission on (None: read FLOORSIGHT_REPLAY_ADMISSION) a folder failing admit_replay is refused."""
     with open(Path(replay_dir) / "playlist.json", encoding="utf-8") as f:
-        return json.load(f)
+        playlist = json.load(f)
+    if admission is None:
+        admission = os.environ.get(ADMISSION_ENV, "").strip().lower() not in ("", "0", "false", "off", "no")
+    if admission:
+        reasons = admit_replay(replay_dir, playlist)
+        if reasons:
+            raise ReplayNotAdmitted(replay_dir, reasons)
+    return playlist
 
 
 class FloorCamera:

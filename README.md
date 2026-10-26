@@ -18,8 +18,10 @@ Competition 2026 on OpenCV 5 and AWS.
 > Optimized OpenCV (COOL) build, and in a closed loop in a simulated warehouse. One camera, development clips, not
 > field-validated. Every number below comes from a receipt in `docs/receipts/`.
 
-**Live demo for the judges:** the app runs on our private AWS deployment; we run it live for the judges by
-screen-share on request (a temporary public HTTPS link is one Terraform variable away, `docs/aws/DEPLOY.md`).
+**Live demo for the judges:** the app runs on our private AWS deployment (one Graviton4 `c8g.xlarge` from the COOL
+Marketplace AMI, created with `infra/terraform` on 23 Oct; each app run is started over SSM by the scripts in
+`infra/aws/`). We run it live for the judges by screen-share on request; a temporary public HTTPS link needs a
+Terraform apply with a judge token plus a settings update on the instance (`docs/aws/DEPLOY.md`, step 8).
 
 Every preview on this page is a moving GIF of a real output; click it to play the full video in your browser.
 
@@ -33,6 +35,7 @@ Every preview on this page is a moving GIF of a real output; click it to play th
 | Working endpoint or live demo | live screen-share on request; every recorded run plays at the [video page](https://tonystark101-debug.github.io/floorsight/) |
 | Video, at most 5 minutes | [the demo, 4 min 22 s](https://tonystark101-debug.github.io/floorsight/#demo) |
 | Evaluation, failure cases, limitations | [Honest results](#honest-results) and [Limits](#limits) below; report sections 9 and 11; every number has a receipt in [`docs/receipts/`](docs/receipts/) |
+| Independent code review: what was found and fixed | [Independent code review (27 Oct)](#independent-code-review-27-oct-what-we-fixed) below |
 | COOL: version and AWS configuration | [`docs/receipts/cool-opencv-build-20261023.txt`](docs/receipts/cool-opencv-build-20261023.txt): OpenCV 5.1.0-dev from `/opt/cool` on the COOL Marketplace AMI, EC2 `c8g.xlarge` (Graviton4) |
 | COOL: reproducible evaluation against a baseline | [`docs/receipts/cool-bench-20261024.json`](docs/receipts/cool-bench-20261024.json), report section 10: same instance, same code, same real frames, COOL against stock OpenCV |
 | COOL: evidence it runs the claimed workload | the perception runs on AWS imported OpenCV from the COOL build: each per-clip result records it (final run: OpenCV 5.1.0-dev from `/opt/cool/python_3.12/site-packages/cv2`); the `cv2.fillPoly` crash we found happens in COOL, not in stock OpenCV ([`docs/findings/COOL-fillPoly-crash.md`](docs/findings/COOL-fillPoly-crash.md)) |
@@ -287,7 +290,42 @@ development: `python -m venv .venv && .venv/bin/pip install -r requirements.txt`
 simulated warehouse with `python -m floorsight.sim.scenario --out data/sim/demo_001`. The closed-loop interlock test:
 `python scripts/interlock_sim.py --out out/interlock-sim`; the app on it: `python -m floorsight.server --source simlive --interlock on`.
 
-Tests: `python -m pytest -q tests` (on AWS, code r55: 233 passed, 2 skipped).
+Tests: `python -m pytest -q tests` (on AWS with the COOL OpenCV 5.1 build, code r56 after the 27 Oct fixes: 275 passed,
+2 skipped, 0 failed; [`docs/receipts/pytest-r56-20261027.txt`](docs/receipts/pytest-r56-20261027.txt)).
+
+## Independent code review (27 Oct): what we fixed
+
+On 26 Oct an outside reviewer read this repository and reported 8 bugs and 6 risks. We checked every one against the
+code and found all of them real. We fixed each one with a test, including tests that fail on the old code. The full
+suite then ran on AWS with the COOL build: 275 passed, 0 failed.
+
+**What the fixes change in our published results: one moment, and we say so.** We replayed the recorded floor data of
+the real-clip app run through the old and the fixed code
+([`docs/receipts/interlock-replay-check-20261027.txt`](docs/receipts/interlock-replay-check-20261027.txt)). On
+clip-dev-002 both slow the forklift at 37.6 s and stop it at 38.0 s. The old code then resumed at 40.4 s, only because
+the warnings had gone quiet. In the recording the driver turned away (a recording cannot be stopped), and the person
+was still standing in the path the truck had been driving on. The fixed code holds the stop; that clip ends 0.4 s
+later. The app video was recorded before the fix, so it still shows the resume. Nothing else changes: the
+simulated-warehouse runs use the other input path, which the fix leaves alone (all 13 interlock tests pass), and no
+published camera has lens distortion or a non-default marker type.
+
+| Finding | What was wrong | Fixed |
+|---|---|---|
+| Forklift resume (most serious) | A stop triggered by the real-camera floor warnings kept no record of the person it stopped for. Those warnings switch off once the truck stands still, so the truck could resume after 2 s with the person still in front of it. | It now waits until that person is seen out of the path it would drive on. If the person drops out of view, it judges by where they were last seen. A stop for a person it never had on the floor map stays stopped. 3 new tests. |
+| Lost alert | If sending an approved alert failed, the alert was marked sent and never retried. | It counts as sent only after delivery. A failed send is retried under the same alert id, so no duplicates, and the dashboard shows it straight away. |
+| Health check | `/healthz` said "ok" even when perception had failed to load. | New `/readyz` returns 503 with the reasons. `/healthz` also reports the vision state. |
+| Deployment | The Terraform start command defaulted to empty, and public mode did not require a token. | Both are now required. The tested start command is documented. |
+| Evidence retention | The preservation hold could not be switched off, and the docs promised deletion unconditionally. | New `--preservation-hold on/off` flag. The docs now say when deletion happens. |
+| Approvals | A decision on an unknown or already-decided approval still answered "ok". | 404 for an unknown approval, 409 for one already decided. The dashboard shows the server's state. |
+| Token in the URL | `?token=` stayed in the address bar. | 303 redirect to a clean URL. The cookie is HttpOnly and SameSite, and Secure over HTTPS. |
+| Lens distortion | The floor mapping ignored lens distortion. | Pixels are undistorted first. On a test lens, points land within 3 mm instead of up to 0.5 m off; zero distortion gives bit-identical results. |
+| Marker type | The site's ArUco dictionary was ignored. | It is now used, and an unknown name is rejected. |
+| Video page | The "Code on GitHub" link was broken, and the layout overflowed on small phones. | Both fixed. The page builder now refuses to write a page with a broken link. |
+| Smaller items | The camera reader's `_stop` name clashed with Python's thread internals; the deployment-status note, an early design document and one dependency note were out of date. | All fixed. |
+
+**Still open, said plainly:** the replay checks (a clip's files match their hashes and passed privacy review) are
+built and tested but off by default (`FLOORSIGHT_REPLAY_ADMISSION=enforce` turns them on). Our recorded clips do not
+yet carry the signed review records the checks need. The per-frame floor-record files are not hash-bound yet.
 
 ## Data, licences, credit
 

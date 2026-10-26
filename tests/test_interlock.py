@@ -34,13 +34,50 @@ def test_a_confirmed_floor_warning_slows_the_forklift_at_once_and_says_where_it_
     assert abs(c["stopsShortBy_m"] - (4.2 - stopping_distance(2.0))) < 0.006
 
 
-def test_danger_stops_and_the_truck_resumes_only_after_the_way_is_clear():
+def test_danger_stops_and_the_truck_resumes_only_after_the_person_is_seen_clear():
+    # The floor stage only warns about a moving truck, so its alerts stop the moment the truck stands: an empty alert
+    # list is not "clear". The truck waits until the person is seen out of its path (audit C1, 27 Oct).
+    lock = ForkliftInterlock()
+    fork = _track("F1", TrackClass.forklift, 0.0, 0.0, vx=2.0)
+    in_path = _track("P1", TrackClass.person, 4.0, 0.0)
+    assert [c["command"] for c in lock.update(_world(1.0, [fork, in_path], FloorHazards(alerts=[_alert("danger", gap=0.6)])))] == ["stop"]
+    stood = _track("F1", TrackClass.forklift, 0.0, 0.0)
+    for t in (1.5, 2.5, 3.5, 6.0):                                                       # alerts gone, person still in the path
+        assert lock.update(_world(t, [stood, in_path], FloorHazards())) == []
+    clear = _track("P1", TrackClass.person, 4.0, 3.0)                                     # stepped 3 m aside
+    assert lock.update(_world(6.5, [stood, clear], FloorHazards())) == []                # first clear moment
+    assert lock.update(_world(6.5 + RESUME_CLEAR_S / 2, [stood, clear], FloorHazards())) == []  # not clear long enough
+    cmds = lock.update(_world(6.5 + RESUME_CLEAR_S + 0.05, [stood, clear], FloorHazards()))
+    assert [c["command"] for c in cmds] == ["resume"]
+
+
+def test_a_floor_stage_stop_waits_for_a_person_last_seen_in_the_path_who_drops_out_of_view():
+    lock = ForkliftInterlock()
+    fork = _track("F1", TrackClass.forklift, 0.0, 0.0, vx=2.0)
+    in_path = _track("P1", TrackClass.person, 4.0, 0.0)
+    assert [c["command"] for c in lock.update(_world(1.0, [fork, in_path], FloorHazards(alerts=[_alert("danger", gap=0.6)])))] == ["stop"]
+    stood = _track("F1", TrackClass.forklift, 0.0, 0.0)
+    for k in range(1, 40):                                                               # a detector dropout: no person track
+        assert lock.update(_world(1.0 + 0.25 * k, [stood], FloorHazards())) == []
+    assert lock.vehicles["F1"]["state"] == "stop"
+
+
+def test_a_floor_stage_stop_for_a_person_not_on_the_floor_map_stays_latched():
     lock = ForkliftInterlock()
     fork = _track("F1", TrackClass.forklift, 0.0, 0.0, vx=2.0)
     assert [c["command"] for c in lock.update(_world(1.0, [fork], FloorHazards(alerts=[_alert("danger", gap=0.6)])))] == ["stop"]
-    assert lock.update(_world(1.5, [fork], FloorHazards())) == []                       # first clear moment
-    assert lock.update(_world(1.5 + RESUME_CLEAR_S / 2, [fork], FloorHazards())) == []  # not clear long enough
-    cmds = lock.update(_world(1.5 + RESUME_CLEAR_S + 0.05, [fork], FloorHazards()))
+    for k in range(1, 40):
+        assert lock.update(_world(1.0 + 0.25 * k, [fork], FloorHazards())) == []
+    assert lock.vehicles["F1"]["state"] == "stop"
+
+
+def test_a_floor_stage_slow_still_returns_to_normal_once_the_warning_is_gone():
+    lock = ForkliftInterlock()
+    fork = _track("F1", TrackClass.forklift, 0.0, 0.0, vx=2.0)
+    person = _track("P1", TrackClass.person, 5.0, 1.0)
+    assert [c["command"] for c in lock.update(_world(1.0, [fork, person], FloorHazards(alerts=[_alert("warning", ttc=2.2, gap=4.2)])))] == ["slow"]
+    assert lock.update(_world(1.5, [fork, person], FloorHazards())) == []
+    cmds = lock.update(_world(1.5 + RESUME_CLEAR_S + 0.05, [fork, person], FloorHazards()))
     assert [c["command"] for c in cmds] == ["resume"]
 
 

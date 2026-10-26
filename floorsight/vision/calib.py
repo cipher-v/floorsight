@@ -8,10 +8,39 @@ import cv2
 import numpy as np
 
 from floorsight.contracts import CameraInfo, SitePlan
+from floorsight.edge.markers import DICT_NAME, get_dictionary
 
 # ArUco returns corners TL, TR, BR, BL; on the floor these sit at (dx, dy) * size/2 from the
 # centre (verified on rendered footage: < 2 px against the true projection).
 CORNER_OFFSETS = np.array([(-1.0, 1.0), (1.0, 1.0), (1.0, -1.0), (-1.0, -1.0)])
+# Undistorting a pixel is iterative; OpenCV's default 5 rounds leave ~0.05 px (about a centimetre far away) at the corners.
+UNDISTORT_CRITERIA = (cv2.TERM_CRITERIA_COUNT | cv2.TERM_CRITERIA_EPS, 50, 1e-10)
+
+
+def undistort_px(px: np.ndarray, K: np.ndarray, dist: np.ndarray | None) -> np.ndarray:
+    """Image pixels (N, 2) -> where an ideal pinhole camera with the same K sees them.
+
+    The image<->floor homographies hold for ideal pixels only. Without lens distortion the pixels come back
+    unchanged, so floor coordinates stay bit-identical to the plain homography.
+    """
+    px = np.asarray(px, np.float64).reshape(-1, 2)
+    if dist is None or not np.any(dist) or not len(px):
+        return px
+    pts = px.reshape(-1, 1, 2)
+    if hasattr(cv2, "undistortPointsIter"):  # OpenCV 4: the variant with stopping criteria has its own name
+        return cv2.undistortPointsIter(pts, K, dist, None, K, UNDISTORT_CRITERIA).reshape(-1, 2)
+    try:  # OpenCV 5 takes the criteria on undistortPoints itself
+        return cv2.undistortPoints(pts, K, dist, R=None, P=K, criteria=UNDISTORT_CRITERIA).reshape(-1, 2)
+    except (cv2.error, TypeError):
+        return cv2.undistortPoints(pts, K, dist, P=K).reshape(-1, 2)
+
+
+def site_dictionary(site: SitePlan) -> str:
+    """The one ArUco dictionary the plan's floor markers use (the default when there are none)."""
+    names = {m.dictionary for m in site.markers} or {DICT_NAME}
+    if len(names) > 1:
+        raise ValueError(f"floor markers mix ArUco dictionaries {sorted(names)}; one detector reads one dictionary")
+    return names.pop()
 
 
 def marker_floor_corners(site: SitePlan) -> dict[int, np.ndarray]:
@@ -28,7 +57,7 @@ class MarkerDetector:
     """Fast detector for routine drift checks, thorough (upscaled, tuned) detector for calibration."""
 
     def __init__(self, site: SitePlan):
-        dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
+        dictionary = get_dictionary(site_dictionary(site))  # ValueError on an unknown or mixed dictionary
         fast = cv2.aruco.DetectorParameters()
         fast.cornerRefinementMethod = cv2.aruco.CORNER_REFINE_SUBPIX
         fine = cv2.aruco.DetectorParameters()
@@ -74,6 +103,7 @@ class Calibration:
     error_m: float
     markers_used: int
     homography_error_m: float
+    dist: np.ndarray | None = None  # lens distortion (OpenCV order) the pose was fitted with; None/zero = ideal pinhole
 
     @property
     def position(self) -> np.ndarray:
@@ -83,23 +113,31 @@ class Calibration:
     def P(self) -> np.ndarray:
         return self.K @ np.column_stack([self.R, self.tvec])
 
+    @property
+    def distorted(self) -> bool:
+        return self.dist is not None and bool(np.any(self.dist))
+
     def to_floor(self, px: np.ndarray) -> np.ndarray:
         """Image pixels (N, 2) -> floor metres (N, 2)."""
-        px = np.asarray(px, np.float64).reshape(-1, 1, 2)
+        px = undistort_px(px, self.K, self.dist).reshape(-1, 1, 2)
         return cv2.perspectiveTransform(px, self.H_img2floor).reshape(-1, 2)
 
     def project(self, xyz: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         """World points (N, 3) -> pixels (N, 2) and camera depth (N,)."""
         xyz = np.asarray(xyz, np.float64).reshape(-1, 3)
         cam = xyz @ self.R.T + self.tvec.ravel()
-        uv = cam @ self.K.T
         z = cam[:, 2]
+        if self.distorted and len(cam):
+            # The same lens model the pose was fitted with, so drawn zones and boxes land where the camera sees them.
+            ideal = np.column_stack([cam[:, :2] / np.where(np.abs(z) < 1e-9, 1e-9, z)[:, None], np.ones(len(cam))])
+            return cv2.projectPoints(ideal, np.zeros(3), np.zeros(3), self.K, self.dist)[0].reshape(-1, 2), z
+        uv = cam @ self.K.T
         return uv[:, :2] / np.where(np.abs(z) < 1e-9, 1e-9, z)[:, None], z
 
     def plane_to_floor(self, px: np.ndarray, height_m: float) -> np.ndarray:
         """Image pixels -> floor (x, y) of points lying on the horizontal plane z = height_m."""
         H = self.K @ np.column_stack([self.R[:, 0], self.R[:, 1], self.R[:, 2] * height_m + self.tvec.ravel()])
-        px = np.asarray(px, np.float64).reshape(-1, 1, 2)
+        px = undistort_px(px, self.K, self.dist).reshape(-1, 1, 2)
         return cv2.perspectiveTransform(px, np.linalg.inv(H)).reshape(-1, 2)
 
     def metres_per_pixel(self, px: tuple[float, float]) -> float:
@@ -108,6 +146,8 @@ class Calibration:
 
     def floor_error(self, obs: dict[int, np.ndarray], floor_corners: dict[int, np.ndarray]) -> float:
         """Median floor distance between observed marker corners mapped to the floor and their true spots."""
+        if self.distorted:
+            obs = {i: undistort_px(c, self.K, self.dist) for i, c in obs.items()}
         return floor_error(self.H_img2floor, obs, floor_corners)
 
 
@@ -134,16 +174,17 @@ def fit_calibration(
         return None
     img = np.concatenate([obs[i] for i in ids]).astype(np.float64)
     flo = np.concatenate([floor_corners[i] for i in ids]).astype(np.float64)
+    K = np.asarray(cam.K, np.float64)
+    dist = np.asarray(cam.dist, np.float64)
     # USAC rejects orientation-reversing models; image y runs down and floor y up, so fit to (x, -y).
-    Hh, inl = cv2.findHomography(img, flo * (1.0, -1.0), cv2.USAC_MAGSAC, 0.10)
+    # Homographies hold for ideal pinhole pixels: undistort first (a no-op without lens distortion).
+    Hh, inl = cv2.findHomography(undistort_px(img, K, dist), flo * (1.0, -1.0), cv2.USAC_MAGSAC, 0.10)
     if Hh is None:
         return None
     Hh = np.diag([1.0, -1.0, 1.0]) @ Hh
     keep = inl.ravel().astype(bool)
     if keep.sum() < 6:
         return None
-    K = np.asarray(cam.K, np.float64)
-    dist = np.asarray(cam.dist, np.float64)
     obj = np.column_stack([flo[keep], np.zeros(keep.sum())])
     ok, rvec, tvec = cv2.solvePnP(obj, img[keep], K, dist, flags=cv2.SOLVEPNP_IPPE)
     if not ok:
@@ -155,6 +196,8 @@ def fit_calibration(
     Hf2i = K @ np.column_stack([R[:, 0], R[:, 1], tvec.ravel()])
     Hi2f = np.linalg.inv(Hf2i)
     used = {i: obs[i] for i in ids}
+    if np.any(dist):  # PnP applied the lens model itself; the homographies need it applied to the pixels
+        used = {i: undistort_px(c, K, dist) for i, c in used.items()}
     err_pnp = floor_error(Hi2f, used, floor_corners)
     err_h = floor_error(Hh, used, floor_corners)
     return Calibration(
@@ -166,6 +209,7 @@ def fit_calibration(
         error_m=err_pnp,
         markers_used=len(ids),
         homography_error_m=err_h,
+        dist=dist,
     )
 
 

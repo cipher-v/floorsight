@@ -5,6 +5,8 @@
 
 Live cameras:  --source live --live "cam1=0,cam2=rtsp://user:pass@host/stream"
 Judge token:   set FLOORSIGHT_TOKEN, then open http://host:port/?token=<token>
+Retention:     --preservation-hold on (default; or FLOORSIGHT_PRESERVATION_HOLD) keeps history/evidence;
+               off deletes them after --retention-h
 """
 
 from __future__ import annotations
@@ -13,7 +15,7 @@ import argparse
 import logging
 
 
-def main(argv: list[str] | None = None) -> None:
+def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="python -m floorsight.server", description="Floorsight live floor map server")
     p.add_argument("--source", choices=["sim", "fake", "live", "realclip", "simlive"], default="fake",
                    help="sim: camera mp4s in --sim-dir; fake: simulator truth with blank frames; live: webcams/RTSP; "
@@ -30,15 +32,22 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--loop", action="store_true", help="restart recorded footage (as a fresh session) when it ends")
     p.add_argument("--blur", choices=["auto", "off"], default="auto", help="edge face blur (auto: use it if installed)")
     p.add_argument("--setup-dir", default=None, help="folder with setup_empty_<camera>.png (default: --sim-dir for recorded footage)")
-    p.add_argument("--runtime-dir", default="data/runtime", help="history and evidence (auto-deleted)")
-    p.add_argument("--retention-h", type=float, default=24.0, help="delete history/evidence older than this")
+    p.add_argument("--runtime-dir", default="data/runtime", help="history and evidence (auto-deleted only with --preservation-hold off)")
+    p.add_argument("--retention-h", type=float, default=24.0, help="with --preservation-hold off: delete history/evidence older than this")
+    p.add_argument("--preservation-hold", choices=["on", "off"], default=None,
+                   help="owner hold. on (default, or env FLOORSIGHT_PRESERVATION_HOLD=on): nothing is deleted automatically; "
+                        "off: history and evidence older than --retention-h are deleted")
     p.add_argument("--log-level", default="info")
     p.add_argument("--opencv-threads", type=int, default=1, help="Threads per OpenCV kernel; cameras already run concurrently")
     p.add_argument("--no-drop", action="store_true", help="Offline evidence replay: process every frame even when slower than real time")
     p.add_argument("--interlock", choices=["on", "off"], default="on",
                    help="forklift interlock: slow/stop a forklift automatically the moment a warning is confirmed")
     p.add_argument("--sim-duration", type=float, default=40.0, help="--source simlive: seconds of the closed-loop scenario")
-    args = p.parse_args(argv)
+    return p
+
+
+def main(argv: list[str] | None = None) -> None:
+    args = build_parser().parse_args(argv)
     import cv2
     cv2.setNumThreads(max(1, args.opencv_threads))
 

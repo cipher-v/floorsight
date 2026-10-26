@@ -5,17 +5,20 @@
     GET  /api/state                 agent snapshot + cameras + world + metrics
     GET  /api/coverage              CoverageMap
     POST /api/rules                 {"text"} -> agent.add_rule_from_text
-    POST /api/approvals/{id}        {"approved": bool} -> agent.decide
+    POST /api/approvals/{id}        {"approved": bool} -> agent.decide (404 unknown, 409 no longer pending)
     GET  /api/evidence/{ref}        blurred evidence JPEG
     GET  /api/cameras/{id}/frame.jpg latest blurred camera thumbnail
     GET  /api/replay?t0=&t1=        world snapshots (2 Hz) in a time range
     GET  /api/report                shift report
     GET  /api/metrics               fps, latency, dropped frames ...
-    GET  /healthz                   liveness (never needs the token)
+    GET  /healthz                   liveness: the process is up (never needs the token)
+    GET  /readyz                    readiness: 503 + reasons unless the floor is really watched (no token)
     WS   /ws                        LiveMessage JSON stream
 
-If the env var FLOORSIGHT_TOKEN is set, every route except /healthz needs it,
-as ``?token=``, the ``floorsight_token`` cookie, or ``Authorization: Bearer``.
+If the env var FLOORSIGHT_TOKEN is set, every route except /healthz and /readyz
+needs it, as the ``floorsight_token`` cookie or ``Authorization: Bearer``. A
+``?token=`` link is swapped for the cookie by a 303 redirect to the same URL
+without the token (the websocket, which cannot redirect, still accepts it).
 """
 
 from __future__ import annotations
@@ -26,20 +29,20 @@ import logging
 import os
 from contextlib import asynccontextmanager
 from http.cookies import SimpleCookie
-from urllib.parse import parse_qs
+from urllib.parse import parse_qs, parse_qsl, urlencode
 
 from fastapi import FastAPI, HTTPException, Query, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from floorsight.server.runtime import Hub, Runtime, RuntimeConfig, to_jsonable
+from floorsight.server.runtime import ApprovalConflict, Hub, Runtime, RuntimeConfig, to_jsonable
 
 log = logging.getLogger("floorsight.server.app")
 
 WEB_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "web")
 TOKEN_COOKIE = "floorsight_token"
-OPEN_PATHS = {"/healthz"}
+OPEN_PATHS = {"/healthz", "/readyz"}
 
 
 class RuleIn(BaseModel):
@@ -70,10 +73,23 @@ input:focus,button:focus{{outline:3px solid #ffd166;outline-offset:2px}}.err{{co
 <button type="submit">Open dashboard</button></form></main></body></html>"""
 
 
+def _without_token(scope) -> str:
+    """The request's own path and query minus ``token`` (relative, so it also works behind CloudFront)."""
+    raw = scope.get("raw_path") or scope.get("path", "/").encode()
+    path = "/" + raw.decode("latin-1").split("?", 1)[0].lstrip("/\\")  # never "//host" or "/\host": no off-site redirect
+    query = [(k, v) for k, v in parse_qsl(scope.get("query_string", b"").decode("latin-1"), keep_blank_values=True) if k != "token"]
+    return path + ("?" + urlencode(query) if query else "")
+
+
 class TokenGuard:
-    def __init__(self, app, token: str):
+    def __init__(self, app, token: str, https_proxy: bool = False):
         self.app = app
         self.token = token
+        self.https_proxy = https_proxy  # behind CloudFront (origin guard on), whose viewers are always on HTTPS
+
+    def _cookie(self, scope) -> str:
+        secure = scope.get("scheme") in ("https", "wss") or self.https_proxy
+        return f"{TOKEN_COOKIE}={self.token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=86400" + ("; Secure" if secure else "")
 
     def _extract(self, scope) -> tuple[str | None, bool]:
         qs = parse_qs(scope.get("query_string", b"").decode("latin-1"))
@@ -110,10 +126,15 @@ class TokenGuard:
             return await resp(scope, receive, send)
         if not from_query or scope["type"] != "http":
             return await self.app(scope, receive, send)
+        cookie = self._cookie(scope)
+        if scope.get("method") in ("GET", "HEAD"):
+            # Swap the token for the cookie and take it out of the address bar at once: URLs end up in browser
+            # history, proxy logs, screenshots and copied links.
+            resp = Response(status_code=303, headers={"location": _without_token(scope), "set-cookie": cookie, "cache-control": "no-store"})
+            return await resp(scope, receive, send)
 
         async def send_with_cookie(message):
             if message["type"] == "http.response.start":
-                cookie = f"{TOKEN_COOKIE}={self.token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=86400"
                 message = {**message, "headers": list(message.get("headers", [])) + [(b"set-cookie", cookie.encode())]}
             await send(message)
 
@@ -151,7 +172,12 @@ def create_app(cfg: RuntimeConfig | None = None, runtime: Runtime | None = None,
 
     @app.get("/healthz")
     def healthz():
-        return {"ok": True, "running": rt.running, "mode": rt.mode, "t": rt.current_t()}
+        return {"ok": True, "running": rt.running, "mode": rt.mode, "t": rt.current_t(), "vision": rt.vision_label}
+
+    @app.get("/readyz")
+    def readyz():
+        ready = rt.readiness()
+        return JSONResponse(ready, status_code=200 if ready["ready"] else 503, headers=no_store)
 
     @app.get("/")
     def index():
@@ -192,10 +218,15 @@ def create_app(cfg: RuntimeConfig | None = None, runtime: Runtime | None = None,
             msgs = rt.decide(approval_id, body.approved, reviewer=body.reviewer)
         except KeyError as exc:
             raise HTTPException(404, f"unknown approval {approval_id}") from exc
+        except ApprovalConflict as exc:  # decided by someone else, or expired: answer with the server's record
+            return JSONResponse({"detail": f"{exc}; your decision was not applied", "status": exc.approval.get("status"),
+                                 "approval": exc.approval}, status_code=409, headers=no_store)
         except Exception as exc:
             log.exception("decide failed")
             raise HTTPException(500, f"agent could not record the decision: {exc}") from exc
-        return {"ok": True, "agent": rt.agent_label, "approval_id": approval_id, "approved": body.approved, "messages": msgs}
+        ap = rt.approval(approval_id) or {}
+        return {"ok": True, "agent": rt.agent_label, "approval_id": approval_id, "status": ap.get("status"),
+                "approved": ap.get("status") == "approved", "approval": ap, "messages": msgs}
 
     @app.get("/api/trace")
     def trace():
@@ -246,8 +277,8 @@ def create_app(cfg: RuntimeConfig | None = None, runtime: Runtime | None = None,
     if os.path.isdir(WEB_DIR):
         app.mount("/static", StaticFiles(directory=WEB_DIR), name="static")
 
-    guarded = TokenGuard(app, token) if token else app
     origin_secret = os.environ.get("FLOORSIGHT_ORIGIN_SECRET", "") if origin_secret is None else origin_secret
+    guarded = TokenGuard(app, token, https_proxy=bool(origin_secret)) if token else app
     if origin_secret:  # public mode: only requests that came through the CloudFront distribution get in
         return OriginGuard(guarded, origin_secret)  # type: ignore[return-value]
     return guarded

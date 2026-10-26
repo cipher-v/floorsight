@@ -1,9 +1,18 @@
-# Copy to terraform.tfvars (gitignored) and fill in. Nothing here has been applied.
-region          = "us-east-1"
-cool_ami_id     = "ami-REPLACE_WITH_COOL_AMI_FOR_THIS_REGION" # from the Marketplace subscription launch page
-alert_email     = "you@example.com"
-app_repo_url    = "https://github.com/REPLACE/floorsight.git"
-app_git_ref     = "main" # pin a commit SHA for the benchmark runs
+# Copy to terraform.tfvars (gitignored) and fill in. Example values only.
+region       = "us-east-1"
+cool_ami_id  = "ami-REPLACE_WITH_COOL_AMI_FOR_THIS_REGION" # from the Marketplace subscription launch page
+alert_email  = "you@example.com"
+app_repo_url = "https://github.com/REPLACE/floorsight.git"
+app_git_ref  = "main" # pin a commit SHA for the benchmark runs
+
+# Required. Runs from /opt/floorsight/app; Terraform appends --host/--port. This is the command line app-run-10 ran on
+# the instance (infra/aws/jobs/run_app.sh, SOURCE=simlive): the closed-loop simulated warehouse, no footage needed.
+# For the real clips: --source realclip --sim-dir <replay folder> --vision replay --agent real (needs a perception job).
+app_start_command = "/opt/floorsight/py -m floorsight.server --source simlive --vision real --agent real"
+
+# public_endpoint   = true                     # CloudFront link; then judge_token is required (>= 20 characters)
+# judge_token       = "<openssl rand -hex 16>"
+# preservation_hold = true                     # default: nothing expires (S3, DynamoDB TTL, logs, app history/evidence)
 
 # instance_type            = "c8g.xlarge"
 # bedrock_model_id         = "anthropic.claude-opus-5-5"   # or the us.* inference-profile id shown in the Bedrock console

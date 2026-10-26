@@ -157,7 +157,7 @@ class _CameraReader(threading.Thread):
         self._lock = threading.Lock()
         self._frame: np.ndarray | None = None
         self._seq = 0
-        self._stop = threading.Event()
+        self._stop_event = threading.Event()  # not _stop: that name is Thread's own join() hook
         self.connected = False
 
     def latest(self) -> tuple[int, np.ndarray | None]:
@@ -165,15 +165,15 @@ class _CameraReader(threading.Thread):
             return self._seq, self._frame
 
     def run(self) -> None:
-        while not self._stop.is_set():
+        while not self._stop_event.is_set():
             cap = cv2.VideoCapture(self.target)
             if not cap.isOpened():
                 self.connected = False
                 log.warning("live camera %s (%s) not available; retrying", self.camera_id, self.target)
-                self._stop.wait(self.retry_s)
+                self._stop_event.wait(self.retry_s)
                 continue
             self.connected = True
-            while not self._stop.is_set():
+            while not self._stop_event.is_set():
                 ok, img = cap.read()
                 if not ok or img is None:
                     break
@@ -182,11 +182,11 @@ class _CameraReader(threading.Thread):
                     self._seq += 1
             cap.release()
             self.connected = False
-            if not self._stop.is_set():
-                self._stop.wait(self.retry_s)
+            if not self._stop_event.is_set():
+                self._stop_event.wait(self.retry_s)
 
     def stop(self) -> None:
-        self._stop.set()
+        self._stop_event.set()
 
 
 class LiveCameraSource:

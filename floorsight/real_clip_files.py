@@ -1,7 +1,8 @@
-"""Read-only artifact integrity checks. Execute on the coordinated GCP worker only.
+"""Read-only artifact integrity checks. Raw-media checks execute on the coordinated GCP worker only.
 
 This checks file bindings, NOT the truth or adequacy of a privacy/geometry review.
-It grants no preview or metric permissions and is not wired into production.
+It grants no preview or metric permissions. The app replay (floorsight.realclip) runs it
+opt-in at startup with skip=("original",): a replay folder never holds the raw clip.
 Use a private, immutable job directory; concurrent mutation is unsupported.
 """
 from __future__ import annotations
@@ -54,12 +55,13 @@ def _digest(path: Path) -> str:
     return digest.hexdigest()
 
 
-def verify_file_bindings(root: Path, manifest: dict) -> FileBindings:
+def verify_file_bindings(root: Path, manifest: dict, skip: tuple[str, ...] = ()) -> FileBindings:
     """Check required artifact bytes without decoding, copying or exposing raw media.
 
     Call alongside metadata assessment. Even both passing still require review of
     evidence contents and decoded media before admitting a clip. Hashes provide
-    integrity, not independent proof that an assertion is true.
+    integrity, not independent proof that an assertion is true. `skip` names
+    references deliberately absent from root (e.g. "original" in an app replay folder).
     """
     root = Path(root).resolve(strict=True)
     if not root.is_dir():
@@ -77,6 +79,8 @@ def verify_file_bindings(root: Path, manifest: dict) -> FileBindings:
             references["calibration." + name] = calibration.get(name)
     checked, reasons, paths = [], [], {}
     for name, reference in references.items():
+        if name in skip:
+            continue
         try:
             path = _bound_file(root, reference)
             if _digest(path) != reference["sha256"]:

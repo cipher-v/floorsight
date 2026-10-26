@@ -1,0 +1,13 @@
+app job app-run-09: replay folder /opt/floorsight/jobs/perc-full-13/replay; old interlock /opt/floorsight/app-20261024-r55/floorsight/interlock.py; code /opt/floorsight/app-20261027-r56
+--- old: 4 commands
+  clip-dev-002   t= 37.563 slow    D002:F1 / D002:P9: will pass within 0.8 m of D002:P9 in 2.2 s
+  clip-dev-002   t= 37.963 stop    D002:F1 / D002:P9: will pass within 0.8 m of D002:P9 in 1.4 s
+  clip-dev-002   t= 40.403 resume  D002:F1 / D002:P9: clear for 2 s
+  clip-dev-003   t= 63.683 slow    D003:F1 / D003:P35: will pass within 0.8 m of D003:P35 in 2.5 s
+--- new: 4 commands
+  clip-dev-002   t= 37.563 slow    D002:F1 / D002:P9: will pass within 0.8 m of D002:P9 in 2.2 s
+  clip-dev-002   t= 37.963 stop    D002:F1 / D002:P9: will pass within 0.8 m of D002:P9 in 1.4 s
+  clip-dev-003   t= 53.603 resume  D002:F1 / D002:P9: clear for 2 s
+  clip-dev-003   t= 63.683 slow    D003:F1 / D003:P35: will pass within 0.8 m of D003:P35 in 2.5 s
+DIFFERENT_COMMANDS
+EXIT=0

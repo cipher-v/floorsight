@@ -105,6 +105,7 @@ class ForkliftInterlock:
         self.vmeta: dict[str, dict] = {}    # vehicle key -> {"xy", "t" last seen, "track"}
         self._nkeys = 0
         self._present: set[str] = set()
+        self._floor = False   # this tick's input is the real-camera floor stage (its alerts stop once the truck stands)
 
     def _vehicle_keys(self, forks, t: float) -> dict[str, str]:
         out: dict[str, str] = {}
@@ -137,6 +138,7 @@ class ForkliftInterlock:
             if not (a.confirmed and a.vehicle_moving and a.vehicle_id):
                 continue
             v = tracks.get(a.vehicle_id)
+            p = tracks.get(a.person_id)  # the person it is for: a stop waits until they are seen clear (audit C1)
             spd = math.hypot(v.vx, v.vy) if v is not None else None
             gap = (a.clearance_m or {}).get("median")
             ttc = (a.ttc_s or {}).get("median")
@@ -146,7 +148,8 @@ class ForkliftInterlock:
             out.append({"vehicle": a.vehicle_id, "track": a.vehicle_id, "person": a.person_id, "level": level, "action": level,
                         "ttc_s": ttc, "gap_m": gap, "speed_mps": spd, "reason": why, "confirmed": True,
                         "heading": heading_of(v.vx, v.vy) if v is not None else None,
-                        "xy": [round(v.x, 2), round(v.y, 2)] if v is not None else None})
+                        "xy": [round(v.x, 2), round(v.y, 2)] if v is not None else None,
+                        "person_xy": [round(p.x, 2), round(p.y, 2)] if p is not None else None})
         return out
 
     def _from_tracks(self, world: WorldState) -> list[dict]:
@@ -219,6 +222,7 @@ class ForkliftInterlock:
         if not self.enabled:
             return []
         t = world.t
+        self._floor = world.hazards is not None
         if world.hazards is not None:
             conds = self._from_hazards(world)
             self._present = {tr.track_id for tr in world.tracks if tr.cls == TrackClass.forklift}
@@ -278,23 +282,34 @@ class ForkliftInterlock:
 
     def _blocker_seen(self, blocker: dict | None, world: WorldState, vid: str, st: dict) -> bool:
         """May the truck stopped for this person resume? Yes if the person is in view now (the normal conditions then
-        decide), or if the last time they were seen they were out of the truck's path and not heading back into it."""
+        decide), or if the last time they were seen they were out of the truck's path and not heading back into it.
+        With the floor stage as input the normal conditions cannot decide: its alerts need a moving truck, so they stop
+        the moment the truck stands. There the person must be seen clear of the path the truck would drive on, and a
+        stop for a person it never had on the floor map stays latched (audit C1, 27 Oct)."""
         if not blocker or blocker.get("xy") is None:
-            return True
+            return not self._floor
         live = (TrackState.seen, TrackState.estimated)
         for tr in world.tracks:
             if tr.cls != TrackClass.person or tr.state not in live:
                 continue
             if tr.track_id == blocker["track"] or math.hypot(tr.x - blocker["xy"][0], tr.y - blocker["xy"][1]) < BLOCKER_NEAR_M:
                 blocker.update(xy=[round(tr.x, 2), round(tr.y, 2)], v=[tr.vx, tr.vy], track=tr.track_id)  # follow them
-                return True
+                if not self._floor:
+                    return True
+                return self._clear_of_path(SimpleNamespace(x=tr.x, y=tr.y, vx=tr.vx, vy=tr.vy), world, vid, st)
         # Not in view: judge by where they were last seen (standing there), against the truck driving on from where it
         # stopped at its own speed. Only "last seen clear of the path" lets it go.
+        return self._clear_of_path(SimpleNamespace(x=blocker["xy"][0], y=blocker["xy"][1], vx=0.0, vy=0.0), world, vid, st)
+
+    def _clear_of_path(self, person, world: WorldState, vid: str, st: dict) -> bool:
+        """Is this person out of the path the stopped truck would take if it drove on from where it stopped?"""
         fork_xy = st.get("stop_xy") or (self.vmeta.get(vid) or {}).get("xy")
+        if fork_xy is None and self._floor:  # floor stage: the vehicle key is the truck's own track
+            v = next((tr for tr in world.tracks if tr.track_id == vid), None)
+            fork_xy = [v.x, v.y] if v is not None else None
         intent = st.get("intent")
         if fork_xy is None or intent is None:
             return False
-        person = SimpleNamespace(x=blocker["xy"][0], y=blocker["xy"][1], vx=0.0, vy=0.0)
         fork = SimpleNamespace(x=fork_xy[0], y=fork_xy[1], vx=intent[1] * math.cos(intent[0]), vy=intent[1] * math.sin(intent[0]))
         ttc, _, _ = predict(person, fork, intent[0])
         return ttc is None

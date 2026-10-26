@@ -1,7 +1,8 @@
 """Metadata admission policy for real footage; not a detector or evidence verifier.
 
 The caller must independently verify referenced files and hashes on the GCP worker.
-This module is not yet wired into the production replay path.
+The app replay (floorsight.realclip) applies it at startup only when opted in with
+FLOORSIGHT_REPLAY_ADMISSION=enforce: export_app_replay.py does not write manifests yet.
 """
 from __future__ import annotations
 

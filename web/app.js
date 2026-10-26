@@ -53,6 +53,7 @@
       const msg = typeof detail === "string" ? detail : Array.isArray(detail) ? "That input was not accepted." : `Request failed (${r.status})`;
       const err = new Error(msg);
       err.status = r.status;
+      err.data = data; // e.g. a 409 carries the server's own record of the approval
       throw err;
     }
     return data;
@@ -485,7 +486,10 @@
     const st = card.querySelector(".ap-status");
     if (decided) {
       st.classList.remove("err");
-      st.textContent = a.status === "approved" ? "Approved. The agent is acting on it." : "Rejected. Nothing will be done.";
+      const said = a.status === "approved" ? "Approved. The agent is acting on it."
+        : a.status === "expired" ? "Expired: the incident closed before a decision. Nothing will be done."
+        : "Rejected. Nothing will be done.";
+      st.textContent = a.note ? `${a.note} ${said}` : said;
     }
   }
 
@@ -499,17 +503,21 @@
       const reviewer = new URLSearchParams(location.search).get("reviewer") || "dashboard user";
       const res = await api(`/api/approvals/${encodeURIComponent(id)}`, { method: "POST", body: { approved, reviewer } });
       for (const m of arr(obj(res).messages)) handleMessage(m);
-      const a = S.approvals.get(id);
-      if (a && a.status === "pending") {
-        S.approvals.set(id, Object.assign({}, a, { status: approved ? "approved" : "rejected" }));
-        S.decidedAt.set(id, Date.now());
-      }
+      const rec = obj(obj(res).approval);
+      if (rec.approval_id) upsertApproval(rec); // the server's record of the decision, not this click
       scheduleRender("approvals");
       $("panel").focus({ preventScroll: true });
     } catch (e) {
       st.classList.add("err");
+      const rec = obj(obj(e.data).approval);
+      if (e.status === 409 && rec.approval_id) {
+        // Someone else answered first, or the incident closed: show what the server holds.
+        upsertApproval(Object.assign({}, rec, { note: "Your decision was not applied: this request was already answered or closed." }));
+        announce(`Your decision was not applied. The request is ${str(rec.status)}.`);
+        return;
+      }
       if (e.status === 404) {
-        st.textContent = "This request is no longer open (it was already handled, or the recording restarted).";
+        st.textContent = "The server no longer knows this request (the recording restarted). Reloading.";
         setTimeout(() => { S.approvals.delete(id); scheduleRender("approvals"); loadState(); }, 2500);
         return;
       }

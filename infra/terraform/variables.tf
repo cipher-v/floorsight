@@ -23,7 +23,7 @@ variable "public_endpoint" {
 }
 
 variable "preservation_hold" {
-  description = "Owner hold: nothing is deleted automatically. true disables the S3 evidence expiry, the DynamoDB TTL and log expiry, keeps buckets non-empty-destroy-safe and keeps the root volume if the instance is terminated."
+  description = "Owner hold: nothing is deleted automatically. true disables the S3 evidence expiry, the DynamoDB TTL and log expiry, keeps buckets non-empty-destroy-safe, keeps the root volume if the instance is terminated, and sets FLOORSIGHT_PRESERVATION_HOLD=on for the app (no local history/evidence purge). false turns all of these expiries on."
   type        = bool
   default     = true
 }
@@ -103,7 +103,7 @@ variable "agent_llm" {
 }
 
 variable "judge_token" {
-  description = "FLOORSIGHT_TOKEN: if set, the dashboard needs ?token=<value>. Share the full link with the judges only."
+  description = "FLOORSIGHT_TOKEN: if set, the dashboard needs ?token=<value> once (swapped for a cookie). Share the full link with the judges only. Required, at least 20 characters, when public_endpoint = true."
   type        = string
   default     = ""
   sensitive   = true
@@ -151,9 +151,13 @@ variable "code_bundle_key" {
 }
 
 variable "app_start_command" {
-  description = "Command systemd runs (from /opt/floorsight/app), without --host/--port (added from public_endpoint and app_port). Empty = install the service but do not start it."
+  description = "Command systemd runs (from /opt/floorsight/app), without --host/--port (added from public_endpoint and app_port). Required: an empty command would install a service that never starts. Command line run on the instance (app-run-10, via infra/aws/jobs/run_app.sh): /opt/floorsight/py -m floorsight.server --source simlive --vision real --agent real"
   type        = string
-  default     = ""
+
+  validation {
+    condition     = length(trimspace(var.app_start_command)) > 0
+    error_message = "Set app_start_command (see terraform.tfvars.example), e.g. \"/opt/floorsight/py -m floorsight.server --source simlive --vision real --agent real\"; empty would deploy an instance that never starts Floorsight."
+  }
 }
 
 variable "app_port" {

@@ -3,7 +3,7 @@
 Runs in one background thread, paced at real time (x --speed) for recorded
 sources. Keeps the latest world, a small blurred JPEG per camera, coverage,
 a 2 Hz history of world snapshots (memory ring + JSONL on disk, purged after
-the retention window) and pipeline metrics. Hands messages to the asyncio
+the retention window only when the preservation hold is off) and pipeline metrics. Hands messages to the asyncio
 websocket side through ``Hub`` (thread-safe).
 """
 
@@ -107,6 +107,18 @@ class Hub:
 # Configuration
 # --------------------------------------------------------------------------- #
 
+HOLD_ENV = "FLOORSIGHT_PRESERVATION_HOLD"
+
+
+def preservation_hold(flag: str | None, env=None) -> bool:
+    """--preservation-hold on|off, else $FLOORSIGHT_PRESERVATION_HOLD, else on (the owner hold is the default)."""
+    value = (flag if flag is not None else (os.environ if env is None else env).get(HOLD_ENV, "")).strip().lower()
+    if value in ("", "on", "true", "1", "yes"):
+        return True
+    if value in ("off", "false", "0", "no"):
+        return False
+    raise ValueError(f"preservation hold must be on or off, got {value!r} (--preservation-hold / {HOLD_ENV})")
+
 
 @dataclass
 class RuntimeConfig:
@@ -139,7 +151,8 @@ class RuntimeConfig:
         return cls(
             source=args.source, sim_dir=args.sim_dir, site_path=args.site, vision=args.vision, agent=args.agent,
             speed=args.speed, loop=args.loop, live=live, blur=args.blur, runtime_dir=args.runtime_dir,
-            retention_s=args.retention_h * 3600, setup_dir=getattr(args, "setup_dir", None),
+            retention_s=args.retention_h * 3600, preserve_evidence=preservation_hold(getattr(args, "preservation_hold", None)),
+            setup_dir=getattr(args, "setup_dir", None),
             max_lag_s=float("inf") if getattr(args, "no_drop", False) or args.source == "simlive" else 0.5,
             interlock=getattr(args, "interlock", "on") != "off", sim_duration_s=getattr(args, "sim_duration", 40.0),
         )
@@ -148,6 +161,14 @@ class RuntimeConfig:
 # --------------------------------------------------------------------------- #
 # Runtime
 # --------------------------------------------------------------------------- #
+
+
+class ApprovalConflict(Exception):
+    """The approval exists but is no longer pending (already decided, or expired when its incident closed)."""
+
+    def __init__(self, approval: dict):
+        super().__init__(f"approval {approval.get('approval_id')} is already {approval.get('status')}")
+        self.approval = approval
 
 
 class Runtime:
@@ -722,8 +743,25 @@ class Runtime:
             msgs = self.agent.add_rule_from_text(text, self.current_t())
         return self.broadcast(msgs)
 
-    def decide(self, approval_id: str, approved: bool, reviewer: str | None = None) -> list[dict]:
+    def approval(self, approval_id: str) -> dict | None:
+        """The agent's own record of one approval (None when it does not know the id)."""
         with self.agent_lock:
+            known = getattr(self.agent, "approvals", None)
+            if isinstance(known, dict):
+                ap = known.get(approval_id)
+                return to_jsonable(ap) if ap is not None else None
+            snap = self.agent.snapshot() or {}
+        return next((a for a in to_jsonable(snap.get("approvals", [])) if a.get("approval_id") == approval_id), None)
+
+    def decide(self, approval_id: str, approved: bool, reviewer: str | None = None) -> list[dict]:
+        """KeyError for an unknown approval, ApprovalConflict for one that is no longer pending: a late or second
+        click must never look like it changed anything."""
+        with self.agent_lock:  # the check and the decision are one step for concurrent reviewers
+            current = self.approval(approval_id)
+            if current is None:
+                raise KeyError(approval_id)
+            if current.get("status") != "pending":
+                raise ApprovalConflict(current)
             try:
                 msgs = self.agent.decide(approval_id, approved, self.current_t(), reviewer=reviewer)
             except TypeError:  # agents without reviewer support (stub, demo)
@@ -808,6 +846,26 @@ class Runtime:
         if isinstance(self.source, LiveCameraSource):
             m["live_connected"] = self.source.status()
         return m
+
+    def readiness(self) -> dict:
+        """Is the floor actually being watched? /healthz only says the process is up. The route is open (no token),
+        so reasons are fixed phrases; error details stay behind /api/metrics."""
+        with self._lock:
+            mode = self.mode
+        reasons = []
+        if self.vision_label == "none":
+            reasons.append("perception fell back to the null vision: nothing is being detected")
+        if mode == "error":
+            reasons.append("the runtime stopped with an error")
+        elif mode == "starting":
+            reasons.append("no frame processed yet: the source is not delivering")
+        if mode in ("starting", "live") and not self.running:
+            reasons.append("the runtime thread is not running")
+        if isinstance(self.source, LiveCameraSource) and not any(self.source.status().values()):
+            reasons.append("no live camera is connected")
+        # "ended" (recorded footage played to the end without --loop) is a normal finish, not a failure
+        return {"ready": not reasons, "reasons": reasons, "mode": mode, "running": self.running,
+                "vision": self.vision_label, "agent": self.agent_label}
 
     def privacy(self) -> dict:
         hours = self.cfg.retention_s / 3600
