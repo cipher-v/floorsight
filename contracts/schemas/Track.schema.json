@@ -1,0 +1,86 @@
+{
+  "$defs": {
+    "TrackClass": {
+      "enum": [
+        "person",
+        "forklift",
+        "object",
+        "unknown"
+      ],
+      "title": "TrackClass",
+      "type": "string"
+    },
+    "TrackState": {
+      "enum": [
+        "seen",
+        "estimated",
+        "unseen",
+        "lost"
+      ],
+      "title": "TrackState",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "track_id": {
+      "title": "Track Id",
+      "type": "string"
+    },
+    "cls": {
+      "$ref": "#/$defs/TrackClass"
+    },
+    "x": {
+      "title": "X",
+      "type": "number"
+    },
+    "y": {
+      "title": "Y",
+      "type": "number"
+    },
+    "vx": {
+      "title": "Vx",
+      "type": "number"
+    },
+    "vy": {
+      "title": "Vy",
+      "type": "number"
+    },
+    "sigma_m": {
+      "title": "Sigma M",
+      "type": "number"
+    },
+    "camera_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Camera Ids",
+      "type": "array"
+    },
+    "first_seen_t": {
+      "title": "First Seen T",
+      "type": "number"
+    },
+    "last_seen_t": {
+      "title": "Last Seen T",
+      "type": "number"
+    },
+    "state": {
+      "$ref": "#/$defs/TrackState"
+    }
+  },
+  "required": [
+    "track_id",
+    "cls",
+    "x",
+    "y",
+    "vx",
+    "vy",
+    "sigma_m",
+    "camera_ids",
+    "first_seen_t",
+    "last_seen_t",
+    "state"
+  ],
+  "title": "Track",
+  "type": "object"
+}

@@ -1,0 +1,259 @@
+{
+ "mode": "ended",
+ "components": {
+  "vision": "replay",
+  "agent": "real",
+  "blur": "prefiltered"
+ },
+ "cloud": {
+  "adapters": [
+   "evidence",
+   "metrics",
+   "notifier",
+   "tracks"
+  ],
+  "errors": {},
+  "evidence_mirrored": 9,
+  "evidence_mirror_errors": 0,
+  "sns_sent": 3
+ },
+ "privacy": {
+  "faces_blurred": true,
+  "blur": "prefiltered",
+  "prefiltered_note": "heads and faces pixelated upstream by the perception stage, which fails closed",
+  "positions_only": false,
+  "preservation_hold": true,
+  "automatic_deletion": false,
+  "retention_h": 24
+ },
+ "events": [
+  [
+   "EV-0001",
+   "floor_warning",
+   "warning",
+   "resolved",
+   "D002:F1 will pass within 0.8 m of D002:P9 in 2.2 s if it keeps its course (gap 4.2 m)"
+  ],
+  [
+   "EV-0002",
+   "floor_warning",
+   "warning",
+   "resolved",
+   "D002:F1 will pass within 0.8 m of D002:P17 in 2.4 s if it keeps its course (gap 6.0 m)"
+  ],
+  [
+   "EV-0003",
+   "floor_warning",
+   "warning",
+   "confirmed",
+   "D003:F1 will pass within 0.8 m of D003:P35 in 2.5 s if it keeps its course (gap 4.6 m)"
+  ]
+ ],
+ "approvals": [
+  [
+   "AP-0001",
+   "approved",
+   {
+    "verdict": "confirm",
+    "headline": "Agent recommends CONFIRM: the warning held for 3 frames with no tracking glitch, and a second detector agrees",
+    "numbers": [
+     {
+      "label": "Floor gap at the warning",
+      "value": "4.2 m"
+     },
+     {
+      "label": "Within 0.8 m",
+      "value": "in 2.2 s"
+     },
+     {
+      "label": "Closest predicted pass",
+      "value": "0.60 m (0.23-1.99)"
+     }
+    ]
+   }
+  ],
+  [
+   "AP-0002",
+   "approved",
+   {
+    "verdict": "confirm",
+    "headline": "Agent recommends CONFIRM: the warning held for 3 frames with no tracking glitch, and a second detector agrees",
+    "numbers": [
+     {
+      "label": "Floor gap at the warning",
+      "value": "6.0 m"
+     },
+     {
+      "label": "Within 0.8 m",
+      "value": "in 2.4 s"
+     },
+     {
+      "label": "Closest predicted pass",
+      "value": "0.00 m (0.00-1.07)"
+     }
+    ]
+   }
+  ],
+  [
+   "AP-0003",
+   "approved",
+   {
+    "verdict": "confirm",
+    "headline": "Agent recommends CONFIRM: the warning held for 3 frames with no tracking glitch",
+    "numbers": [
+     {
+      "label": "Floor gap at the warning",
+      "value": "4.6 m"
+     },
+     {
+      "label": "Within 0.8 m",
+      "value": "in 2.5 s"
+     },
+     {
+      "label": "Closest predicted pass",
+      "value": "0.26 m (0.00-4.52)"
+     }
+    ]
+   }
+  ]
+ ],
+ "alerts": [
+  [
+   "AL-0001",
+   "floor_lead",
+   "D002:F1 will pass within 0.8 m of D002:P9 in 2.2 s if it keeps its course (gap 4.2 m)"
+  ],
+  [
+   "AL-0002",
+   "floor_lead",
+   "D002:F1 will pass within 0.8 m of D002:P17 in 2.4 s if it keeps its course (gap 6.0 m)"
+  ],
+  [
+   "AL-0003",
+   "floor_lead",
+   "D003:F1 will pass within 0.8 m of D003:P35 in 2.5 s if it keeps its course (gap 4.6 m)"
+  ]
+ ],
+ "steps": 29,
+ "stepModes": {
+  "local": 29
+ },
+ "tools": [
+  "confirm_event",
+  "human_decision",
+  "recommend",
+  "redetect",
+  "redetect_result",
+  "request_approval",
+  "resolve_event",
+  "send_alert",
+  "sharper_crop",
+  "short_replay"
+ ],
+ "human_decisions": [
+  [
+   "EV-0001",
+   "scripted stand-in",
+   "approved"
+  ],
+  [
+   "EV-0002",
+   "scripted stand-in",
+   "approved"
+  ],
+  [
+   "EV-0003",
+   "scripted stand-in",
+   "approved"
+  ]
+ ],
+ "trace_files": [
+  "/opt/floorsight/jobs/app-run-09/runtime/traces/20261024-153437-s0-snapshot.json",
+  "/opt/floorsight/jobs/app-run-09/runtime/traces/20261024-153437-s0.jsonl"
+ ],
+ "interlock": {
+  "enabled": true,
+  "commands": [
+   {
+    "t": 37.563,
+    "vehicle": "D002:F1",
+    "track": "D002:F1",
+    "command": "slow",
+    "person": "D002:P9",
+    "reason": "will pass within 0.8 m of D002:P9 in 2.2 s",
+    "ttc_s": 2.2,
+    "gap_m": 4.167,
+    "speed_mps": 1.1616006198345454,
+    "xy": [
+     6.45,
+     7.67
+    ],
+    "person_xy": null,
+    "applied": false,
+    "limit_mps": 0.7,
+    "stoppingDistance_m": 0.8,
+    "stopsShortBy_m": 3.37
+   },
+   {
+    "t": 37.963,
+    "vehicle": "D002:F1",
+    "track": "D002:F1",
+    "command": "stop",
+    "person": "D002:P9",
+    "reason": "will pass within 0.8 m of D002:P9 in 1.4 s",
+    "ttc_s": 1.4,
+    "gap_m": 3.455,
+    "speed_mps": 1.5673327661986782,
+    "xy": [
+     6.71,
+     7.71
+    ],
+    "person_xy": null,
+    "applied": false,
+    "stoppingDistance_m": 1.29,
+    "stopsShortBy_m": 2.17
+   },
+   {
+    "t": 40.403,
+    "vehicle": "D002:F1",
+    "track": null,
+    "command": "resume",
+    "person": "D002:P9",
+    "reason": "clear for 2 s",
+    "ttc_s": null,
+    "gap_m": null,
+    "speed_mps": null,
+    "xy": null,
+    "person_xy": null,
+    "applied": false
+   },
+   {
+    "t": 63.683,
+    "vehicle": "D003:F1",
+    "track": "D003:F1",
+    "command": "slow",
+    "person": "D003:P35",
+    "reason": "will pass within 0.8 m of D003:P35 in 2.5 s",
+    "ttc_s": 2.45,
+    "gap_m": 4.646,
+    "speed_mps": 0.8852491174804976,
+    "xy": [
+     6.14,
+     6.75
+    ],
+    "person_xy": null,
+    "applied": false,
+    "limit_mps": 0.7,
+    "stoppingDistance_m": 0.53,
+    "stopsShortBy_m": 4.12
+   }
+  ],
+  "counts": {
+   "slow": 2,
+   "stop": 1,
+   "resume": 1,
+   "horn": 0
+  }
+ },
+ "note": "Recorded on AWS c8g.xlarge (COOL OpenCV 5.1), 24 Oct 2026, code r55, replaying perception run perc-full-13; forklift interlock on (recorded video: commands logged, not applied); local planner; decisions by a scripted stand-in."
+}

@@ -1,0 +1,415 @@
+{
+  "$defs": {
+    "CameraHealth": {
+      "properties": {
+        "camera_id": {
+          "title": "Camera Id",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/CameraStatus"
+        },
+        "fps": {
+          "title": "Fps",
+          "type": "number"
+        },
+        "last_frame_t": {
+          "title": "Last Frame T",
+          "type": "number"
+        },
+        "markers_visible": {
+          "title": "Markers Visible",
+          "type": "integer"
+        },
+        "calib_error_m": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Median marker re-projection error on the floor; null when not measured",
+          "title": "Calib Error M"
+        }
+      },
+      "required": [
+        "camera_id",
+        "status",
+        "fps",
+        "last_frame_t",
+        "markers_visible",
+        "calib_error_m"
+      ],
+      "title": "CameraHealth",
+      "type": "object"
+    },
+    "CameraStatus": {
+      "enum": [
+        "ok",
+        "moved",
+        "repairing",
+        "needs_human",
+        "offline"
+      ],
+      "title": "CameraStatus",
+      "type": "string"
+    },
+    "FloorAlert": {
+      "description": "One person's floor assessment against one forklift, from the real-camera floor stage.",
+      "properties": {
+        "person_id": {
+          "title": "Person Id",
+          "type": "string"
+        },
+        "vehicle_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Vehicle Id"
+        },
+        "level": {
+          "description": "warning: will come within 0.8 m in the next 3 s if the forklift keeps its course; danger: in its stopping or tail-swing zone, in its blind zone while it drives load-first, or within 0.8 m",
+          "enum": [
+            "warning",
+            "danger"
+          ],
+          "title": "Level",
+          "type": "string"
+        },
+        "confirmed": {
+          "description": "The condition held for 3 frames in a row",
+          "title": "Confirmed",
+          "type": "boolean"
+        },
+        "streak": {
+          "default": 0,
+          "title": "Streak",
+          "type": "integer"
+        },
+        "clearance_m": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "{median, p5, p95} floor clearance now",
+          "title": "Clearance M"
+        },
+        "pass_m": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Closest the forklift will come in the next 3 s if it keeps its course",
+          "title": "Pass M"
+        },
+        "pass_t_s": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pass T S"
+        },
+        "ttc_s": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Time until within 0.8 m, {median, p5, p95}",
+          "title": "Ttc S"
+        },
+        "p_warn": {
+          "default": 0.0,
+          "title": "P Warn",
+          "type": "number"
+        },
+        "p_path": {
+          "default": 0.0,
+          "title": "P Path",
+          "type": "number"
+        },
+        "reasons": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reasons",
+          "type": "array"
+        },
+        "vehicle_moving": {
+          "default": false,
+          "title": "Vehicle Moving",
+          "type": "boolean"
+        },
+        "cut_by_frame": {
+          "default": false,
+          "title": "Cut By Frame",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "person_id",
+        "vehicle_id",
+        "level",
+        "confirmed"
+      ],
+      "title": "FloorAlert",
+      "type": "object"
+    },
+    "FloorHazards": {
+      "description": "Per-tick output of the real-camera floor stage (empty for sites without it).",
+      "properties": {
+        "source": {
+          "default": "",
+          "title": "Source",
+          "type": "string"
+        },
+        "zones": {
+          "additionalProperties": {
+            "items": {
+              "items": {
+                "maxItems": 2,
+                "minItems": 2,
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "type": "array"
+              },
+              "type": "array"
+            },
+            "type": "array"
+          },
+          "description": "'Likely' outlines in floor metres: stop, tail, blind, blindTrailing, warn",
+          "title": "Zones",
+          "type": "object"
+        },
+        "footprints": {
+          "additionalProperties": {
+            "items": {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            "type": "array"
+          },
+          "description": "vehicle track id -> floor footprint polygon",
+          "title": "Footprints",
+          "type": "object"
+        },
+        "notes": {
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "description": "vehicle track id -> labels (speed, stopping distance, load, turn)",
+          "title": "Notes",
+          "type": "object"
+        },
+        "alerts": {
+          "items": {
+            "$ref": "#/$defs/FloorAlert"
+          },
+          "title": "Alerts",
+          "type": "array"
+        }
+      },
+      "title": "FloorHazards",
+      "type": "object"
+    },
+    "Track": {
+      "properties": {
+        "track_id": {
+          "title": "Track Id",
+          "type": "string"
+        },
+        "cls": {
+          "$ref": "#/$defs/TrackClass"
+        },
+        "x": {
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "title": "Y",
+          "type": "number"
+        },
+        "vx": {
+          "title": "Vx",
+          "type": "number"
+        },
+        "vy": {
+          "title": "Vy",
+          "type": "number"
+        },
+        "sigma_m": {
+          "title": "Sigma M",
+          "type": "number"
+        },
+        "camera_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Camera Ids",
+          "type": "array"
+        },
+        "first_seen_t": {
+          "title": "First Seen T",
+          "type": "number"
+        },
+        "last_seen_t": {
+          "title": "Last Seen T",
+          "type": "number"
+        },
+        "state": {
+          "$ref": "#/$defs/TrackState"
+        }
+      },
+      "required": [
+        "track_id",
+        "cls",
+        "x",
+        "y",
+        "vx",
+        "vy",
+        "sigma_m",
+        "camera_ids",
+        "first_seen_t",
+        "last_seen_t",
+        "state"
+      ],
+      "title": "Track",
+      "type": "object"
+    },
+    "TrackClass": {
+      "enum": [
+        "person",
+        "forklift",
+        "object",
+        "unknown"
+      ],
+      "title": "TrackClass",
+      "type": "string"
+    },
+    "TrackState": {
+      "enum": [
+        "seen",
+        "estimated",
+        "unseen",
+        "lost"
+      ],
+      "title": "TrackState",
+      "type": "string"
+    }
+  },
+  "description": "Broadcast to the dashboard and the agent several times per second.",
+  "properties": {
+    "schema_version": {
+      "default": "1.3",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "t": {
+      "title": "T",
+      "type": "number"
+    },
+    "tracks": {
+      "items": {
+        "$ref": "#/$defs/Track"
+      },
+      "title": "Tracks",
+      "type": "array"
+    },
+    "cameras": {
+      "items": {
+        "$ref": "#/$defs/CameraHealth"
+      },
+      "title": "Cameras",
+      "type": "array"
+    },
+    "coverage_version": {
+      "title": "Coverage Version",
+      "type": "integer"
+    },
+    "pipeline_latency_ms": {
+      "title": "Pipeline Latency Ms",
+      "type": "number"
+    },
+    "hazards": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FloorHazards"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "interlock": {
+      "anyOf": [
+        {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Forklift interlock: each vehicle's state (normal/slow/stop) and the latest automatic commands",
+      "title": "Interlock"
+    }
+  },
+  "required": [
+    "t",
+    "tracks",
+    "cameras",
+    "coverage_version",
+    "pipeline_latency_ms"
+  ],
+  "title": "WorldState",
+  "type": "object"
+}

@@ -1,0 +1,38 @@
+{
+  "description": "How many cameras can see each floor cell (0 = blind spot).",
+  "properties": {
+    "cell_m": {
+      "title": "Cell M",
+      "type": "number"
+    },
+    "cols": {
+      "title": "Cols",
+      "type": "integer"
+    },
+    "rows": {
+      "title": "Rows",
+      "type": "integer"
+    },
+    "counts": {
+      "description": "Row-major, row 0 at y=0",
+      "items": {
+        "type": "integer"
+      },
+      "title": "Counts",
+      "type": "array"
+    },
+    "version": {
+      "title": "Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "cell_m",
+    "cols",
+    "rows",
+    "counts",
+    "version"
+  ],
+  "title": "CoverageMap",
+  "type": "object"
+}

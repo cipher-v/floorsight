@@ -1,0 +1,449 @@
+{
+ "opencv": "5.1.0-dev",
+ "cv2_file": "/opt/cool/python_3.12/site-packages/cv2/__init__.py",
+ "torch": "2.14.1+cu130",
+ "threads": 4,
+ "frames": 60,
+ "clips": [
+  "clip-dev-002",
+  "clip-dev-004",
+  "screen-002",
+  "screen-032",
+  "screen-033"
+ ],
+ "detectors": {
+  "yolox_l-cv2dnn": {
+   "perClip": {
+    "clip-dev-002": {
+     "ms": 1893.8,
+     "personRecall": 0.8,
+     "personExtra": 0.42,
+     "forkliftRecall": 0.444,
+     "forkliftExtra": 0.17,
+     "refPersons": 20,
+     "refForklifts": 9
+    },
+    "clip-dev-004": {
+     "ms": 1896.0,
+     "personRecall": 0.594,
+     "personExtra": 1.92,
+     "forkliftRecall": 0.8,
+     "forkliftExtra": 0.08,
+     "refPersons": 32,
+     "refForklifts": 10
+    },
+    "screen-002": {
+     "ms": 1871.9,
+     "personRecall": 1.0,
+     "personExtra": 0.58,
+     "forkliftRecall": 0.7,
+     "forkliftExtra": 0.0,
+     "refPersons": 11,
+     "refForklifts": 10
+    },
+    "screen-032": {
+     "ms": 1887.1,
+     "personRecall": 0.929,
+     "personExtra": 0.58,
+     "forkliftRecall": 0.75,
+     "forkliftExtra": 0.17,
+     "refPersons": 14,
+     "refForklifts": 4
+    },
+    "screen-033": {
+     "ms": 1888.7,
+     "personRecall": 0.69,
+     "personExtra": 0.25,
+     "forkliftRecall": 1.0,
+     "forkliftExtra": 0.0,
+     "refPersons": 58,
+     "refForklifts": 11
+    }
+   },
+   "load_s": 0.2,
+   "overall": {
+    "ms": 1887.5,
+    "personRecall": 0.733,
+    "personExtra": 0.75,
+    "forkliftRecall": 0.75,
+    "forkliftExtra": 0.08,
+    "refPersons": 135,
+    "refForklifts": 44
+   }
+  },
+  "yolox_l-cv2dnn-tiles3": {
+   "perClip": {
+    "clip-dev-002": {
+     "ms": 7352.0,
+     "personRecall": 0.95,
+     "personExtra": 0.67,
+     "forkliftRecall": 0.667,
+     "forkliftExtra": 0.17,
+     "refPersons": 20,
+     "refForklifts": 9
+    },
+    "clip-dev-004": {
+     "ms": 6149.8,
+     "personRecall": 0.906,
+     "personExtra": 3.42,
+     "forkliftRecall": 0.9,
+     "forkliftExtra": 0.5,
+     "refPersons": 32,
+     "refForklifts": 10
+    },
+    "screen-002": {
+     "ms": 6121.9,
+     "personRecall": 1.0,
+     "personExtra": 1.0,
+     "forkliftRecall": 0.8,
+     "forkliftExtra": 0.42,
+     "refPersons": 11,
+     "refForklifts": 10
+    },
+    "screen-032": {
+     "ms": 6340.3,
+     "personRecall": 1.0,
+     "personExtra": 0.83,
+     "forkliftRecall": 1.0,
+     "forkliftExtra": 0.25,
+     "refPersons": 14,
+     "refForklifts": 4
+    },
+    "screen-033": {
+     "ms": 5893.4,
+     "personRecall": 0.845,
+     "personExtra": 1.17,
+     "forkliftRecall": 1.0,
+     "forkliftExtra": 0.0,
+     "refPersons": 58,
+     "refForklifts": 11
+    }
+   },
+   "load_s": 0.2,
+   "overall": {
+    "ms": 6371.5,
+    "personRecall": 0.904,
+    "personExtra": 1.42,
+    "forkliftRecall": 0.864,
+    "forkliftExtra": 0.27,
+    "refPersons": 135,
+    "refForklifts": 44
+   }
+  },
+  "yolox_m-cv2dnn-tiles3": {
+   "perClip": {
+    "clip-dev-002": {
+     "ms": 2814.6,
+     "personRecall": 0.85,
+     "personExtra": 0.58,
+     "forkliftRecall": 0.889,
+     "forkliftExtra": 2.08,
+     "refPersons": 20,
+     "refForklifts": 9
+    },
+    "clip-dev-004": {
+     "ms": 2814.2,
+     "personRecall": 0.844,
+     "personExtra": 3.92,
+     "forkliftRecall": 1.0,
+     "forkliftExtra": 2.0,
+     "refPersons": 32,
+     "refForklifts": 10
+    },
+    "screen-002": {
+     "ms": 2816.7,
+     "personRecall": 1.0,
+     "personExtra": 0.42,
+     "forkliftRecall": 1.0,
+     "forkliftExtra": 2.17,
+     "refPersons": 11,
+     "refForklifts": 10
+    },
+    "screen-032": {
+     "ms": 2814.9,
+     "personRecall": 1.0,
+     "personExtra": 0.92,
+     "forkliftRecall": 1.0,
+     "forkliftExtra": 0.83,
+     "refPersons": 14,
+     "refForklifts": 4
+    },
+    "screen-033": {
+     "ms": 2811.0,
+     "personRecall": 0.845,
+     "personExtra": 0.83,
+     "forkliftRecall": 1.0,
+     "forkliftExtra": 1.25,
+     "refPersons": 58,
+     "refForklifts": 11
+    }
+   },
+   "load_s": 0.3,
+   "overall": {
+    "ms": 2814.3,
+    "personRecall": 0.874,
+    "personExtra": 1.33,
+    "forkliftRecall": 0.977,
+    "forkliftExtra": 1.67,
+    "refPersons": 135,
+    "refForklifts": 44
+   }
+  },
+  "rtdetrv2": {
+   "perClip": {
+    "clip-dev-002": {
+     "ms": 935.7,
+     "personRecall": 0.9,
+     "personExtra": 32.0,
+     "forkliftRecall": 1.0,
+     "forkliftExtra": 6.17,
+     "refPersons": 20,
+     "refForklifts": 9
+    },
+    "clip-dev-004": {
+     "ms": 953.5,
+     "personRecall": 0.938,
+     "personExtra": 47.33,
+     "forkliftRecall": 0.9,
+     "forkliftExtra": 7.25,
+     "refPersons": 32,
+     "refForklifts": 10
+    },
+    "screen-002": {
+     "ms": 954.1,
+     "personRecall": 1.0,
+     "personExtra": 36.42,
+     "forkliftRecall": 1.0,
+     "forkliftExtra": 7.75,
+     "refPersons": 11,
+     "refForklifts": 10
+    },
+    "screen-032": {
+     "ms": 944.4,
+     "personRecall": 1.0,
+     "personExtra": 40.42,
+     "forkliftRecall": 1.0,
+     "forkliftExtra": 2.67,
+     "refPersons": 14,
+     "refForklifts": 4
+    },
+    "screen-033": {
+     "ms": 953.8,
+     "personRecall": 1.0,
+     "personExtra": 44.17,
+     "forkliftRecall": 1.0,
+     "forkliftExtra": 7.92,
+     "refPersons": 58,
+     "refForklifts": 11
+    }
+   },
+   "load_s": 6.4,
+   "overall": {
+    "ms": 948.3,
+    "personRecall": 0.97,
+    "personExtra": 40.07,
+    "forkliftRecall": 0.977,
+    "forkliftExtra": 6.35,
+    "refPersons": 135,
+    "refForklifts": 44
+   }
+  },
+  "rtdetrv2-960": {
+   "perClip": {
+    "clip-dev-002": {
+     "ms": 2168.9,
+     "personRecall": 0.95,
+     "personExtra": 43.33,
+     "forkliftRecall": 1.0,
+     "forkliftExtra": 5.92,
+     "refPersons": 20,
+     "refForklifts": 9
+    },
+    "clip-dev-004": {
+     "ms": 2170.2,
+     "personRecall": 0.938,
+     "personExtra": 56.33,
+     "forkliftRecall": 1.0,
+     "forkliftExtra": 5.67,
+     "refPersons": 32,
+     "refForklifts": 10
+    },
+    "screen-002": {
+     "ms": 2180.6,
+     "personRecall": 1.0,
+     "personExtra": 52.83,
+     "forkliftRecall": 1.0,
+     "forkliftExtra": 7.17,
+     "refPersons": 11,
+     "refForklifts": 10
+    },
+    "screen-032": {
+     "ms": 2173.0,
+     "personRecall": 1.0,
+     "personExtra": 54.58,
+     "forkliftRecall": 1.0,
+     "forkliftExtra": 2.67,
+     "refPersons": 14,
+     "refForklifts": 4
+    },
+    "screen-033": {
+     "ms": 2251.1,
+     "personRecall": 1.0,
+     "personExtra": 52.92,
+     "forkliftRecall": 1.0,
+     "forkliftExtra": 7.08,
+     "refPersons": 58,
+     "refForklifts": 11
+    }
+   },
+   "load_s": 0.1,
+   "overall": {
+    "ms": 2188.8,
+    "personRecall": 0.978,
+    "personExtra": 52.0,
+    "forkliftRecall": 1.0,
+    "forkliftExtra": 5.7,
+    "refPersons": 135,
+    "refForklifts": 44
+   }
+  },
+  "omdet": {
+   "perClip": {},
+   "load_s": 1.3,
+   "error": "RuntimeError: Tensor on device meta is not on the expected device cpu!",
+   "trace": ".12/site-packages/torch/_refs/__init__.py\", line 1253, in add\n    output = prims.add(a, b)\n             ^^^^^^^^^^^^^^^\n  File \"/opt/floorsight/venv-perc/lib/python3.12/site-packages/torch/_ops.py\", line 916, in __call__\n    return self._op(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/floorsight/venv-perc/lib/python3.12/site-packages/torch/_library/fake_impl.py\", line 123, in meta_kernel\n    return fake_impl_holder.kernel(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/floorsight/venv-perc/lib/python3.12/site-packages/torch/_library/utils.py\", line 23, in __call__\n    return self.func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/floorsight/venv-perc/lib/python3.12/site-packages/torch/library.py\", line 1651, in inner\n    return func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/floorsight/venv-perc/lib/python3.12/site-packages/torch/_library/custom_ops.py\", line 785, in fake_impl\n    return self._abstract_fn(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/floorsight/venv-perc/lib/python3.12/site-packages/torch/_prims/__init__.py\", line 422, in _prim_elementwise_meta\n    utils.check_same_device(*args_, allow_cpu_scalar_tensors=True)\n  File \"/opt/floorsight/venv-perc/lib/python3.12/site-packages/torch/_prims_common/__init__.py\", line 931, in check_same_device\n    raise RuntimeError(msg)\nRuntimeError: Tensor on device meta is not on the expected device cpu!\n"
+  },
+  "gdino": {
+   "perClip": {
+    "clip-dev-002": {
+     "ms": 5955.1,
+     "personRecall": 0.95,
+     "personExtra": 2.42,
+     "forkliftRecall": 1.0,
+     "forkliftExtra": 3.17,
+     "refPersons": 20,
+     "refForklifts": 9
+    },
+    "clip-dev-004": {
+     "ms": 5974.3,
+     "personRecall": 0.969,
+     "personExtra": 12.33,
+     "forkliftRecall": 1.0,
+     "forkliftExtra": 3.08,
+     "refPersons": 32,
+     "refForklifts": 10
+    },
+    "screen-002": {
+     "ms": 5973.5,
+     "personRecall": 1.0,
+     "personExtra": 6.67,
+     "forkliftRecall": 1.0,
+     "forkliftExtra": 3.17,
+     "refPersons": 11,
+     "refForklifts": 10
+    },
+    "screen-032": {
+     "ms": 5943.5,
+     "personRecall": 0.929,
+     "personExtra": 4.75,
+     "forkliftRecall": 1.0,
+     "forkliftExtra": 1.08,
+     "refPersons": 14,
+     "refForklifts": 4
+    },
+    "screen-033": {
+     "ms": 5906.7,
+     "personRecall": 0.948,
+     "personExtra": 9.75,
+     "forkliftRecall": 1.0,
+     "forkliftExtra": 6.25,
+     "refPersons": 58,
+     "refForklifts": 11
+    }
+   },
+   "load_s": 0.6,
+   "overall": {
+    "ms": 5950.6,
+    "personRecall": 0.956,
+    "personExtra": 7.18,
+    "forkliftRecall": 1.0,
+    "forkliftExtra": 3.35,
+    "refPersons": 135,
+    "refForklifts": 44
+   }
+  },
+  "owlv2": {
+   "perClip": {
+    "clip-dev-002": {
+     "ms": 8069.6,
+     "personRecall": 0.9,
+     "personExtra": 0.33,
+     "forkliftRecall": 0.556,
+     "forkliftExtra": 0.42,
+     "refPersons": 20,
+     "refForklifts": 9
+    },
+    "clip-dev-004": {
+     "ms": 8038.9,
+     "personRecall": 0.812,
+     "personExtra": 1.75,
+     "forkliftRecall": 1.0,
+     "forkliftExtra": 0.83,
+     "refPersons": 32,
+     "refForklifts": 10
+    },
+    "screen-002": {
+     "ms": 8030.8,
+     "personRecall": 1.0,
+     "personExtra": 0.0,
+     "forkliftRecall": 1.0,
+     "forkliftExtra": 1.92,
+     "refPersons": 11,
+     "refForklifts": 10
+    },
+    "screen-032": {
+     "ms": 8021.1,
+     "personRecall": 0.929,
+     "personExtra": 0.0,
+     "forkliftRecall": 1.0,
+     "forkliftExtra": 0.67,
+     "refPersons": 14,
+     "refForklifts": 4
+    },
+    "screen-033": {
+     "ms": 8000.7,
+     "personRecall": 0.81,
+     "personExtra": 0.08,
+     "forkliftRecall": 1.0,
+     "forkliftExtra": 1.17,
+     "refPersons": 58,
+     "refForklifts": 11
+    }
+   },
+   "load_s": 1.3,
+   "overall": {
+    "ms": 8032.2,
+    "personRecall": 0.852,
+    "personExtra": 0.43,
+    "forkliftRecall": 0.909,
+    "forkliftExtra": 1.0,
+    "refPersons": 135,
+    "refForklifts": 44
+   }
+  }
+ },
+ "segmenters": {
+  "slimsam77": {
+   "ms": 1436.5,
+   "outlineIoU_mean": 0.925,
+   "outlineIoU_p10": 0.903,
+   "n": 44
+  },
+  "sam-vit-base": {
+   "ms": 6394.1,
+   "outlineIoU_mean": 0.924,
+   "outlineIoU_p10": 0.89,
+   "n": 44
+  }
+ }
+}

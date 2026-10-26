@@ -1,0 +1,114 @@
+{
+ "opencv": "5.1.0-dev",
+ "cv2_file": "/opt/cool/python_3.12/site-packages/cv2/__init__.py",
+ "torch": "2.14.1+cu130",
+ "threads": 4,
+ "frames": 60,
+ "clips": [
+  "clip-dev-002",
+  "clip-dev-004",
+  "screen-002",
+  "screen-032",
+  "screen-033"
+ ],
+ "detectors": {
+  "rtdetrv2": {
+   "perClip": {
+    "clip-dev-002": {
+     "ms": 927.7,
+     "personRecall": 0.9,
+     "personExtra": 32.0,
+     "forkliftRecall": 1.0,
+     "forkliftExtra": 6.17,
+     "refPersons": 20,
+     "refForklifts": 9
+    },
+    "clip-dev-004": {
+     "ms": 946.8,
+     "personRecall": 0.938,
+     "personExtra": 47.33,
+     "forkliftRecall": 0.9,
+     "forkliftExtra": 7.25,
+     "refPersons": 32,
+     "refForklifts": 10
+    },
+    "screen-002": {
+     "ms": 956.0,
+     "personRecall": 1.0,
+     "personExtra": 36.42,
+     "forkliftRecall": 1.0,
+     "forkliftExtra": 7.75,
+     "refPersons": 11,
+     "refForklifts": 10
+    },
+    "screen-032": {
+     "ms": 945.8,
+     "personRecall": 1.0,
+     "personExtra": 40.42,
+     "forkliftRecall": 1.0,
+     "forkliftExtra": 2.67,
+     "refPersons": 14,
+     "refForklifts": 4
+    },
+    "screen-033": {
+     "ms": 954.2,
+     "personRecall": 1.0,
+     "personExtra": 44.17,
+     "forkliftRecall": 1.0,
+     "forkliftExtra": 7.92,
+     "refPersons": 58,
+     "refForklifts": 11
+    }
+   },
+   "load_s": 2.8,
+   "overall": {
+    "ms": 946.1,
+    "personRecall": 0.97,
+    "personExtra": 40.07,
+    "forkliftRecall": 0.977,
+    "forkliftExtra": 6.35,
+    "refPersons": 135,
+    "refForklifts": 44
+   },
+   "sweep": {
+    "0.1": {
+     "personRecall": 0.97,
+     "personExtra": 40.07,
+     "forkliftRecall": 0.977,
+     "forkliftExtra": 6.35
+    },
+    "0.2": {
+     "personRecall": 0.926,
+     "personExtra": 8.47,
+     "forkliftRecall": 0.932,
+     "forkliftExtra": 5.05
+    },
+    "0.3": {
+     "personRecall": 0.867,
+     "personExtra": 2.65,
+     "forkliftRecall": 0.886,
+     "forkliftExtra": 2.0
+    },
+    "0.4": {
+     "personRecall": 0.815,
+     "personExtra": 0.92,
+     "forkliftRecall": 0.886,
+     "forkliftExtra": 0.98
+    },
+    "0.5": {
+     "personRecall": 0.681,
+     "personExtra": 0.22,
+     "forkliftRecall": 0.864,
+     "forkliftExtra": 0.28
+    }
+   }
+  },
+  "omdet": {
+   "perClip": {},
+   "load_s": 8.6,
+   "error": "RuntimeError: Tensor on device meta is not on the expected device cpu!",
+   "trace": ".12/site-packages/torch/_refs/__init__.py\", line 1253, in add\n    output = prims.add(a, b)\n             ^^^^^^^^^^^^^^^\n  File \"/opt/floorsight/venv-perc/lib/python3.12/site-packages/torch/_ops.py\", line 916, in __call__\n    return self._op(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/floorsight/venv-perc/lib/python3.12/site-packages/torch/_library/fake_impl.py\", line 123, in meta_kernel\n    return fake_impl_holder.kernel(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/floorsight/venv-perc/lib/python3.12/site-packages/torch/_library/utils.py\", line 23, in __call__\n    return self.func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/floorsight/venv-perc/lib/python3.12/site-packages/torch/library.py\", line 1651, in inner\n    return func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/floorsight/venv-perc/lib/python3.12/site-packages/torch/_library/custom_ops.py\", line 785, in fake_impl\n    return self._abstract_fn(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/floorsight/venv-perc/lib/python3.12/site-packages/torch/_prims/__init__.py\", line 422, in _prim_elementwise_meta\n    utils.check_same_device(*args_, allow_cpu_scalar_tensors=True)\n  File \"/opt/floorsight/venv-perc/lib/python3.12/site-packages/torch/_prims_common/__init__.py\", line 931, in check_same_device\n    raise RuntimeError(msg)\nRuntimeError: Tensor on device meta is not on the expected device cpu!\n"
+  }
+ },
+ "segmenters": {}
+}

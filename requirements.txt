@@ -1,0 +1,13 @@
+# Pinned runtime dependencies (Floorsight)
+opencv-python-headless==5.0.0.93
+numpy==2.2.6
+scipy==1.15.3
+fastapi==0.115.12
+uvicorn[standard]==0.34.2
+pydantic==2.11.4
+boto3==1.43.114  # floorsight.cloud AWS adapters; imported lazily
+
+# Test dependencies (server stream)
+pytest==9.1.1
+httpx==0.28.1
+anthropic[bedrock]==1.15.0  # agent: BedrockPlanner/BedrockRuleParser (only imported when FLOORSIGHT_LLM=bedrock)

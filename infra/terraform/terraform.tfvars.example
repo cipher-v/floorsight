@@ -1,0 +1,12 @@
+# Copy to terraform.tfvars (gitignored) and fill in. Nothing here has been applied.
+region          = "us-east-1"
+cool_ami_id     = "ami-REPLACE_WITH_COOL_AMI_FOR_THIS_REGION" # from the Marketplace subscription launch page
+alert_email     = "you@example.com"
+app_repo_url    = "https://github.com/REPLACE/floorsight.git"
+app_git_ref     = "main" # pin a commit SHA for the benchmark runs
+
+# instance_type            = "c8g.xlarge"
+# bedrock_model_id         = "anthropic.claude-opus-5-5"   # or the us.* inference-profile id shown in the Bedrock console
+# budget_limit_usd         = 75
+# baseline_x86_count       = 0   # 1 only during the 3-way benchmark
+# baseline_arm_stock_count = 0

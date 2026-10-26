@@ -1,0 +1,101 @@
+{
+  "$defs": {
+    "DetectionKind": {
+      "enum": [
+        "moving",
+        "static"
+      ],
+      "title": "DetectionKind",
+      "type": "string"
+    }
+  },
+  "description": "One object seen by one camera, already projected to the floor.",
+  "properties": {
+    "camera_id": {
+      "title": "Camera Id",
+      "type": "string"
+    },
+    "t": {
+      "title": "T",
+      "type": "number"
+    },
+    "bbox": {
+      "description": "x, y, w, h in pixels",
+      "maxItems": 4,
+      "minItems": 4,
+      "prefixItems": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "integer"
+        }
+      ],
+      "title": "Bbox",
+      "type": "array"
+    },
+    "foot_px": {
+      "maxItems": 2,
+      "minItems": 2,
+      "prefixItems": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        }
+      ],
+      "title": "Foot Px",
+      "type": "array"
+    },
+    "floor_xy": {
+      "maxItems": 2,
+      "minItems": 2,
+      "prefixItems": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        }
+      ],
+      "title": "Floor Xy",
+      "type": "array"
+    },
+    "floor_sigma_m": {
+      "title": "Floor Sigma M",
+      "type": "number"
+    },
+    "footprint_m": {
+      "description": "Estimated width on the floor, metres",
+      "title": "Footprint M",
+      "type": "number"
+    },
+    "kind": {
+      "$ref": "#/$defs/DetectionKind"
+    },
+    "score": {
+      "title": "Score",
+      "type": "number"
+    }
+  },
+  "required": [
+    "camera_id",
+    "t",
+    "bbox",
+    "foot_px",
+    "floor_xy",
+    "floor_sigma_m",
+    "footprint_m",
+    "kind",
+    "score"
+  ],
+  "title": "Detection",
+  "type": "object"
+}

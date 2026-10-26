@@ -1,0 +1,122 @@
+{
+  "$defs": {
+    "RuleType": {
+      "enum": [
+        "blocked",
+        "dwell",
+        "proximity",
+        "unseen",
+        "floor_zone"
+      ],
+      "title": "RuleType",
+      "type": "string"
+    },
+    "TrackClass": {
+      "enum": [
+        "person",
+        "forklift",
+        "object",
+        "unknown"
+      ],
+      "title": "TrackClass",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "rule_id": {
+      "title": "Rule Id",
+      "type": "string"
+    },
+    "text": {
+      "description": "Plain-language form shown to the user",
+      "title": "Text",
+      "type": "string"
+    },
+    "type": {
+      "$ref": "#/$defs/RuleType"
+    },
+    "zone_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Zone Id"
+    },
+    "classes": {
+      "items": {
+        "$ref": "#/$defs/TrackClass"
+      },
+      "title": "Classes",
+      "type": "array"
+    },
+    "seconds": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Seconds"
+    },
+    "distance_m": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Distance M"
+    },
+    "closing_mps": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Closing Mps"
+    },
+    "enabled": {
+      "default": true,
+      "title": "Enabled",
+      "type": "boolean"
+    },
+    "source": {
+      "default": "default",
+      "enum": [
+        "default",
+        "manual",
+        "language",
+        "agent"
+      ],
+      "title": "Source",
+      "type": "string"
+    },
+    "confirmed": {
+      "default": true,
+      "title": "Confirmed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "rule_id",
+    "text",
+    "type"
+  ],
+  "title": "Rule",
+  "type": "object"
+}

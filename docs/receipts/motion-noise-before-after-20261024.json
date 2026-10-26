@@ -1,0 +1,582 @@
+{
+ "schema": "floorsight.motion-noise.v1",
+ "note": "same cached detections; raw = 23 Oct tracking and floor logic, smoothed = 24 Oct (v10); turningFlips counts the turning decision (the recorded flag where present, else most draws turning)",
+ "clips": {
+  "screen-002": {
+   "raw": {
+    "frames": 228,
+    "dt_s": 0.04,
+    "forklift": {
+     "footprintJump_m": {
+      "median": 0.135,
+      "p90": 0.435,
+      "max": 2.295
+     },
+     "footprintArea_m2": {
+      "min": 3.448,
+      "max": 10.955,
+      "cv": 0.196
+     },
+     "headingChange_deg": {
+      "median": 0.269,
+      "p90": 24.322,
+      "over30": 17
+     },
+     "speedChange_mps": {
+      "p90": 0.128,
+      "max": 2.572
+     },
+     "stopDistanceChange_m": {
+      "p90": 0.225,
+      "max": 4.424
+     },
+     "turningFlips": 17,
+     "speedDropouts": 0,
+     "movingFlagFlips": 1
+    },
+    "tracks": {
+     "vehicleIds": 4,
+     "vehicleIdsUnder10Frames": 1,
+     "personIds": 17,
+     "personIdsUnder10Frames": 10
+    },
+    "persons": {
+     "floorJumpNearMovingForklift_m": {
+      "median": 0.055,
+      "p90": 0.294,
+      "max": 1.324
+     },
+     "warnFlips": 9,
+     "singleFrameWarnSpikes": 2
+    }
+   },
+   "smoothed": {
+    "frames": 228,
+    "dt_s": 0.04,
+    "forklift": {
+     "footprintJump_m": {
+      "median": 0.087,
+      "p90": 0.122,
+      "max": 0.51
+     },
+     "footprintArea_m2": {
+      "min": 3.448,
+      "max": 5.995,
+      "cv": 0.14
+     },
+     "headingChange_deg": {
+      "median": 0.155,
+      "p90": 2.298,
+      "over30": 2
+     },
+     "speedChange_mps": {
+      "p90": 0.093,
+      "max": 2.773
+     },
+     "stopDistanceChange_m": {
+      "p90": 0.158,
+      "max": 4.855
+     },
+     "turningFlips": 0,
+     "speedDropouts": 0,
+     "movingFlagFlips": 1
+    },
+    "tracks": {
+     "vehicleIds": 1,
+     "vehicleIdsUnder10Frames": 0,
+     "personIds": 17,
+     "personIdsUnder10Frames": 12
+    },
+    "persons": {
+     "floorJumpNearMovingForklift_m": {
+      "median": 0.022,
+      "p90": 0.088,
+      "max": 1.244
+     },
+     "warnFlips": 0,
+     "singleFrameWarnSpikes": 0
+    }
+   }
+  },
+  "clip-dev-004": {
+   "raw": {
+    "frames": 201,
+    "dt_s": 0.04,
+    "forklift": {
+     "footprintJump_m": {
+      "median": 0.11,
+      "p90": 0.384,
+      "max": 0.879
+     },
+     "footprintArea_m2": {
+      "min": 3.449,
+      "max": 6.299,
+      "cv": 0.123
+     },
+     "headingChange_deg": {
+      "median": 0.232,
+      "p90": 7.821,
+      "over30": 6
+     },
+     "speedChange_mps": {
+      "p90": 0.11,
+      "max": 1.301
+     },
+     "stopDistanceChange_m": {
+      "p90": 0.183,
+      "max": 1.841
+     },
+     "turningFlips": 19,
+     "speedDropouts": 1,
+     "movingFlagFlips": 1
+    },
+    "tracks": {
+     "vehicleIds": 2,
+     "vehicleIdsUnder10Frames": 0,
+     "personIds": 33,
+     "personIdsUnder10Frames": 14
+    },
+    "persons": {
+     "floorJumpNearMovingForklift_m": {
+      "median": 0.113,
+      "p90": 0.845,
+      "max": 19.002
+     },
+     "warnFlips": 8,
+     "singleFrameWarnSpikes": 2
+    }
+   },
+   "smoothed": {
+    "frames": 201,
+    "dt_s": 0.04,
+    "forklift": {
+     "footprintJump_m": {
+      "median": 0.06,
+      "p90": 0.1,
+      "max": 0.49
+     },
+     "footprintArea_m2": {
+      "min": 3.448,
+      "max": 5.413,
+      "cv": 0.108
+     },
+     "headingChange_deg": {
+      "median": 0.1,
+      "p90": 2.292,
+      "over30": 1
+     },
+     "speedChange_mps": {
+      "p90": 0.104,
+      "max": 1.475
+     },
+     "stopDistanceChange_m": {
+      "p90": 0.198,
+      "max": 2.133
+     },
+     "turningFlips": 0,
+     "speedDropouts": 0,
+     "movingFlagFlips": 1
+    },
+    "tracks": {
+     "vehicleIds": 1,
+     "vehicleIdsUnder10Frames": 0,
+     "personIds": 29,
+     "personIdsUnder10Frames": 10
+    },
+    "persons": {
+     "floorJumpNearMovingForklift_m": {
+      "median": 0.041,
+      "p90": 0.421,
+      "max": 10.303
+     },
+     "warnFlips": 0,
+     "singleFrameWarnSpikes": 0
+    }
+   }
+  },
+  "screen-032": {
+   "raw": {
+    "frames": 302,
+    "dt_s": 0.04,
+    "forklift": {
+     "footprintJump_m": {
+      "median": 0.147,
+      "p90": 0.959,
+      "max": 2.098
+     },
+     "footprintArea_m2": {
+      "min": 3.448,
+      "max": 7.999,
+      "cv": 0.173
+     },
+     "headingChange_deg": {
+      "median": 1.037,
+      "p90": 8.01,
+      "over30": 3
+     },
+     "speedChange_mps": {
+      "p90": 0.469,
+      "max": 1.444
+     },
+     "stopDistanceChange_m": {
+      "p90": 1.274,
+      "max": 3.677
+     },
+     "turningFlips": 18,
+     "speedDropouts": 1,
+     "movingFlagFlips": 1
+    },
+    "tracks": {
+     "vehicleIds": 1,
+     "vehicleIdsUnder10Frames": 0,
+     "personIds": 17,
+     "personIdsUnder10Frames": 11
+    },
+    "persons": {
+     "floorJumpNearMovingForklift_m": {
+      "median": 0.043,
+      "p90": 0.277,
+      "max": 0.645
+     },
+     "warnFlips": 4,
+     "singleFrameWarnSpikes": 1
+    }
+   },
+   "smoothed": {
+    "frames": 302,
+    "dt_s": 0.04,
+    "forklift": {
+     "footprintJump_m": {
+      "median": 0.103,
+      "p90": 0.234,
+      "max": 2.37
+     },
+     "footprintArea_m2": {
+      "min": 3.448,
+      "max": 7.366,
+      "cv": 0.188
+     },
+     "headingChange_deg": {
+      "median": 0.149,
+      "p90": 1.679,
+      "over30": 2
+     },
+     "speedChange_mps": {
+      "p90": 0.277,
+      "max": 1.306
+     },
+     "stopDistanceChange_m": {
+      "p90": 0.578,
+      "max": 3.476
+     },
+     "turningFlips": 0,
+     "speedDropouts": 0,
+     "movingFlagFlips": 1
+    },
+    "tracks": {
+     "vehicleIds": 1,
+     "vehicleIdsUnder10Frames": 0,
+     "personIds": 16,
+     "personIdsUnder10Frames": 10
+    },
+    "persons": {
+     "floorJumpNearMovingForklift_m": {
+      "median": 0.016,
+      "p90": 0.051,
+      "max": 0.331
+     },
+     "warnFlips": 0,
+     "singleFrameWarnSpikes": 0
+    }
+   }
+  },
+  "clip-dev-002": {
+   "raw": {
+    "frames": 251,
+    "dt_s": 0.04,
+    "forklift": {
+     "footprintJump_m": {
+      "median": 0.068,
+      "p90": 0.171,
+      "max": 0.744
+     },
+     "footprintArea_m2": {
+      "min": 3.448,
+      "max": 6.618,
+      "cv": 0.171
+     },
+     "headingChange_deg": {
+      "median": 0.854,
+      "p90": 2.017,
+      "over30": 4
+     },
+     "speedChange_mps": {
+      "p90": 0.07,
+      "max": 0.919
+     },
+     "stopDistanceChange_m": {
+      "p90": 0.135,
+      "max": 1.718
+     },
+     "turningFlips": 13,
+     "speedDropouts": 0,
+     "movingFlagFlips": 0
+    },
+    "tracks": {
+     "vehicleIds": 1,
+     "vehicleIdsUnder10Frames": 0,
+     "personIds": 14,
+     "personIdsUnder10Frames": 5
+    },
+    "persons": {
+     "floorJumpNearMovingForklift_m": {
+      "median": 0.064,
+      "p90": 0.312,
+      "max": 3.142
+     },
+     "warnFlips": 8,
+     "singleFrameWarnSpikes": 1
+    }
+   },
+   "smoothed": {
+    "frames": 251,
+    "dt_s": 0.04,
+    "forklift": {
+     "footprintJump_m": {
+      "median": 0.056,
+      "p90": 0.09,
+      "max": 0.221
+     },
+     "footprintArea_m2": {
+      "min": 3.585,
+      "max": 5.816,
+      "cv": 0.122
+     },
+     "headingChange_deg": {
+      "median": 0.791,
+      "p90": 1.805,
+      "over30": 2
+     },
+     "speedChange_mps": {
+      "p90": 0.063,
+      "max": 0.92
+     },
+     "stopDistanceChange_m": {
+      "p90": 0.13,
+      "max": 1.323
+     },
+     "turningFlips": 2,
+     "speedDropouts": 0,
+     "movingFlagFlips": 0
+    },
+    "tracks": {
+     "vehicleIds": 1,
+     "vehicleIdsUnder10Frames": 0,
+     "personIds": 15,
+     "personIdsUnder10Frames": 5
+    },
+    "persons": {
+     "floorJumpNearMovingForklift_m": {
+      "median": 0.018,
+      "p90": 0.077,
+      "max": 2.564
+     },
+     "warnFlips": 5,
+     "singleFrameWarnSpikes": 0
+    }
+   }
+  },
+  "screen-033": {
+   "raw": {
+    "frames": 225,
+    "dt_s": 0.04,
+    "forklift": {
+     "footprintJump_m": {
+      "median": 0.008,
+      "p90": 0.041,
+      "max": 0.136
+     },
+     "footprintArea_m2": {
+      "min": 3.448,
+      "max": 3.452,
+      "cv": 0.0
+     },
+     "headingChange_deg": {
+      "median": 0.278,
+      "p90": 1.14,
+      "over30": 4
+     },
+     "speedChange_mps": {
+      "p90": 0.009,
+      "max": 1.132
+     },
+     "stopDistanceChange_m": {
+      "p90": 0.021,
+      "max": 1.551
+     },
+     "turningFlips": 6,
+     "speedDropouts": 0,
+     "movingFlagFlips": 0
+    },
+    "tracks": {
+     "vehicleIds": 1,
+     "vehicleIdsUnder10Frames": 0,
+     "personIds": 27,
+     "personIdsUnder10Frames": 15
+    },
+    "persons": {
+     "floorJumpNearMovingForklift_m": {
+      "median": 0.091,
+      "p90": 0.438,
+      "max": 1.282
+     },
+     "warnFlips": 0,
+     "singleFrameWarnSpikes": 0
+    }
+   },
+   "smoothed": {
+    "frames": 225,
+    "dt_s": 0.04,
+    "forklift": {
+     "footprintJump_m": {
+      "median": 0.006,
+      "p90": 0.021,
+      "max": 0.048
+     },
+     "footprintArea_m2": {
+      "min": 3.448,
+      "max": 3.452,
+      "cv": 0.0
+     },
+     "headingChange_deg": {
+      "median": 0.235,
+      "p90": 0.957,
+      "over30": 0
+     },
+     "speedChange_mps": {
+      "p90": 0.0,
+      "max": 0.67
+     },
+     "stopDistanceChange_m": {
+      "p90": 0.0,
+      "max": 0.933
+     },
+     "turningFlips": 0,
+     "speedDropouts": 0,
+     "movingFlagFlips": 0
+    },
+    "tracks": {
+     "vehicleIds": 1,
+     "vehicleIdsUnder10Frames": 0,
+     "personIds": 24,
+     "personIdsUnder10Frames": 12
+    },
+    "persons": {
+     "floorJumpNearMovingForklift_m": {
+      "median": 0.039,
+      "p90": 0.676,
+      "max": 0.764
+     },
+     "warnFlips": 0,
+     "singleFrameWarnSpikes": 0
+    }
+   }
+  },
+  "clip-dev-003": {
+   "raw": {
+    "frames": 325,
+    "dt_s": 0.04,
+    "forklift": {
+     "footprintJump_m": {
+      "median": 0.062,
+      "p90": 0.365,
+      "max": 5.584
+     },
+     "footprintArea_m2": {
+      "min": 3.447,
+      "max": 6.722,
+      "cv": 0.18
+     },
+     "headingChange_deg": {
+      "median": 1.218,
+      "p90": 18.908,
+      "over30": 19
+     },
+     "speedChange_mps": {
+      "p90": 0.306,
+      "max": 1.979
+     },
+     "stopDistanceChange_m": {
+      "p90": 0.393,
+      "max": 4.469
+     },
+     "turningFlips": 21,
+     "speedDropouts": 2,
+     "movingFlagFlips": 1
+    },
+    "tracks": {
+     "vehicleIds": 1,
+     "vehicleIdsUnder10Frames": 0,
+     "personIds": 14,
+     "personIdsUnder10Frames": 5
+    },
+    "persons": {
+     "floorJumpNearMovingForklift_m": {
+      "median": 0.06,
+      "p90": 0.259,
+      "max": 3.279
+     },
+     "warnFlips": 4,
+     "singleFrameWarnSpikes": 2
+    }
+   },
+   "smoothed": {
+    "frames": 325,
+    "dt_s": 0.04,
+    "forklift": {
+     "footprintJump_m": {
+      "median": 0.027,
+      "p90": 0.065,
+      "max": 0.341
+     },
+     "footprintArea_m2": {
+      "min": 3.448,
+      "max": 6.223,
+      "cv": 0.2
+     },
+     "headingChange_deg": {
+      "median": 0.0,
+      "p90": 1.478,
+      "over30": 4
+     },
+     "speedChange_mps": {
+      "p90": 0.093,
+      "max": 1.456
+     },
+     "stopDistanceChange_m": {
+      "p90": 0.18,
+      "max": 2.179
+     },
+     "turningFlips": 0,
+     "speedDropouts": 1,
+     "movingFlagFlips": 1
+    },
+    "tracks": {
+     "vehicleIds": 1,
+     "vehicleIdsUnder10Frames": 0,
+     "personIds": 13,
+     "personIdsUnder10Frames": 4
+    },
+    "persons": {
+     "floorJumpNearMovingForklift_m": {
+      "median": 0.015,
+      "p90": 0.052,
+      "max": 3.279
+     },
+     "warnFlips": 1,
+     "singleFrameWarnSpikes": 0
+    }
+   }
+  }
+ }
+}

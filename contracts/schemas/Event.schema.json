@@ -1,0 +1,214 @@
+{
+  "$defs": {
+    "EventStatus": {
+      "enum": [
+        "candidate",
+        "verifying",
+        "confirmed",
+        "rejected",
+        "escalated",
+        "resolved"
+      ],
+      "title": "EventStatus",
+      "type": "string"
+    },
+    "EventType": {
+      "enum": [
+        "blocked_exit",
+        "near_miss",
+        "camera_moved",
+        "unseen_in_zone",
+        "dwell",
+        "floor_warning"
+      ],
+      "title": "EventType",
+      "type": "string"
+    },
+    "Evidence": {
+      "properties": {
+        "kind": {
+          "enum": [
+            "crop",
+            "second_view",
+            "history",
+            "calibration",
+            "trajectory",
+            "replay",
+            "redetect"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "camera_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Camera Id"
+        },
+        "t": {
+          "title": "T",
+          "type": "number"
+        },
+        "supports": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "True supports the event, False contradicts it",
+          "title": "Supports"
+        },
+        "score": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Score"
+        },
+        "image_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Blurred evidence image id",
+          "title": "Image Ref"
+        },
+        "note": {
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "t",
+        "supports",
+        "note"
+      ],
+      "title": "Evidence",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "event_id": {
+      "title": "Event Id",
+      "type": "string"
+    },
+    "type": {
+      "$ref": "#/$defs/EventType"
+    },
+    "rule_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Rule Id"
+    },
+    "t_start": {
+      "title": "T Start",
+      "type": "number"
+    },
+    "t_detect": {
+      "title": "T Detect",
+      "type": "number"
+    },
+    "location": {
+      "maxItems": 2,
+      "minItems": 2,
+      "prefixItems": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        }
+      ],
+      "title": "Location",
+      "type": "array"
+    },
+    "zone_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Zone Id"
+    },
+    "track_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Track Ids",
+      "type": "array"
+    },
+    "camera_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Camera Ids",
+      "type": "array"
+    },
+    "severity": {
+      "enum": [
+        "info",
+        "warning",
+        "critical"
+      ],
+      "title": "Severity",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/EventStatus"
+    },
+    "summary": {
+      "title": "Summary",
+      "type": "string"
+    },
+    "evidence": {
+      "items": {
+        "$ref": "#/$defs/Evidence"
+      },
+      "title": "Evidence",
+      "type": "array"
+    }
+  },
+  "required": [
+    "event_id",
+    "type",
+    "rule_id",
+    "t_start",
+    "t_detect",
+    "location",
+    "severity",
+    "status",
+    "summary"
+  ],
+  "title": "Event",
+  "type": "object"
+}

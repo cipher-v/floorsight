@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" font-family="DejaVu Sans, Arial, sans-serif">
+  <rect width="1600" height="1000" fill="#ffffff"/>
+  <text x="40" y="44" font-size="26" font-weight="700" fill="#111">Floorsight architecture, 24 Oct 2026: running privately on AWS (us-east-1)</text>
+  <text x="40" y="72" font-size="15" fill="#444">Solid = built and run on AWS with the real clips. Dashed = built, proven on the simulated warehouse only. Dotted = off / planned. OpenCV calls in green monospace.</text>
+
+  <!-- legend -->
+  <rect x="1180" y="90" width="26" height="14" fill="none" stroke="#1f6feb" stroke-width="3"/><text x="1214" y="102" font-size="13" fill="#333">built, run on AWS, real clips</text>
+  <rect x="1180" y="112" width="26" height="14" fill="none" stroke="#8250df" stroke-width="3" stroke-dasharray="6 4"/><text x="1214" y="124" font-size="13" fill="#333">simulated warehouse only</text>
+  <rect x="1180" y="134" width="26" height="14" fill="none" stroke="#6e7781" stroke-width="2" stroke-dasharray="2 4"/><text x="1214" y="146" font-size="13" fill="#333">off until the owner says yes / planned</text>
+
+  <!-- AWS account frame -->
+  <rect x="30" y="160" width="1540" height="760" rx="14" fill="#fbfbfd" stroke="#232f3e" stroke-width="2"/>
+  <text x="50" y="188" font-size="16" font-weight="700" fill="#232f3e">AWS account, us-east-1 · every resource anisha-robotics-*, tagged Project=anisha-robotics-floorsight · Budget $50/month (tag-filtered) -&gt; SNS budget alerts</text>
+
+  <!-- EC2 instance -->
+  <rect x="50" y="205" width="1080" height="560" rx="12" fill="#f3f8ff" stroke="#1f6feb" stroke-width="3"/>
+  <text x="70" y="232" font-size="17" font-weight="700" fill="#0b3d91">EC2 c8g.xlarge (Graviton4, 4 vCPU), COOL Marketplace AMI · OpenCV 5.1.0-dev + KleidiCV 0.7.0</text>
+
+  <!-- perception row -->
+  <text x="70" y="262" font-size="15" font-weight="700" fill="#333">PERCEPTION (batch, per frame; Apache-2.0 / MIT models only)</text>
+  <g font-size="13" fill="#222">
+    <rect x="70" y="272" width="150" height="150" rx="8" fill="#fff" stroke="#1f6feb" stroke-width="2"/>
+    <text x="80" y="292" font-weight="700">Video in</text><text x="80" y="312">6 clips from the</text><text x="80" y="328">publisher, SHA-256</text><text x="80" y="344">checked, private</text>
+    <text x="80" y="368" fill="#1a7f37" font-family="DejaVu Sans Mono, monospace" font-size="12">VideoCapture</text>
+
+    <rect x="235" y="272" width="170" height="150" rx="8" fill="#fff" stroke="#1f6feb" stroke-width="2"/>
+    <text x="245" y="292" font-weight="700">Privacy first</text><text x="245" y="312">heads + faces mosaic,</text><text x="245" y="328">cab blurred, fail-closed</text><text x="245" y="344">(black frame on error)</text>
+    <text x="245" y="368" fill="#1a7f37" font-family="DejaVu Sans Mono, monospace" font-size="12">FaceDetectorYN, dnn</text><text x="245" y="384">98 % of heads seen</text><text x="245" y="400">by the old stack covered</text>
+
+    <rect x="420" y="272" width="200" height="150" rx="8" fill="#fff" stroke="#1f6feb" stroke-width="2"/>
+    <text x="430" y="292" font-weight="700">Detect + track</text><text x="430" y="312">people/vehicles: RT-DETRv2</text><text x="430" y="328">forklift confirm + loads:</text><text x="430" y="344">Grounding DINO (every 5th)</text><text x="430" y="360">outlines: SlimSAM</text>
+    <text x="430" y="384" fill="#1a7f37" font-family="DejaVu Sans Mono, monospace" font-size="12">dnn.NMSBoxes</text><text x="430" y="400">Hungarian tracker</text>
+
+    <rect x="635" y="272" width="160" height="150" rx="8" fill="#fff" stroke="#1f6feb" stroke-width="2"/>
+    <text x="645" y="292" font-weight="700">Floor map (m)</text><text x="645" y="312">vanishing points +</text><text x="645" y="328">two size references,</text><text x="645" y="344">300-draw error</text>
+    <text x="645" y="368" fill="#1a7f37" font-family="DejaVu Sans Mono, monospace" font-size="12">LineSegment</text><text x="645" y="384" fill="#1a7f37" font-family="DejaVu Sans Mono, monospace" font-size="12">Detector</text>
+
+    <rect x="810" y="272" width="160" height="150" rx="8" fill="#fff" stroke="#1f6feb" stroke-width="2"/>
+    <text x="820" y="292" font-weight="700">Danger zones</text><text x="820" y="312">64 draws: stopping,</text><text x="820" y="328">tail swing, blind zone,</text><text x="820" y="344">3 s warning</text>
+    <text x="820" y="368" fill="#1a7f37" font-family="DejaVu Sans Mono, monospace" font-size="12">fillConvexPoly,</text><text x="820" y="384" fill="#1a7f37" font-family="DejaVu Sans Mono, monospace" font-size="12">warpPerspective,</text><text x="820" y="400" fill="#1a7f37" font-family="DejaVu Sans Mono, monospace" font-size="12">findContours</text>
+
+    <rect x="985" y="272" width="130" height="150" rx="8" fill="#fff" stroke="#1f6feb" stroke-width="2"/>
+    <text x="995" y="292" font-weight="700">Outputs</text><text x="995" y="312">filtered video,</text><text x="995" y="328">floor records,</text><text x="995" y="344">receipts with the</text><text x="995" y="360">OpenCV build</text>
+  </g>
+  <g stroke="#1f6feb" stroke-width="2" marker-end="url(#a)"><line x1="220" y1="347" x2="233" y2="347"/><line x1="405" y1="347" x2="418" y2="347"/><line x1="620" y1="347" x2="633" y2="347"/><line x1="795" y1="347" x2="808" y2="347"/><line x1="970" y1="347" x2="983" y2="347"/></g>
+  <defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#1f6feb"/></marker></defs>
+  <text x="70" y="446" font-size="13" fill="#9a3412">COOL finding: cv2.fillPoly crashes on vertices below the image (stock 5.0.0 does not); every polygon is now clipped first (cvsafe.py).</text>
+
+  <!-- app row -->
+  <text x="70" y="480" font-size="15" font-weight="700" fill="#333">THE APP (replays the filtered clips; dashboard on 127.0.0.1:8000)</text>
+  <g font-size="13" fill="#222">
+    <rect x="70" y="490" width="170" height="130" rx="8" fill="#fff" stroke="#1f6feb" stroke-width="2"/>
+    <text x="80" y="510" font-weight="700">Replay source</text><text x="80" y="530">floor tracks, zones,</text><text x="80" y="546">warnings per frame</text>
+
+    <rect x="255" y="490" width="170" height="130" rx="8" fill="#fff" stroke="#1f6feb" stroke-width="2"/>
+    <text x="265" y="510" font-weight="700">Rules</text><text x="265" y="530">warning after 3</text><text x="265" y="546">frames in a row</text>
+
+    <rect x="440" y="490" width="250" height="130" rx="8" fill="#fff" stroke="#1f6feb" stroke-width="2"/>
+    <text x="450" y="510" font-weight="700">Agent: second look</text><text x="450" y="530">short replay (1.5 s), close-up,</text><text x="450" y="546">second detector pass on raw</text><text x="450" y="562">pixels inside the private stage,</text><text x="450" y="578">then confirm / reject + 3 numbers</text>
+
+    <rect x="705" y="490" width="190" height="130" rx="8" fill="#fff8e1" stroke="#1f6feb" stroke-width="2"/>
+    <text x="715" y="510" font-weight="700">A person decides</text><text x="715" y="530">Approve = alert the</text><text x="715" y="546">floor lead; Reject =</text><text x="715" y="562">false alarm. Nothing is</text><text x="715" y="578">sent before that.</text>
+
+    <rect x="910" y="490" width="205" height="130" rx="8" fill="#fff" stroke="#1f6feb" stroke-width="2"/>
+    <text x="920" y="510" font-weight="700">Dashboard + trace</text><text x="920" y="530">floor map, zones, decision</text><text x="920" y="546">cards; every agent step</text><text x="920" y="562">written to a JSONL trace</text>
+  </g>
+  <g stroke="#1f6feb" stroke-width="2" marker-end="url(#a)"><line x1="240" y1="555" x2="253" y2="555"/><line x1="425" y1="555" x2="438" y2="555"/><line x1="690" y1="555" x2="703" y2="555"/><line x1="895" y1="555" x2="908" y2="555"/></g>
+  <rect x="70" y="640" width="1045" height="110" rx="8" fill="#fff" stroke="#8250df" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="80" y="662" font-size="14" font-weight="700" fill="#5b2ab5">Simulated warehouse (16-17 Oct): multi-camera floor tracking (ArUco, solvePnP, Kalman, MOG2), coverage map, camera health,</text>
+  <text x="80" y="682" font-size="14" fill="#5b2ab5">blocked exits, plain-language rules. Same agent and dashboard. Proven on simulation only.</text>
+
+  <!-- AWS services column -->
+  <g font-size="13" fill="#222">
+    <rect x="1150" y="205" width="400" height="70" rx="8" fill="#fff" stroke="#1f6feb" stroke-width="2"/>
+    <text x="1162" y="228" font-weight="700">S3 artifacts (versioned, never expires)</text><text x="1162" y="248">code bundles r1-r25, clips (private), job receipts</text>
+    <rect x="1150" y="285" width="400" height="60" rx="8" fill="#fff" stroke="#1f6feb" stroke-width="2"/>
+    <text x="1162" y="308" font-weight="700">S3 evidence (blurred crops, mirrored)</text><text x="1162" y="328">same ids as the dashboard's local copy</text>
+    <rect x="1150" y="355" width="400" height="60" rx="8" fill="#fff" stroke="#1f6feb" stroke-width="2"/>
+    <text x="1162" y="378" font-weight="700">DynamoDB track history</text><text x="1162" y="398">one floor snapshot per second</text>
+    <rect x="1150" y="425" width="400" height="60" rx="8" fill="#fff" stroke="#1f6feb" stroke-width="2"/>
+    <text x="1162" y="448" font-weight="700">SNS alerts -&gt; floor lead</text><text x="1162" y="468">published after a human approves</text>
+    <rect x="1150" y="495" width="400" height="60" rx="8" fill="#fff" stroke="#1f6feb" stroke-width="2"/>
+    <text x="1162" y="518" font-weight="700">CloudWatch</text><text x="1162" y="538">metrics (fps, latency, events), logs, dashboard</text>
+    <rect x="1150" y="565" width="400" height="70" rx="8" fill="#fff" stroke="#6e7781" stroke-width="2" stroke-dasharray="2 4"/>
+    <text x="1162" y="588" font-weight="700">Amazon Bedrock: Claude (planner)</text><text x="1162" y="608">agent planner (guarded by the local policy);</text><text x="1162" y="624">no model access yet; the local planner ran</text>
+    <rect x="1150" y="645" width="400" height="50" rx="8" fill="#fff" stroke="#1f6feb" stroke-width="2"/>
+    <text x="1162" y="668" font-weight="700">Amazon Polly</text><text x="1162" y="686">narration for the demo video</text>
+    <rect x="1150" y="705" width="400" height="60" rx="8" fill="#fff" stroke="#6e7781" stroke-width="2" stroke-dasharray="2 4"/>
+    <text x="1162" y="728" font-weight="700">CloudFront HTTPS judge link + Elastic IP</text><text x="1162" y="748">terraform -var public_endpoint=true (owner's yes)</text>
+  </g>
+
+  <!-- access -->
+  <rect x="50" y="790" width="520" height="110" rx="10" fill="#fff" stroke="#1f6feb" stroke-width="2"/>
+  <text x="66" y="814" font-size="15" font-weight="700" fill="#222">Access today: SSM only</text>
+  <text x="66" y="836" font-size="13" fill="#222">Session Manager shell and port-forward (no SSH, no open port).</text>
+  <text x="66" y="854" font-size="13" fill="#222">Jobs run detached and write receipts to S3; the instance is</text>
+  <text x="66" y="872" font-size="13" fill="#222">stopped after each work session. Infrastructure: Terraform.</text>
+  <rect x="590" y="790" width="540" height="110" rx="10" fill="#fff" stroke="#1f6feb" stroke-width="2"/>
+  <text x="606" y="814" font-size="15" font-weight="700" fill="#222">Data and privacy</text>
+  <text x="606" y="836" font-size="13" fill="#222">Footage: Önal &amp; Dandıl (2024), CC BY 4.0; employees consented.</text>
+  <text x="606" y="854" font-size="13" fill="#222">Raw clips stay in the private bucket and job folders; only</text>
+  <text x="606" y="872" font-size="13" fill="#222">pixelated frames reach the app, the dashboard and the video.</text>
+</svg>

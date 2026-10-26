@@ -1,0 +1,108 @@
+OpenCV build on the COOL AMI (c8g.xlarge, us-east-1), 23 Oct 2026: cv2.__version__, module path, and cv2.getBuildInformation() key lines
+
+5.1.0-dev /opt/cool/python_3.12/site-packages/cv2/__init__.py
+cool
+PYTHONPATH=/opt/cool/python_3.12/site-packages
+LD_LIBRARY_PATH=/opt/cool/cpp_sdk/lib
+cv2 5.1.0-dev /opt/cool/python_3.12/site-packages/cv2/__init__.py build-sha256 12740978f31483f2
+   General configuration for OpenCV 5.1.0-dev =====================================
+   Version control:               unknown
+   Platform:
+   Timestamp:                   2026-07-13T03:56:14Z
+   Host:                        Linux 6.17.0-1019-aws aarch64
+   CPU/HW features:
+   Baseline:                    SVE NEON FP16 NEON_DOTPROD NEON_FP16 NEON_BF16
+   requested:                 DETECT
+   Dispatched code generation:
+   requested:                 NEON_DOTPROD NEON_FP16 NEON_BF16
+   C++ Compiler:                /usr/bin/c++  (ver 13.3.0)
+   C++ flags (Release):         -O3 -mcpu=neoverse-v2 -fvisibility=hidden -fvisibility-inlines-hidden   -fsigned-char -W -Wall -Wreturn-type -Wnon-virtual-dtor -Wa
+   C Compiler:                  /usr/bin/cc
+   Video I/O:
+   FFMPEG:                      YES
+   avcodec:                   YES (62.28.101)
+   GStreamer:                   NO
+   Parallel framework:            pthreads
+   DNN MLAS:                    YES (SGEMM-only, vendored)
+   Custom HAL:                  YES (carotene (ver 0.0.1) KleidiCV (ver 0.7.0))
+   Python 3:
+   numpy:                       /home/ubuntu/build_artifacts_secure/venv_3.12/lib/python3.12/site-packages/numpy/_core/include (ver 2.5.1)
+   Install to:                    /home/ubuntu/build_artifacts_secure/install_3.12
+threads 4 optimized True
+## COOL SDK: Performance Benchmarking Manual
+
+This guide explains how to run the performance tests of the ***Optimized COOL Build***.
+
+### Test Suite Description
+The suite contains 3 standardized tests designed to stress CPU/SIMD pipelines:
+1.  ***Augmentation:*** (Rotate, Resize 2x, MedianBlur, Float Conv, GaussianBlur)
+2.  ***Analysis:*** (CLAHE, Hist, HoughCircles, FindContours)
+3.  ***Video:*** (MJPG Transcoding Read/Write)
+
+### Performance Results
+
+Below are the benchmark results comparing the optimized `COOL` build (OpenCV 5.1.0) against the standard tag build (OpenCV 5.0.0) on AWS Graviton (aarch64). For Python, the comparison is against the standard `pip install opencv-python` (OpenCV 5.0.0) wheel; for C++, against a local unoptimized build from the same 5.0.0 tag (pip does not ship a C++ SDK).
+
+#### Python Performance ( Python 3.12 )
+| Test Case | pip install (OpenCV 5.0.0) | Optimized (COOL) |
+| :--- | :--- | :--- |
+| **Augmentation** | 17.69 ms | **11.84 ms** |
+| **Analysis** | 1774.04 ms | **1658.69 ms** |
+| **Video Transcode** | 116.34 ms | **102.15 ms** |
+
+#### C++ Performance
+| Test Case | Standard (OpenCV 5.0.0) | Optimized (COOL) |
+| :--- | :--- | :--- |
+| **Augmentation** | 15.29 ms | **14.48 ms** |
+| **Analysis** | 1657.22 ms | **1643.77 ms** |
+| **Video Transcode** | 116.28 ms | **80.63 ms** |
+
+---
+
+### Part 1: Python Benchmarking
+
+#### Testing the Optimized Build (COOL)
+1.  ***Activate the Environment:***
+
+    `
+    source /opt/cool/venvs/python_3.12/bin/activate
+    `
+2.  ***Verify Optimization:***
+
+    `
+    python3 -c "import cv2; print(f'Active OpenCV: {cv2.__version__} from {cv2.__file__}')"
+    `
+3.  ***Run Test (Example):***
+
+    `
+    python3 /opt/cool/samples/python/test_augmentation.py 
+        --input /opt/cool/samples/data/lena.jpg 
+    `
+
+---
+
+### Part 2: C++ Benchmarking
+
+#### A. Testing the Optimized Build (COOL)
+1.  ***Build the Binaries:***
+
+    `
+    cd /opt/cool/samples/cpp
+    `
+
+    `sudo ./build.sh
+    `
+2.  ***Run Test:***
+
+    `
+    /opt/cool/samples/cpp/build/test_aug /opt/cool/samples/data/lena.jpg 
+    `
+
+#### B. Building Your Own Custom Tests (Development Guide)
+
+If you wish to compile your **own personal C++ files** against the optimized **COOL** binaries, follow these steps. 
+Create `<path_to_your_work_dir>/build` folder.
+
+1.  ***Create a CMakeLists.txt:***
+    Create a file named `CMakeLists.txt` inside the build directory with this content:
+

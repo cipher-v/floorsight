@@ -1,0 +1,283 @@
+{
+  "$defs": {
+    "CameraInfo": {
+      "properties": {
+        "camera_id": {
+          "title": "Camera Id",
+          "type": "string"
+        },
+        "width": {
+          "title": "Width",
+          "type": "integer"
+        },
+        "height": {
+          "title": "Height",
+          "type": "integer"
+        },
+        "fps": {
+          "title": "Fps",
+          "type": "number"
+        },
+        "K": {
+          "description": "3x3 intrinsic matrix",
+          "items": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array"
+          },
+          "title": "K",
+          "type": "array"
+        },
+        "dist": {
+          "items": {
+            "type": "number"
+          },
+          "title": "Dist",
+          "type": "array"
+        },
+        "nominal_position": {
+          "anyOf": [
+            {
+              "maxItems": 3,
+              "minItems": 3,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Rough mounting position (x, y, height) in metres",
+          "title": "Nominal Position"
+        }
+      },
+      "required": [
+        "camera_id",
+        "width",
+        "height",
+        "fps",
+        "K"
+      ],
+      "title": "CameraInfo",
+      "type": "object"
+    },
+    "FloorMarker": {
+      "description": "A printed ArUco marker lying flat on the floor.",
+      "properties": {
+        "marker_id": {
+          "title": "Marker Id",
+          "type": "integer"
+        },
+        "dictionary": {
+          "default": "DICT_4X4_50",
+          "title": "Dictionary",
+          "type": "string"
+        },
+        "center": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Center",
+          "type": "array"
+        },
+        "size_m": {
+          "title": "Size M",
+          "type": "number"
+        },
+        "rotation_deg": {
+          "default": 0.0,
+          "title": "Rotation Deg",
+          "type": "number"
+        }
+      },
+      "required": [
+        "marker_id",
+        "center",
+        "size_m"
+      ],
+      "title": "FloorMarker",
+      "type": "object"
+    },
+    "Obstacle": {
+      "description": "A static volume such as a rack. Blocks camera sight lines.",
+      "properties": {
+        "obstacle_id": {
+          "title": "Obstacle Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "polygon": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array"
+          },
+          "title": "Polygon",
+          "type": "array"
+        },
+        "height_m": {
+          "title": "Height M",
+          "type": "number"
+        }
+      },
+      "required": [
+        "obstacle_id",
+        "name",
+        "polygon",
+        "height_m"
+      ],
+      "title": "Obstacle",
+      "type": "object"
+    },
+    "Zone": {
+      "properties": {
+        "zone_id": {
+          "title": "Zone Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/ZoneKind"
+        },
+        "polygon": {
+          "description": "Floor polygon, metres, counter-clockwise",
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array"
+          },
+          "title": "Polygon",
+          "type": "array"
+        }
+      },
+      "required": [
+        "zone_id",
+        "name",
+        "kind",
+        "polygon"
+      ],
+      "title": "Zone",
+      "type": "object"
+    },
+    "ZoneKind": {
+      "enum": [
+        "exit",
+        "lane",
+        "restricted",
+        "area"
+      ],
+      "title": "ZoneKind",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "schema_version": {
+      "default": "1.3",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "site_id": {
+      "title": "Site Id",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "width_m": {
+      "title": "Width M",
+      "type": "number"
+    },
+    "depth_m": {
+      "title": "Depth M",
+      "type": "number"
+    },
+    "zones": {
+      "items": {
+        "$ref": "#/$defs/Zone"
+      },
+      "title": "Zones",
+      "type": "array"
+    },
+    "obstacles": {
+      "items": {
+        "$ref": "#/$defs/Obstacle"
+      },
+      "title": "Obstacles",
+      "type": "array"
+    },
+    "markers": {
+      "items": {
+        "$ref": "#/$defs/FloorMarker"
+      },
+      "title": "Markers",
+      "type": "array"
+    },
+    "cameras": {
+      "items": {
+        "$ref": "#/$defs/CameraInfo"
+      },
+      "title": "Cameras",
+      "type": "array"
+    },
+    "floor_stage": {
+      "default": false,
+      "description": "True when the cameras come with the real-camera floor stage (zones, warnings) in WorldState.hazards",
+      "title": "Floor Stage",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "site_id",
+    "name",
+    "width_m",
+    "depth_m",
+    "zones",
+    "obstacles",
+    "markers",
+    "cameras"
+  ],
+  "title": "SitePlan",
+  "type": "object"
+}

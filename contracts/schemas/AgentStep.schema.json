@@ -1,0 +1,60 @@
+{
+  "description": "One line of the agent's decision trace. Judges read these.",
+  "properties": {
+    "event_id": {
+      "title": "Event Id",
+      "type": "string"
+    },
+    "step": {
+      "title": "Step",
+      "type": "integer"
+    },
+    "t": {
+      "title": "T",
+      "type": "number"
+    },
+    "tool": {
+      "title": "Tool",
+      "type": "string"
+    },
+    "tool_input": {
+      "additionalProperties": true,
+      "title": "Tool Input",
+      "type": "object"
+    },
+    "tool_output": {
+      "additionalProperties": true,
+      "title": "Tool Output",
+      "type": "object"
+    },
+    "decision": {
+      "title": "Decision",
+      "type": "string"
+    },
+    "reason": {
+      "title": "Reason",
+      "type": "string"
+    },
+    "mode": {
+      "enum": [
+        "local",
+        "bedrock"
+      ],
+      "title": "Mode",
+      "type": "string"
+    }
+  },
+  "required": [
+    "event_id",
+    "step",
+    "t",
+    "tool",
+    "tool_input",
+    "tool_output",
+    "decision",
+    "reason",
+    "mode"
+  ],
+  "title": "AgentStep",
+  "type": "object"
+}

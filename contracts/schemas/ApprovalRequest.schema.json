@@ -1,0 +1,81 @@
+{
+  "$defs": {
+    "ApprovalStatus": {
+      "enum": [
+        "pending",
+        "approved",
+        "rejected",
+        "expired"
+      ],
+      "title": "ApprovalStatus",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "approval_id": {
+      "title": "Approval Id",
+      "type": "string"
+    },
+    "event_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Event Id"
+    },
+    "action": {
+      "enum": [
+        "escalate",
+        "create_rule",
+        "recalibrate",
+        "dispatch_check",
+        "confirm_rule",
+        "confirm_incident"
+      ],
+      "title": "Action",
+      "type": "string"
+    },
+    "summary": {
+      "title": "Summary",
+      "type": "string"
+    },
+    "payload": {
+      "additionalProperties": true,
+      "title": "Payload",
+      "type": "object"
+    },
+    "status": {
+      "$ref": "#/$defs/ApprovalStatus",
+      "default": "pending"
+    },
+    "created_t": {
+      "title": "Created T",
+      "type": "number"
+    },
+    "decided_t": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Decided T"
+    }
+  },
+  "required": [
+    "approval_id",
+    "event_id",
+    "action",
+    "summary",
+    "created_t"
+  ],
+  "title": "ApprovalRequest",
+  "type": "object"
+}

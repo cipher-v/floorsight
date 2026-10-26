@@ -1,0 +1,354 @@
+{
+ "schema": "floorsight.interlock-sim.v1",
+ "opencv": "5.1.0-dev",
+ "fps": 10.0,
+ "note": "Simulated warehouse, scripted people who do not react; the forklift obeys the interlock only in mode 'on'. Truth = true positions; contact = true gap under 0.05 m.",
+ "runs": {
+  "off": {
+   "mode": "off",
+   "duration_s": 40.0,
+   "frames": 400,
+   "scenes": {
+    "S2 crossing": {
+     "person": "w2",
+     "started": true,
+     "startedT": 2.9,
+     "closestGap_m": 0.0,
+     "closestT": 4.7,
+     "forkliftSpeedAtClosest_mps": 2.0,
+     "contact": true
+    },
+    "S4 tail": {
+     "person": "w4",
+     "started": true,
+     "startedT": 6.6,
+     "closestGap_m": 0.0,
+     "closestT": 7.4,
+     "forkliftSpeedAtClosest_mps": 2.0,
+     "contact": true
+    },
+    "S1 in path": {
+     "person": "w1",
+     "started": true,
+     "startedT": 8.1,
+     "closestGap_m": 0.0,
+     "closestT": 10.7,
+     "forkliftSpeedAtClosest_mps": 2.0,
+     "contact": true
+    },
+    "S3 alongside": {
+     "person": "w3",
+     "started": true,
+     "startedT": 7.8,
+     "closestGap_m": 1.15,
+     "closestT": 27.2,
+     "forkliftSpeedAtClosest_mps": 2.0,
+     "contact": false
+    }
+   },
+   "commands": [],
+   "counts": {
+    "slow": 0,
+    "stop": 0,
+    "resume": 0,
+    "horn": 0
+   },
+   "forkliftModes": [],
+   "forkliftDistance_m": 79.8,
+   "stoppedSeconds": 0.0,
+   "slowSeconds": 0.0,
+   "perception": {
+    "forkliftTrackedFrames": 287,
+    "personTrackedFrames": {
+     "w2": 362,
+     "w4": 367,
+     "w1": 364,
+     "w3": 270
+    },
+    "visionPlusInterlockMs": {
+     "median": 16.2,
+     "p95": 26.7
+    }
+   }
+  },
+  "on": {
+   "mode": "on",
+   "duration_s": 40.0,
+   "frames": 400,
+   "scenes": {
+    "S2 crossing": {
+     "person": "w2",
+     "started": true,
+     "startedT": 3.5,
+     "closestGap_m": 0.65,
+     "closestT": 16.2,
+     "forkliftSpeedAtClosest_mps": 2.0,
+     "contact": false
+    },
+    "S4 tail": {
+     "person": "w4",
+     "started": true,
+     "startedT": 16.3,
+     "closestGap_m": 0.0,
+     "closestT": 17.1,
+     "forkliftSpeedAtClosest_mps": 2.0,
+     "contact": true
+    },
+    "S1 in path": {
+     "person": "w1",
+     "started": true,
+     "startedT": 17.8,
+     "closestGap_m": 0.7,
+     "closestT": 32.3,
+     "forkliftSpeedAtClosest_mps": 1.75,
+     "contact": false
+    },
+    "S3 alongside": {
+     "person": "w3",
+     "started": true,
+     "startedT": 17.5,
+     "closestGap_m": 1.15,
+     "closestT": 19.7,
+     "forkliftSpeedAtClosest_mps": 0.0,
+     "contact": false
+    }
+   },
+   "commands": [
+    {
+     "t": 2.2,
+     "vehicle": "V1",
+     "track": "T1",
+     "command": "slow",
+     "person": "T2",
+     "reason": "T2 5.5 m from T1, contact predicted in 1.7 s",
+     "ttc_s": 1.7,
+     "gap_m": 5.49,
+     "speed_mps": 3.12,
+     "xy": [
+      5.9,
+      4.89
+     ],
+     "person_xy": [
+      12.12,
+      2.8
+     ],
+     "applied": true,
+     "limit_mps": 0.7,
+     "stoppingDistance_m": 4.18,
+     "stopsShortBy_m": 1.31,
+     "latency_note": "vision frame 0.1 s + actuation 0.2 s",
+     "personTruth": "S3 alongside"
+    },
+    {
+     "t": 4.1,
+     "vehicle": "V1",
+     "track": "T1",
+     "command": "stop",
+     "person": "T4",
+     "reason": "T4 3.5 m from T1, contact predicted in 0.9 s",
+     "ttc_s": 0.9,
+     "gap_m": 3.51,
+     "speed_mps": 3.12,
+     "xy": [
+      7.51,
+      4.91
+     ],
+     "person_xy": [
+      11.84,
+      6.61
+     ],
+     "applied": true,
+     "stoppingDistance_m": 4.18,
+     "stopsShortBy_m": -0.67,
+     "latency_note": "vision frame 0.1 s + actuation 0.2 s",
+     "personTruth": "S2 crossing"
+    },
+    {
+     "t": 4.2,
+     "vehicle": "V1",
+     "track": "T1",
+     "command": "horn",
+     "person": "T4",
+     "reason": "T4 is walking into T1 (1.5 m)",
+     "ttc_s": 0.6,
+     "gap_m": 1.55,
+     "speed_mps": 3.12,
+     "xy": [
+      10.58,
+      4.49
+     ],
+     "person_xy": [
+      11.85,
+      6.43
+     ],
+     "applied": null,
+     "latency_note": "vision frame 0.1 s + actuation 0.2 s",
+     "personTruth": "S2 crossing"
+    },
+    {
+     "t": 11.8,
+     "vehicle": "V1",
+     "track": null,
+     "command": "resume",
+     "person": "T4",
+     "reason": "clear for 2 s",
+     "ttc_s": null,
+     "gap_m": null,
+     "speed_mps": null,
+     "xy": null,
+     "person_xy": null,
+     "applied": true,
+     "latency_note": "vision frame 0.1 s + actuation 0.2 s"
+    },
+    {
+     "t": 18.2,
+     "vehicle": "V2",
+     "track": "T12",
+     "command": "slow",
+     "person": "T3",
+     "reason": "T3 4.3 m from T12, contact predicted in 1.9 s",
+     "ttc_s": 1.9,
+     "gap_m": 4.3,
+     "speed_mps": 1.96,
+     "xy": [
+      11.28,
+      1.01
+     ],
+     "person_xy": [
+      5.98,
+      1.89
+     ],
+     "applied": true,
+     "limit_mps": 0.7,
+     "stoppingDistance_m": 1.87,
+     "stopsShortBy_m": 2.43,
+     "latency_note": "vision frame 0.1 s + actuation 0.2 s",
+     "personTruth": "S1 in path"
+    },
+    {
+     "t": 18.5,
+     "vehicle": "V2",
+     "track": "T12",
+     "command": "stop",
+     "person": "T3",
+     "reason": "T3 3.5 m from T12, contact predicted in 1.2 s",
+     "ttc_s": 1.2,
+     "gap_m": 3.49,
+     "speed_mps": 1.96,
+     "xy": [
+      10.69,
+      1.05
+     ],
+     "person_xy": [
+      6.18,
+      1.61
+     ],
+     "applied": true,
+     "stoppingDistance_m": 1.87,
+     "stopsShortBy_m": 1.62,
+     "latency_note": "vision frame 0.1 s + actuation 0.2 s",
+     "personTruth": "S1 in path"
+    },
+    {
+     "t": 29.5,
+     "vehicle": "V2",
+     "track": null,
+     "command": "resume",
+     "person": "T3",
+     "reason": "clear for 2 s",
+     "ttc_s": null,
+     "gap_m": null,
+     "speed_mps": null,
+     "xy": null,
+     "person_xy": null,
+     "applied": true,
+     "latency_note": "vision frame 0.1 s + actuation 0.2 s"
+    },
+    {
+     "t": 32.1,
+     "vehicle": "V2",
+     "track": "T12",
+     "command": "slow",
+     "person": "T3",
+     "reason": "T3 0.8 m from T12, contact predicted in 0.1 s",
+     "ttc_s": 0.1,
+     "gap_m": 0.81,
+     "speed_mps": 1.97,
+     "xy": [
+      7.27,
+      1.06
+     ],
+     "person_xy": [
+      5.97,
+      2.37
+     ],
+     "applied": true,
+     "limit_mps": 0.7,
+     "stoppingDistance_m": 1.88,
+     "stopsShortBy_m": -1.07,
+     "latency_note": "vision frame 0.1 s + actuation 0.2 s",
+     "personTruth": "S1 in path"
+    }
+   ],
+   "counts": {
+    "slow": 3,
+    "stop": 2,
+    "resume": 2,
+    "horn": 1
+   },
+   "forkliftModes": [
+    {
+     "t": 2.4,
+     "mode": "slow",
+     "v": 2.0
+    },
+    {
+     "t": 4.3,
+     "mode": "stop",
+     "v": 0.7
+    },
+    {
+     "t": 12.0,
+     "mode": "normal",
+     "v": 0.0
+    },
+    {
+     "t": 18.4,
+     "mode": "slow",
+     "v": 2.0
+    },
+    {
+     "t": 18.7,
+     "mode": "stop",
+     "v": 1.25
+    },
+    {
+     "t": 29.7,
+     "mode": "normal",
+     "v": 0.0
+    },
+    {
+     "t": 32.3,
+     "mode": "slow",
+     "v": 2.0
+    }
+   ],
+   "forkliftDistance_m": 26.8,
+   "stoppedSeconds": 18.1,
+   "slowSeconds": 9.9,
+   "perception": {
+    "forkliftTrackedFrames": 175,
+    "personTrackedFrames": {
+     "w2": 82,
+     "w4": 82,
+     "w1": 293,
+     "w3": 282
+    },
+    "visionPlusInterlockMs": {
+     "median": 13.5,
+     "p95": 18.3
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,29 @@
+{
+  "description": "Everything on the dashboard websocket is wrapped in this.",
+  "properties": {
+    "kind": {
+      "enum": [
+        "world",
+        "event",
+        "agent_step",
+        "approval",
+        "alert",
+        "rule",
+        "coverage"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "data": {
+      "additionalProperties": true,
+      "title": "Data",
+      "type": "object"
+    }
+  },
+  "required": [
+    "kind",
+    "data"
+  ],
+  "title": "LiveMessage",
+  "type": "object"
+}

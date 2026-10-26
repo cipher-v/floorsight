@@ -1,0 +1,206 @@
+{
+ "mode": "ended",
+ "components": {
+  "vision": "replay",
+  "agent": "real",
+  "blur": "prefiltered"
+ },
+ "cloud": {
+  "adapters": [
+   "evidence",
+   "metrics",
+   "notifier",
+   "tracks"
+  ],
+  "errors": {},
+  "evidence_mirrored": 12,
+  "evidence_mirror_errors": 0,
+  "sns_sent": 3
+ },
+ "privacy": {
+  "faces_blurred": true,
+  "blur": "prefiltered",
+  "prefiltered_note": "heads and faces pixelated upstream by the perception stage, which fails closed",
+  "positions_only": false,
+  "preservation_hold": true,
+  "automatic_deletion": false,
+  "retention_h": 24
+ },
+ "events": [
+  [
+   "EV-0001",
+   "floor_warning",
+   "warning",
+   "resolved",
+   "S002:F1 will pass within 0.8 m of S002:P1 in 2.1 s if it keeps its course (gap 7.9 m)"
+  ],
+  [
+   "EV-0002",
+   "floor_warning",
+   "warning",
+   "rejected",
+   "S032:F1 will pass within 0.8 m of S032:P11 in 1.7 s if it keeps its course (gap 1.5 m)"
+  ],
+  [
+   "EV-0003",
+   "floor_warning",
+   "warning",
+   "resolved",
+   "D002:F1 will pass within 0.8 m of D002:P14 in 1.5 s if it keeps its course (gap 3.9 m)"
+  ],
+  [
+   "EV-0004",
+   "floor_warning",
+   "warning",
+   "resolved",
+   "D002:F1 will pass within 0.8 m of D002:P13 in 2.2 s if it keeps its course (gap 6.2 m)"
+  ]
+ ],
+ "approvals": [
+  [
+   "AP-0001",
+   "approved",
+   {
+    "verdict": "confirm",
+    "headline": "Agent recommends CONFIRM: the warning held for 3 frames with no tracking glitch, and a second detector agrees",
+    "numbers": [
+     {
+      "label": "Floor gap at the warning",
+      "value": "7.9 m"
+     },
+     {
+      "label": "Within 0.8 m",
+      "value": "in 2.1 s"
+     },
+     {
+      "label": "Closest predicted pass",
+      "value": "0.21 m (0.00-2.02)"
+     }
+    ]
+   }
+  ],
+  [
+   "AP-0002",
+   "rejected",
+   {
+    "verdict": "reject",
+    "headline": "Agent recommends REJECT: likely a tracking glitch (speed jumped 1.0 -> 2.1 m/s)",
+    "numbers": [
+     {
+      "label": "Floor gap at the warning",
+      "value": "1.5 m"
+     },
+     {
+      "label": "Within 0.8 m",
+      "value": "in 1.7 s"
+     },
+     {
+      "label": "Closest predicted pass",
+      "value": "0.00 m (0.00-0.21)"
+     }
+    ]
+   }
+  ],
+  [
+   "AP-0003",
+   "approved",
+   {
+    "verdict": "confirm",
+    "headline": "Agent recommends CONFIRM: the warning held for 3 frames with no tracking glitch, and a second detector agrees",
+    "numbers": [
+     {
+      "label": "Floor gap at the warning",
+      "value": "3.9 m"
+     },
+     {
+      "label": "Within 0.8 m",
+      "value": "in 1.5 s"
+     },
+     {
+      "label": "Closest predicted pass",
+      "value": "0.14 m (0.00-0.43)"
+     }
+    ]
+   }
+  ],
+  [
+   "AP-0004",
+   "approved",
+   {
+    "verdict": "confirm",
+    "headline": "Agent recommends CONFIRM: the warning held for 3 frames with no tracking glitch, and a second detector agrees",
+    "numbers": [
+     {
+      "label": "Floor gap at the warning",
+      "value": "6.2 m"
+     },
+     {
+      "label": "Within 0.8 m",
+      "value": "in 2.2 s"
+     },
+     {
+      "label": "Closest predicted pass",
+      "value": "0.00 m (0.00-2.30)"
+     }
+    ]
+   }
+  ]
+ ],
+ "alerts": [
+  [
+   "AL-0001",
+   "floor_lead",
+   "S002:F1 will pass within 0.8 m of S002:P1 in 2.1 s if it keeps its course (gap 7.9 m)"
+  ],
+  [
+   "AL-0002",
+   "floor_lead",
+   "D002:F1 will pass within 0.8 m of D002:P14 in 1.5 s if it keeps its course (gap 3.9 m)"
+  ],
+  [
+   "AL-0003",
+   "floor_lead",
+   "D002:F1 will pass within 0.8 m of D002:P13 in 2.2 s if it keeps its course (gap 6.2 m)"
+  ]
+ ],
+ "steps": 38,
+ "stepModes": {
+  "local": 38
+ },
+ "tools": [
+  "confirm_event",
+  "human_decision",
+  "recommend",
+  "redetect",
+  "redetect_result",
+  "reject_event",
+  "request_approval",
+  "resolve_event",
+  "send_alert",
+  "sharper_crop",
+  "short_replay"
+ ],
+ "human_decisions": [
+  [
+   "EV-0001",
+   "scripted stand-in",
+   "approved"
+  ],
+  [
+   "EV-0002",
+   "scripted stand-in",
+   "rejected"
+  ],
+  [
+   "EV-0003",
+   "scripted stand-in",
+   "approved"
+  ],
+  [
+   "EV-0004",
+   "scripted stand-in",
+   "approved"
+  ]
+ ],
+ "note": "App run app-run-02 on AWS c8g.xlarge (COOL OpenCV 5.1.0-dev), 24 Oct 2026, replaying perception run 3 (23 Oct, Apache-2.0 detectors); the recorded run used in the demo video. Decisions by a SCRIPTED STAND-IN reviewer that follows the agent's recommendation. Planner: local (Bedrock has no Claude model open to this account). app-run-01 (same day, same results) differed only in the morning report's wording."
+}

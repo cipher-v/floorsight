@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+/data/
+*.pyc
+.env
+infra/terraform/.terraform/
+infra/terraform/*.tfstate*
+infra/terraform/terraform.tfvars
+infra/terraform/*.tfplan
+build/
+infra/terraform/plan-*.txt
+infra/terraform/apply-*.txt
+infra/aws/manual/

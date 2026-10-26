@@ -1,0 +1,55 @@
+{
+ "schema": "floorsight.measured-twice.v1",
+ "opencv": "5.1.0-dev",
+ "runs": [
+  {
+   "label": "20 Oct, earlier detectors",
+   "run": "/opt/floorsight/jobs/perc-full-13/history-v7c",
+   "clip": "screen-002",
+   "person": "P1",
+   "closest": {
+    "clear": 0.665,
+    "frame": 154,
+    "t": 6.18,
+    "person": "P1",
+    "p5": 0.372,
+    "p95": 1.05
+   },
+   "clipClosest": {
+    "clear": 0.665,
+    "frame": 154,
+    "t": 6.18,
+    "person": "P1"
+   },
+   "warnings": [
+    {
+     "confirmedT": 6.22,
+     "endT": 6.46
+    }
+   ],
+   "runOpencv": "5.0.0"
+  },
+  {
+   "label": "24 Oct, AWS, Apache-2.0 detectors, Kalman-smoothed",
+   "run": "/opt/floorsight/jobs/perc-full-13/screen-002",
+   "clip": "screen-002",
+   "person": "P1",
+   "closest": {
+    "clear": 1.551,
+    "frame": 146,
+    "t": 5.859,
+    "person": "P1",
+    "p5": 1.211,
+    "p95": 1.901
+   },
+   "clipClosest": {
+    "clear": 1.551,
+    "frame": 146,
+    "t": 5.859,
+    "person": "P1"
+   },
+   "warnings": [],
+   "runOpencv": "5.1.0-dev"
+  }
+ ]
+}

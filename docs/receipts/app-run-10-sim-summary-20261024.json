@@ -1,0 +1,213 @@
+{
+ "mode": "ended",
+ "components": {
+  "vision": "real",
+  "agent": "real",
+  "blur": "on"
+ },
+ "cloud": {
+  "adapters": [
+   "evidence",
+   "metrics",
+   "notifier",
+   "tracks"
+  ],
+  "errors": {},
+  "evidence_mirrored": 0,
+  "evidence_mirror_errors": 0,
+  "sns_sent": 0
+ },
+ "privacy": {
+  "faces_blurred": true,
+  "blur": "on",
+  "prefiltered_note": null,
+  "positions_only": false,
+  "preservation_hold": true,
+  "automatic_deletion": false,
+  "retention_h": 24
+ },
+ "events": [],
+ "approvals": [],
+ "alerts": [],
+ "steps": 0,
+ "stepModes": {},
+ "tools": [],
+ "human_decisions": [],
+ "trace_files": [
+  "/opt/floorsight/jobs/app-run-10/runtime/traces/20261024-153638-s0-snapshot.json",
+  "/opt/floorsight/jobs/app-run-10/runtime/traces/20261024-153638-s0.jsonl"
+ ],
+ "interlock": {
+  "enabled": true,
+  "commands": [
+   {
+    "t": 2.2,
+    "vehicle": "V1",
+    "track": "T1",
+    "command": "slow",
+    "person": "T2",
+    "reason": "T2 5.5 m from T1, contact predicted in 1.7 s",
+    "ttc_s": 1.7,
+    "gap_m": 5.49,
+    "speed_mps": 3.11,
+    "xy": [
+     5.9,
+     4.89
+    ],
+    "person_xy": [
+     12.12,
+     2.8
+    ],
+    "applied": true,
+    "limit_mps": 0.7,
+    "stoppingDistance_m": 4.16,
+    "stopsShortBy_m": 1.33
+   },
+   {
+    "t": 4.1,
+    "vehicle": "V1",
+    "track": "T1",
+    "command": "stop",
+    "person": "T4",
+    "reason": "T4 3.5 m from T1, contact predicted in 0.9 s",
+    "ttc_s": 0.9,
+    "gap_m": 3.5,
+    "speed_mps": 3.11,
+    "xy": [
+     7.51,
+     4.91
+    ],
+    "person_xy": [
+     11.84,
+     6.61
+    ],
+    "applied": true,
+    "stoppingDistance_m": 4.16,
+    "stopsShortBy_m": -0.66
+   },
+   {
+    "t": 4.2,
+    "vehicle": "V1",
+    "track": "T1",
+    "command": "horn",
+    "person": "T4",
+    "reason": "T4 is walking into T1 (1.6 m)",
+    "ttc_s": 0.6,
+    "gap_m": 1.55,
+    "speed_mps": 3.11,
+    "xy": [
+     10.56,
+     4.49
+    ],
+    "person_xy": [
+     11.85,
+     6.43
+    ],
+    "applied": null
+   },
+   {
+    "t": 11.8,
+    "vehicle": "V1",
+    "track": null,
+    "command": "resume",
+    "person": "T4",
+    "reason": "clear for 2 s",
+    "ttc_s": null,
+    "gap_m": null,
+    "speed_mps": null,
+    "xy": null,
+    "person_xy": null,
+    "applied": true
+   },
+   {
+    "t": 18.2,
+    "vehicle": "V2",
+    "track": "T11",
+    "command": "slow",
+    "person": "T3",
+    "reason": "T3 4.3 m from T11, contact predicted in 1.9 s",
+    "ttc_s": 1.9,
+    "gap_m": 4.3,
+    "speed_mps": 1.96,
+    "xy": [
+     11.28,
+     1.01
+    ],
+    "person_xy": [
+     5.98,
+     1.89
+    ],
+    "applied": true,
+    "limit_mps": 0.7,
+    "stoppingDistance_m": 1.87,
+    "stopsShortBy_m": 2.43
+   },
+   {
+    "t": 18.5,
+    "vehicle": "V2",
+    "track": "T11",
+    "command": "stop",
+    "person": "T3",
+    "reason": "T3 3.5 m from T11, contact predicted in 1.2 s",
+    "ttc_s": 1.2,
+    "gap_m": 3.49,
+    "speed_mps": 1.96,
+    "xy": [
+     10.69,
+     1.05
+    ],
+    "person_xy": [
+     6.18,
+     1.61
+    ],
+    "applied": true,
+    "stoppingDistance_m": 1.87,
+    "stopsShortBy_m": 1.62
+   },
+   {
+    "t": 29.5,
+    "vehicle": "V2",
+    "track": null,
+    "command": "resume",
+    "person": "T3",
+    "reason": "clear for 2 s",
+    "ttc_s": null,
+    "gap_m": null,
+    "speed_mps": null,
+    "xy": null,
+    "person_xy": null,
+    "applied": true
+   },
+   {
+    "t": 32.0,
+    "vehicle": "V3",
+    "track": "T24",
+    "command": "slow",
+    "person": "T3",
+    "reason": "T3 0.9 m from T24, contact predicted in 0.1 s",
+    "ttc_s": 0.1,
+    "gap_m": 0.9,
+    "speed_mps": 1.99,
+    "xy": [
+     7.47,
+     1.06
+    ],
+    "person_xy": [
+     5.97,
+     2.37
+    ],
+    "applied": true,
+    "limit_mps": 0.7,
+    "stoppingDistance_m": 1.92,
+    "stopsShortBy_m": -1.02
+   }
+  ],
+  "counts": {
+   "slow": 3,
+   "stop": 2,
+   "resume": 2,
+   "horn": 1
+  }
+ },
+ "note": "Recorded on AWS c8g.xlarge, 24 Oct 2026, code r55: the same app on the closed-loop simulated warehouse (--source simlive, 4 rendered cameras, real vision pipeline, interlock driving the simulated forklift)."
+}

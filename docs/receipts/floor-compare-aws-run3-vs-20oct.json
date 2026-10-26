@@ -1,0 +1,224 @@
+{
+ "clip-dev-002": {
+  "old": {
+   "warnings": [
+    {
+     "person": "P3",
+     "t": 6.96,
+     "closestAfter_m": 2.027,
+     "lead_s": 1.24
+    }
+   ],
+   "dangerEvents": 0,
+   "closest": {
+    "clear": 2.027,
+    "frame": 205,
+    "t": 8.2,
+    "person": "P3"
+   }
+  },
+  "new": {
+   "warnings": [
+    {
+     "person": "P13",
+     "t": 7.04,
+     "closestAfter_m": 3.842,
+     "lead_s": 2.16
+    },
+    {
+     "person": "P14",
+     "t": 6.96,
+     "closestAfter_m": 2.203,
+     "lead_s": 1.92
+    }
+   ],
+   "dangerEvents": 0,
+   "closest": {
+    "clear": 2.019,
+    "frame": 222,
+    "t": 8.88,
+    "person": "P25"
+   },
+   "skips": {
+    "vehicleFramesNoFloorContact": 0,
+    "vehicleFramesCutBySideEdge": 0,
+    "nonFinitePointsReplaced": 0
+   },
+   "s_per_frame": 4.75
+  }
+ },
+ "clip-dev-003": {
+  "old": {
+   "warnings": [],
+   "dangerEvents": 0,
+   "closest": {
+    "clear": 1.452,
+    "frame": 17,
+    "t": 0.68,
+    "person": "P1"
+   }
+  },
+  "new": {
+   "warnings": [],
+   "dangerEvents": 0,
+   "closest": {
+    "clear": 1.774,
+    "frame": 24,
+    "t": 0.96,
+    "person": "P1"
+   },
+   "skips": {
+    "vehicleFramesNoFloorContact": 0,
+    "vehicleFramesCutBySideEdge": 6,
+    "nonFinitePointsReplaced": 0
+   },
+   "s_per_frame": 4.63
+  }
+ },
+ "clip-dev-004": {
+  "old": {
+   "warnings": [],
+   "dangerEvents": 0,
+   "closest": {
+    "clear": 1.803,
+    "frame": 134,
+    "t": 5.36,
+    "person": "P2"
+   }
+  },
+  "new": {
+   "warnings": [],
+   "dangerEvents": 0,
+   "closest": {
+    "clear": 2.385,
+    "frame": 148,
+    "t": 5.92,
+    "person": "P3"
+   },
+   "skips": {
+    "vehicleFramesNoFloorContact": 0,
+    "vehicleFramesCutBySideEdge": 59,
+    "nonFinitePointsReplaced": 0
+   },
+   "s_per_frame": 4.95
+  }
+ },
+ "screen-002": {
+  "old": {
+   "warnings": [
+    {
+     "person": "P1",
+     "t": 6.22,
+     "closestAfter_m": 0.665,
+     "lead_s": -0.04
+    }
+   ],
+   "dangerEvents": 0,
+   "closest": {
+    "clear": 0.665,
+    "frame": 154,
+    "t": 6.18,
+    "person": "P1"
+   }
+  },
+  "new": {
+   "warnings": [
+    {
+     "person": "P1",
+     "t": 1.565,
+     "closestAfter_m": 3.612,
+     "lead_s": 2.167
+    },
+    {
+     "person": "P1",
+     "t": 2.969,
+     "closestAfter_m": 1.871,
+     "lead_s": 2.207
+    }
+   ],
+   "dangerEvents": 0,
+   "closest": {
+    "clear": 1.426,
+    "frame": 201,
+    "t": 8.066,
+    "person": "P33"
+   },
+   "skips": {
+    "vehicleFramesNoFloorContact": 0,
+    "vehicleFramesCutBySideEdge": 121,
+    "nonFinitePointsReplaced": 0
+   },
+   "s_per_frame": 4.88
+  }
+ },
+ "screen-032": {
+  "old": {
+   "warnings": [],
+   "dangerEvents": 0,
+   "closest": {
+    "clear": 1.367,
+    "frame": 48,
+    "t": 1.925,
+    "person": "P6"
+   }
+  },
+  "new": {
+   "warnings": [
+    {
+     "person": "P11",
+     "t": 2.006,
+     "closestAfter_m": 1.549,
+     "lead_s": 0.0
+    }
+   ],
+   "dangerEvents": 0,
+   "closest": {
+    "clear": 1.549,
+    "frame": 50,
+    "t": 2.006,
+    "person": "P11"
+   },
+   "skips": {
+    "vehicleFramesNoFloorContact": 0,
+    "vehicleFramesCutBySideEdge": 0,
+    "nonFinitePointsReplaced": 0
+   },
+   "s_per_frame": 4.28
+  }
+ },
+ "screen-033": {
+  "old": {
+   "warnings": [
+    {
+     "person": "P6",
+     "t": 4.12,
+     "closestAfter_m": 0.53,
+     "lead_s": 1.12
+    }
+   ],
+   "dangerEvents": 0,
+   "closest": {
+    "clear": 0.53,
+    "frame": 131,
+    "t": 5.24,
+    "person": "P6"
+   }
+  },
+  "new": {
+   "warnings": [],
+   "dangerEvents": 0,
+   "closest": {
+    "clear": 1.39,
+    "frame": 74,
+    "t": 2.96,
+    "person": "P12"
+   },
+   "skips": {
+    "vehicleFramesNoFloorContact": 0,
+    "vehicleFramesCutBySideEdge": 0,
+    "nonFinitePointsReplaced": 0
+   },
+   "s_per_frame": 4.62
+  }
+ }
+}

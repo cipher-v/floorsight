@@ -1,0 +1,46 @@
+{
+  "properties": {
+    "alert_id": {
+      "title": "Alert Id",
+      "type": "string"
+    },
+    "event_id": {
+      "title": "Event Id",
+      "type": "string"
+    },
+    "t": {
+      "title": "T",
+      "type": "number"
+    },
+    "channel": {
+      "enum": [
+        "dashboard",
+        "sns"
+      ],
+      "title": "Channel",
+      "type": "string"
+    },
+    "audience": {
+      "enum": [
+        "floor_lead",
+        "manager"
+      ],
+      "title": "Audience",
+      "type": "string"
+    },
+    "message": {
+      "title": "Message",
+      "type": "string"
+    }
+  },
+  "required": [
+    "alert_id",
+    "event_id",
+    "t",
+    "channel",
+    "audience",
+    "message"
+  ],
+  "title": "Alert",
+  "type": "object"
+}

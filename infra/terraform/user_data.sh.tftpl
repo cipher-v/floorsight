@@ -1,0 +1,145 @@
+#!/bin/bash
+# Floorsight bootstrap (rendered by Terraform; role=${role}, opencv_source=${opencv_source}).
+# Log: /var/log/floorsight-bootstrap.log   Inspect via SSM: sudo tail -f /var/log/floorsight-bootstrap.log
+set -euxo pipefail
+exec > >(tee -a /var/log/floorsight-bootstrap.log) 2>&1
+
+export DEBIAN_FRONTEND=noninteractive
+apt-get update -y
+apt-get install -y git python3-venv python3-pip curl ca-certificates unzip ffmpeg
+# Session Manager is the only way in (no SSH). Ubuntu AMIs ship the agent as a snap; make sure.
+snap list amazon-ssm-agent >/dev/null 2>&1 || snap install amazon-ssm-agent --classic || true
+# AWS CLI v2 (code bundle from S3, receipts back to S3)
+# (official zip into /usr/local: the snap build cannot run for the floorsight user, whose home is outside /home)
+if [ ! -x /usr/local/bin/aws ]; then
+  curl -fsSL -o /tmp/awscliv2.zip "https://awscli.amazonaws.com/awscli-exe-linux-$(uname -m).zip"
+  (cd /tmp && unzip -q -o awscliv2.zip && ./aws/install --update)
+fi
+export PATH=/usr/local/bin:$PATH
+
+useradd --system --create-home --home-dir /opt/floorsight --shell /usr/sbin/nologin floorsight || true
+mkdir -p /opt/floorsight/app /var/log/floorsight /opt/floorsight/eval
+chown -R floorsight: /opt/floorsight /var/log/floorsight
+
+cd /opt/floorsight/app
+%{ if repo_url != "" ~}
+# ---- code at an exact ref (branch, tag or commit) --------------------------------
+if [ ! -d .git ]; then
+  sudo -u floorsight git init -q .
+  sudo -u floorsight git remote add origin '${repo_url}'
+fi
+sudo -u floorsight git fetch --depth 1 origin '${git_ref}'
+sudo -u floorsight git checkout -q --force FETCH_HEAD
+sudo -u floorsight git rev-parse HEAD > /opt/floorsight/DEPLOYED_COMMIT # as owner: avoids git "dubious ownership"
+%{ else ~}
+# ---- code bundle from the private artifacts bucket (no public repo needed) -------
+aws s3 cp --region '${region}' '${bundle_s3}' /tmp/floorsight-bundle.tgz
+sha256sum /tmp/floorsight-bundle.tgz | tee /opt/floorsight/DEPLOYED_BUNDLE_SHA256
+sudo -u floorsight tar -xzf /tmp/floorsight-bundle.tgz -C /opt/floorsight/app
+echo '${bundle_s3}' > /opt/floorsight/DEPLOYED_COMMIT
+%{ endif ~}
+
+# ---- Python env -------------------------------------------------------------------
+: > /etc/floorsight.opencv.env
+%{ if opencv_source == "cool" ~}
+# COOL instance: use the AMI's OpenCV build, never the pip wheel. Per the Marketplace
+# listing, the Python bindings live in /opt/cool/python_3.12/site-packages and need
+# /opt/cool/cpp_sdk/lib on LD_LIBRARY_PATH (prebuilt venvs also exist in /opt/cool/venvs/).
+# The benchmark JSON records cv2's path + build-info hash, so a fallback is always visible.
+COOL_SITE=/opt/cool/python_3.12/site-packages
+COOL_LIB=/opt/cool/cpp_sdk/lib
+sudo -u floorsight python3 -m venv /opt/floorsight/venv
+grep -viE '^opencv' requirements.txt > /tmp/requirements-no-opencv.txt
+sudo -u floorsight /opt/floorsight/venv/bin/pip install -q -r /tmp/requirements-no-opencv.txt
+if sudo -u floorsight env PYTHONPATH="$${COOL_SITE}" LD_LIBRARY_PATH="$${COOL_LIB}" /opt/floorsight/venv/bin/python -c "import cv2, sys; print(cv2.__version__, cv2.__file__); sys.exit(0 if cv2.__version__.startswith('5.') else 1)" > /opt/floorsight/OPENCV_SOURCE 2>&1; then
+  printf 'PYTHONPATH=%s\nLD_LIBRARY_PATH=%s\n' "$${COOL_SITE}" "$${COOL_LIB}" > /etc/floorsight.opencv.env
+  echo "cool" >> /opt/floorsight/OPENCV_SOURCE
+else
+  echo "WARNING: COOL OpenCV 5 Python bindings not importable; installing the stock wheel so the demo still runs" | tee -a /opt/floorsight/OPENCV_SOURCE
+  sudo -u floorsight /opt/floorsight/venv/bin/pip install -q "$(grep -iE '^opencv' requirements.txt | head -1)"
+  echo "pip-fallback" >> /opt/floorsight/OPENCV_SOURCE
+fi
+%{ else ~}
+sudo -u floorsight python3 -m venv /opt/floorsight/venv
+sudo -u floorsight /opt/floorsight/venv/bin/pip install -q -r requirements.txt
+echo "pip" > /opt/floorsight/OPENCV_SOURCE
+%{ endif ~}
+chmod 644 /etc/floorsight.opencv.env
+
+# Same interpreter + OpenCV the service uses: /opt/floorsight/py <args>
+cat > /opt/floorsight/py <<'PYEOF'
+#!/bin/bash
+set -a; . /etc/floorsight.opencv.env; set +a
+exec /opt/floorsight/venv/bin/python "$@"
+PYEOF
+chmod 755 /opt/floorsight/py
+
+%{ if length(regexall("--source sim", app_start_command)) > 0 ~}
+# ---- demo footage (data/ is not in git) -------------------------------------------
+sudo -u floorsight /opt/floorsight/py -m floorsight.sim.scenario --out data/sim/demo_001 \
+  || echo "WARNING: footage render failed (videoio/FFmpeg missing in this OpenCV build?)"
+%{ endif ~}
+
+%{ if role == "app" ~}
+# ---- runtime settings ---------------------------------------------------------------
+cat > /etc/floorsight.env <<'ENVEOF'
+%{ for k, v in env ~}
+${k}=${v}
+%{ endfor ~}
+ENVEOF
+chmod 640 /etc/floorsight.env
+chgrp floorsight /etc/floorsight.env
+
+# ---- systemd service ---------------------------------------------------------------
+cat > /etc/systemd/system/floorsight.service <<'UNITEOF'
+[Unit]
+Description=Floorsight server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=floorsight
+WorkingDirectory=/opt/floorsight/app
+EnvironmentFile=/etc/floorsight.env
+EnvironmentFile=-/etc/floorsight.opencv.env
+ExecStart=${app_start_command}
+Restart=always
+RestartSec=3
+StandardOutput=append:/var/log/floorsight/app.log
+StandardError=append:/var/log/floorsight/app.log
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+
+[Install]
+WantedBy=multi-user.target
+UNITEOF
+systemctl daemon-reload
+%{ if app_start_command != "" ~}
+systemctl enable --now floorsight.service
+%{ endif ~}
+
+# ---- CloudWatch agent: ship app + bootstrap logs ------------------------------------
+ARCH="$(dpkg --print-architecture)"
+curl -fsSL -o /tmp/cwagent.deb "https://amazoncloudwatch-agent.s3.amazonaws.com/ubuntu/$${ARCH}/latest/amazon-cloudwatch-agent.deb"
+dpkg -i -E /tmp/cwagent.deb
+cat > /opt/aws/amazon-cloudwatch-agent/etc/floorsight.json <<'CWEOF'
+{
+  "agent": { "run_as_user": "root" },
+  "logs": {
+    "logs_collected": {
+      "files": {
+        "collect_list": [
+          { "file_path": "/var/log/floorsight/app.log", "log_group_name": "${log_group}", "log_stream_name": "{instance_id}/app" },
+          { "file_path": "/var/log/floorsight-bootstrap.log", "log_group_name": "${log_group}", "log_stream_name": "{instance_id}/bootstrap" }
+        ]
+      }
+    }
+  }
+}
+CWEOF
+/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s \
+  -c file:/opt/aws/amazon-cloudwatch-agent/etc/floorsight.json
+%{ endif ~}
+
+echo "bootstrap done: role=${role} commit=$(cat /opt/floorsight/DEPLOYED_COMMIT) opencv=$(tail -1 /opt/floorsight/OPENCV_SOURCE)"

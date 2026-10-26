@@ -1,0 +1,46 @@
+{
+  "description": "Sent alongside every JPEG frame leaving the edge device.",
+  "properties": {
+    "camera_id": {
+      "title": "Camera Id",
+      "type": "string"
+    },
+    "frame_index": {
+      "title": "Frame Index",
+      "type": "integer"
+    },
+    "t": {
+      "description": "Capture time, seconds since session start",
+      "title": "T",
+      "type": "number"
+    },
+    "width": {
+      "title": "Width",
+      "type": "integer"
+    },
+    "height": {
+      "title": "Height",
+      "type": "integer"
+    },
+    "faces_blurred": {
+      "description": "Faces blurred on the device before upload",
+      "title": "Faces Blurred",
+      "type": "integer"
+    },
+    "blur_applied": {
+      "default": true,
+      "title": "Blur Applied",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "camera_id",
+    "frame_index",
+    "t",
+    "width",
+    "height",
+    "faces_blurred"
+  ],
+  "title": "FrameMeta",
+  "type": "object"
+}

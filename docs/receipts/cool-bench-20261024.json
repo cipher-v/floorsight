@@ -1,0 +1,202 @@
+{
+ "note": "COOL (OpenCV 5.1.0-dev, KleidiCV) vs stock opencv-python-headless 5.0.0 on the same AWS c8g.xlarge, 24 Oct 2026. Chart numbers: stock first, COOL second in pipelines_fps.",
+ "summary": {
+  "ops": {
+   "cool": {
+    "opencv": "5.1.0-dev",
+    "frame_size": [
+     1920,
+     1080
+    ],
+    "per_op_p50_ms": {
+     "resize": 1.2584,
+     "cvtColor": 0.0223,
+     "GaussianBlur": 0.0249,
+     "MOG2_apply": 0.8175,
+     "morphologyEx": 0.2441,
+     "findContours": 0.0889,
+     "warpPerspective": 0.5632,
+     "adaptiveThreshold": 0.1203
+    },
+    "extra_p50_ms": {
+     "imdecode_jpeg": 6.2762,
+     "aruco_detect": 11.2652
+    },
+    "e2e_core_mean_ms": 3.1622,
+    "e2e_server_mean_ms": 9.607,
+    "throughput": {
+     "workers": 4,
+     "threads_per_worker": 1,
+     "seconds": 15.0,
+     "frames_per_worker": [
+      888,
+      896,
+      883,
+      880
+     ],
+     "workers_started_late": 0,
+     "aggregate_fps_server_chain": 236.36,
+     "cameras_per_instance_at_10fps": 23
+    },
+    "cost": {
+     "ec2_usd_per_h": 0.1595,
+     "software_usd_per_h": 0.01,
+     "usd_per_instance_month_730h": 123.74,
+     "usd_per_camera_month": 5.3798,
+     "formula": "(ec2_usd_per_h + software_usd_per_h) * 730 / cameras_per_instance_at_10fps"
+    }
+   },
+   "stock": {
+    "opencv": "5.0.0",
+    "frame_size": [
+     1920,
+     1080
+    ],
+    "per_op_p50_ms": {
+     "resize": 0.9383,
+     "cvtColor": 0.0224,
+     "GaussianBlur": 0.0282,
+     "MOG2_apply": 0.7443,
+     "morphologyEx": 0.2421,
+     "findContours": 0.0932,
+     "warpPerspective": 0.54,
+     "adaptiveThreshold": 0.8493
+    },
+    "extra_p50_ms": {
+     "imdecode_jpeg": 5.8544,
+     "aruco_detect": 13.7453
+    },
+    "e2e_core_mean_ms": 3.4789,
+    "e2e_server_mean_ms": 9.4623,
+    "throughput": {
+     "workers": 4,
+     "threads_per_worker": 1,
+     "seconds": 15.0,
+     "frames_per_worker": [
+      984,
+      992,
+      981,
+      973
+     ],
+     "workers_started_late": 0,
+     "aggregate_fps_server_chain": 261.87,
+     "cameras_per_instance_at_10fps": 26
+    },
+    "cost": {
+     "ec2_usd_per_h": 0.1595,
+     "software_usd_per_h": 0.0,
+     "usd_per_instance_month_730h": 116.44,
+     "usd_per_camera_month": 4.4783,
+     "formula": "(ec2_usd_per_h + software_usd_per_h) * 730 / cameras_per_instance_at_10fps"
+    }
+   }
+  },
+  "perception": [
+   {
+    "run": "perc-1-cool",
+    "seconds": 143.0,
+    "frames": 30,
+    "detector_s": 129.85,
+    "stages": {
+     "person_s": 58.9,
+     "person_backend": "torch",
+     "privacy_extra_cv2dnn_s": 30.93,
+     "vocab_torch_s": 33.47,
+     "segment_torch_s": 35.62,
+     "faces_cv2dnn_s": 1.86,
+     "frames": 30
+    },
+    "build": "YES (carotene (ver 0.0.1) KleidiCV (ver 0.7.0))"
+   },
+   {
+    "run": "perc-2-stock",
+    "seconds": 139.3,
+    "frames": 30,
+    "detector_s": 124.39,
+    "stages": {
+     "person_s": 56.05,
+     "person_backend": "torch",
+     "privacy_extra_cv2dnn_s": 28.52,
+     "vocab_torch_s": 32.52,
+     "segment_torch_s": 34.24,
+     "faces_cv2dnn_s": 1.58,
+     "frames": 30
+    },
+    "build": "YES (carotene (ver 0.0.1) KleidiCV (ver 26.03))"
+   },
+   {
+    "run": "perc-3-stock",
+    "seconds": 138.8,
+    "frames": 30,
+    "detector_s": 125.64,
+    "stages": {
+     "person_s": 55.94,
+     "person_backend": "torch",
+     "privacy_extra_cv2dnn_s": 28.29,
+     "vocab_torch_s": 33.1,
+     "segment_torch_s": 35.02,
+     "faces_cv2dnn_s": 1.58,
+     "frames": 30
+    },
+    "build": "YES (carotene (ver 0.0.1) KleidiCV (ver 26.03))"
+   },
+   {
+    "run": "perc-4-cool",
+    "seconds": 140.2,
+    "frames": 30,
+    "detector_s": 126.91,
+    "stages": {
+     "person_s": 58.39,
+     "person_backend": "torch",
+     "privacy_extra_cv2dnn_s": 30.9,
+     "vocab_torch_s": 32.66,
+     "segment_torch_s": 34.04,
+     "faces_cv2dnn_s": 1.82,
+     "frames": 30
+    },
+    "build": "YES (carotene (ver 0.0.1) KleidiCV (ver 0.7.0))"
+   }
+  ]
+ },
+ "chart": {
+  "schema": "floorsight.bench-chart.v1",
+  "speedup_per_op": {
+   "resize": 0.7456293706293706,
+   "MOG2_apply": 0.9104587155963302,
+   "imdecode_jpeg": 0.9327937286893343,
+   "warpPerspective": 0.9588068181818182,
+   "morphologyEx": 0.9918066366243343,
+   "cvtColor": 1.0044843049327354,
+   "findContours": 1.0483689538807648,
+   "GaussianBlur": 1.1325301204819278,
+   "aruco_detect": 1.2201558782800128,
+   "adaptiveThreshold": 7.059850374064838
+  },
+  "pipelines_fps": {
+   "OpenCV core chain, 1 stream": [
+    287.4471815803846,
+    316.23553222440074
+   ],
+   "OpenCV chain, 4 processes": [
+    261.87,
+    236.36
+   ],
+   "whole perception stage (detectors incl.)": [
+    0.23997720144601742,
+    0.23371190102033385
+   ]
+  },
+  "perception_fps": {
+   "cool": [
+    0.23103581055063535,
+    0.2363879914900323
+   ],
+   "stock": [
+    0.2411769434842029,
+    0.2387774594078319
+   ]
+  },
+  "cool": "5.1.0-dev",
+  "stock": "5.0.0"
+ }
+}

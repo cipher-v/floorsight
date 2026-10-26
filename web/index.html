@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Floorsight - live floor map</title>
+  <meta name="description" content="Live, privacy-safe map of everything moving on the warehouse floor.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27%3E%3Ccircle cx=%2712%27 cy=%2712%27 r=%279%27 fill=%27none%27 stroke=%27%235aaeff%27 stroke-width=%273%27/%3E%3Ccircle cx=%2712%27 cy=%2712%27 r=%273.5%27 fill=%27%235aaeff%27/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#panel">Skip to decisions and events</a>
+
+  <!-- ===== Top bar ===== -->
+  <header class="topbar">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3.2" fill="currentColor"/><path d="M12 1v4M12 19v4M1 12h4M19 12h4" stroke="currentColor" stroke-width="2"/></svg>
+      <div class="brand-text">
+        <span class="brand-name">Floorsight</span>
+        <span id="site-name" class="site-name">Loading site...</span>
+      </div>
+    </div>
+
+    <div class="clock-box" title="Time since the start of the shift recording">
+      <span class="kicker">Shift time</span>
+      <span id="clock" class="clock" aria-live="off">--:--</span>
+    </div>
+
+    <span id="mode-pill" class="pill pill-live" role="status"><span class="dot" aria-hidden="true"></span><span id="mode-text">Live</span></span>
+
+    <span id="conn" class="conn conn-wait" role="status" aria-live="polite"><span class="dot" aria-hidden="true"></span><span id="conn-text">Connecting...</span></span>
+
+    <dl class="stats" aria-label="Pipeline speed">
+      <div><dt>Speed</dt><dd id="stat-fps">-- fps</dd></div>
+      <div><dt>Delay</dt><dd id="stat-latency">-- ms</dd></div>
+    </dl>
+
+    <dl class="counts" aria-label="Tracked on the floor now">
+      <div class="count count-person"><dt><span class="swatch" aria-hidden="true"></span>People</dt><dd id="count-person">0</dd></div>
+      <div class="count count-forklift"><dt><span class="swatch" aria-hidden="true"></span>Forklifts</dt><dd id="count-forklift">0</dd></div>
+      <div class="count count-object"><dt><span class="swatch" aria-hidden="true"></span>Objects</dt><dd id="count-object">0</dd></div>
+    </dl>
+
+    <div id="privacy" class="privacy" role="note">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10V7a5 5 0 0 1 10 0v3" fill="none" stroke="currentColor" stroke-width="2"/><rect x="4.5" y="10" width="15" height="11" rx="2" fill="currentColor"/></svg>
+      <span id="privacy-text">Checking privacy and evidence policy...</span>
+    </div>
+
+    <button id="report-btn" class="btn btn-primary" type="button" aria-haspopup="dialog">Morning report</button>
+  </header>
+
+  <div id="warnings" class="warnings" role="status" aria-live="polite" hidden></div>
+
+  <!-- ===== Main ===== -->
+  <main class="layout">
+    <section class="map-area" aria-labelledby="map-heading">
+      <div class="map-toolbar">
+        <h1 id="map-heading" class="map-title">Floor map</h1>
+        <ul class="legend" aria-label="Map legend">
+          <li><span class="lg lg-person" aria-hidden="true"></span>Person</li>
+          <li><span class="lg lg-forklift" aria-hidden="true"></span>Forklift</li>
+          <li><span class="lg lg-object" aria-hidden="true"></span>Object</li>
+          <li><span class="lg lg-unseen" aria-hidden="true"></span>Unseen (estimated)</li>
+          <li><span class="lg lg-event" aria-hidden="true"></span>Event</li>
+        </ul>
+        <button id="coverage-btn" class="btn btn-toggle" type="button" aria-pressed="false" title="Show which parts of the floor the cameras can see (key: C)">
+          Camera coverage
+        </button>
+      </div>
+      <div id="map-wrap" class="map-wrap">
+        <canvas id="map" role="img" aria-label="Floor map" aria-describedby="map-summary"></canvas>
+        <ul id="coverage-legend" class="legend coverage-legend" aria-label="Coverage legend" hidden>
+          <li><span class="lg lg-cov0" aria-hidden="true"></span>Blind spot (no camera)</li>
+          <li><span class="lg lg-cov1" aria-hidden="true"></span>1 camera</li>
+          <li><span class="lg lg-cov2" aria-hidden="true"></span>2 or more cameras</li>
+        </ul>
+        <div id="map-tooltip" class="map-tooltip" role="tooltip" hidden></div>
+        <div id="map-empty" class="map-empty">Waiting for the floor plan...</div>
+        <div id="toasts" class="toasts" aria-live="assertive" aria-relevant="additions"></div>
+        <div id="interlock-banner" class="interlock-banner" role="alert" hidden></div>
+      </div>
+      <p id="map-summary" class="sr-only"></p>
+
+      <section class="cameras" aria-labelledby="cameras-heading">
+        <h2 id="cameras-heading" class="sr-only">Cameras</h2>
+        <ul id="camera-list" class="camera-list"></ul>
+      </section>
+    </section>
+
+    <aside id="panel" class="panel" aria-label="Decisions, events and rules" tabindex="-1">
+      <section id="approvals-section" class="approvals-section" aria-labelledby="approvals-heading">
+        <h2 id="approvals-heading" class="section-title">Needs your decision <span id="approvals-count" class="count-badge" hidden>0</span></h2>
+        <div id="approvals" class="approvals"></div>
+        <p id="no-approvals" class="calm">Nothing needs you right now. The agent only alerts on its own; anything more waits for your OK here.</p>
+      </section>
+
+      <section class="events-section" aria-labelledby="events-heading">
+        <h2 id="events-heading" class="section-title">Events <span id="events-count" class="muted-count"></span></h2>
+        <ol id="events" class="events" aria-live="off"></ol>
+        <p id="no-events" class="calm">No events yet. Anything the cameras flag shows up here, and the agent checks it before anyone is bothered.</p>
+      </section>
+
+      <section class="rule-section" aria-labelledby="rule-heading">
+        <h2 id="rule-heading" class="section-title"><label for="rule-input">Add a rule in plain English</label></h2>
+        <form id="rule-form" class="rule-form" autocomplete="off">
+          <input id="rule-input" name="text" type="text" maxlength="500" placeholder="e.g. Keep Exit B clear for more than 30 seconds" aria-describedby="rule-feedback">
+          <button id="rule-submit" class="btn btn-primary" type="submit">Add rule</button>
+        </form>
+        <div class="chips" role="group" aria-label="Example rules">
+          <button type="button" class="chip">Keep Exit B clear for more than 30 seconds</button>
+          <button type="button" class="chip">Warn if a person is within 1 m of a forklift</button>
+          <button type="button" class="chip">Nobody should stay in the cold room longer than 2 minutes</button>
+        </div>
+        <p id="rule-feedback" class="feedback" aria-live="polite"></p>
+        <details id="rules-details" class="rules-details">
+          <summary>Active rules <span id="rules-count">(0)</span></summary>
+          <ul id="rules" class="rules"></ul>
+        </details>
+      </section>
+    </aside>
+  </main>
+
+  <!-- ===== Replay ===== -->
+  <footer class="replay-bar">
+    <button id="play-btn" class="btn btn-icon" type="button" aria-label="Play replay" title="Play replay">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path id="play-icon" d="M7 5v14l12-7z" fill="currentColor"/></svg>
+    </button>
+    <label for="replay" class="replay-label">Replay</label>
+    <input id="replay" class="replay" type="range" min="0" max="0" step="0.1" value="0" aria-valuetext="Live">
+    <output id="replay-time" for="replay" class="replay-time">Live</output>
+    <button id="live-btn" class="btn" type="button" disabled title="Return to the live view (key: L)">Back to live</button>
+    <span id="components" class="components"></span>
+    <span class="keys" aria-hidden="true">Keys: C coverage &middot; L live</span>
+  </footer>
+
+  <!-- ===== Modal (report and evidence) ===== -->
+  <div id="modal-backdrop" class="modal-backdrop" hidden>
+    <div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <header class="modal-head">
+        <h2 id="modal-title">Report</h2>
+        <div class="modal-actions">
+          <button id="modal-print" class="btn" type="button" hidden>Print</button>
+          <button id="modal-close" class="btn" type="button" aria-label="Close dialog">Close</button>
+        </div>
+      </header>
+      <div id="modal-body" class="modal-body"></div>
+    </div>
+  </div>
+
+  <div id="announcer" class="sr-only" aria-live="polite"></div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

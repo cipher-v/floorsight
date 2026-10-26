@@ -1,0 +1,58 @@
+{
+  "$defs": {
+    "CameraStatus": {
+      "enum": [
+        "ok",
+        "moved",
+        "repairing",
+        "needs_human",
+        "offline"
+      ],
+      "title": "CameraStatus",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "camera_id": {
+      "title": "Camera Id",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/CameraStatus"
+    },
+    "fps": {
+      "title": "Fps",
+      "type": "number"
+    },
+    "last_frame_t": {
+      "title": "Last Frame T",
+      "type": "number"
+    },
+    "markers_visible": {
+      "title": "Markers Visible",
+      "type": "integer"
+    },
+    "calib_error_m": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Median marker re-projection error on the floor; null when not measured",
+      "title": "Calib Error M"
+    }
+  },
+  "required": [
+    "camera_id",
+    "status",
+    "fps",
+    "last_frame_t",
+    "markers_visible",
+    "calib_error_m"
+  ],
+  "title": "CameraHealth",
+  "type": "object"
+}

@@ -1,0 +1,91 @@
+{
+ "minCover": 0.8,
+ "clips": {
+  "clip-dev-002": {
+   "referenceHeads": 429,
+   "coveredShare": 0.9767,
+   "framesWithUncoveredHead": 7,
+   "frames": [
+    200,
+    201,
+    202,
+    203,
+    205,
+    206,
+    211
+   ],
+   "worstCover": 0.175
+  },
+  "clip-dev-004": {
+   "referenceHeads": 602,
+   "coveredShare": 0.9867,
+   "framesWithUncoveredHead": 8,
+   "frames": [
+    16,
+    21,
+    44,
+    56,
+    69,
+    99,
+    136,
+    181
+   ],
+   "worstCover": 0.154
+  },
+  "screen-002": {
+   "referenceHeads": 196,
+   "coveredShare": 1.0,
+   "framesWithUncoveredHead": 0,
+   "frames": [],
+   "worstCover": 1.0
+  },
+  "screen-032": {
+   "referenceHeads": 352,
+   "coveredShare": 0.9886,
+   "framesWithUncoveredHead": 4,
+   "frames": [
+    31,
+    49,
+    67,
+    115
+   ],
+   "worstCover": 0.64
+  },
+  "screen-033": {
+   "referenceHeads": 1057,
+   "coveredShare": 0.9678,
+   "framesWithUncoveredHead": 28,
+   "frames": [
+    4,
+    6,
+    7,
+    8,
+    9,
+    11,
+    12,
+    13,
+    14,
+    16,
+    17,
+    19,
+    21,
+    36,
+    39,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    55,
+    136,
+    139,
+    141,
+    161,
+    169,
+    186
+   ],
+   "worstCover": 0.0
+  }
+ }
+}
