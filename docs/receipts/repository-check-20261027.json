@@ -7,7 +7,13 @@
     "opencv": "5.0.0"
   },
   "baseline_commit": "199c11d0e121723d63740f905835591d44ebf870",
-  "current_code": "The commit introducing this receipt",
+  "current_code": "The final code on codex/hackathon-readiness, incorporating ca1861a",
+  "tests": {
+    "passed": 283,
+    "skipped": 5,
+    "warnings": 1,
+    "command": "python -m pytest -q tests"
+  },
   "simulation_command": "python scripts/interlock_sim.py --out data/interlock-check --no-video",
   "simulation": {
     "off": {
@@ -142,8 +148,8 @@
           "started": true,
           "startedT": 15.2,
           "closestGap_m": 0.7,
-          "closestT": 27.4,
-          "forkliftSpeedAtClosest_mps": 1.7,
+          "closestT": 28.1,
+          "forkliftSpeedAtClosest_mps": 2.0,
           "contact": false
         },
         "S3 alongside": {
@@ -151,24 +157,24 @@
           "started": true,
           "startedT": 14.9,
           "closestGap_m": 1.15,
-          "closestT": 18.4,
-          "forkliftSpeedAtClosest_mps": 0.7,
+          "closestT": 17.8,
+          "forkliftSpeedAtClosest_mps": 0.0,
           "contact": false
         }
       },
       "counts": {
-        "slow": 4,
+        "slow": 2,
         "stop": 2,
         "resume": 2,
         "horn": 1
       },
-      "forkliftDistance_m": 30.3,
-      "stoppedSeconds": 11.3,
-      "slowSeconds": 17.8
+      "forkliftDistance_m": 45.0,
+      "stoppedSeconds": 13.3,
+      "slowSeconds": 3.3
     }
   },
   "application": {
-    "command": "python -m floorsight.server --source simlive --vision real --agent real --interlock on --sim-duration 8 --port 18770 --runtime-dir data/review-app",
+    "command": "python -m floorsight.server --source simlive --vision real --agent real --interlock on --sim-duration 8 --port 18770 --runtime-dir data/review-app-integrated",
     "mode": "ended",
     "components": {
       "vision": "real",
@@ -176,10 +182,10 @@
       "blur": "on"
     },
     "metrics": {
-      "fps": 3.61,
+      "fps": 2.52,
       "target_fps": 10.0,
-      "latency_ms": 26.42,
-      "vision_latency_ms": 30.73,
+      "latency_ms": 33.07,
+      "vision_latency_ms": 37.82,
       "t": 7.9,
       "frame_index": 79,
       "frames": 80,
@@ -216,10 +222,10 @@
     }
   },
   "notes": [
-    "Baseline substitutes the original controller into the same local simulator and dependencies.",
+    "Baseline uses the initial checkout and original controller; the final run also includes the concurrent upstream review.",
     "Off and on were run separately to limit memory use; each uses 400 rendered frames.",
     "Historical AWS on-distance was 27 m; the original controller on this local environment was 24 m.",
-    "The revised local on-distance is 30.3 m. This single scenario does not establish general improvement.",
+    "Distance differences cannot be attributed to a single fix. This scenario does not establish general improvement.",
     "All scenarios started; both in-path contacts are avoided, but the scripted tail contact remains.",
     "Application smoke check used stock OpenCV, local policy, no cloud adapters and the default face filter."
   ]

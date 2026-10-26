@@ -14,16 +14,22 @@ This review covers the public repository, demo gallery, current run instructions
 | Fresh AWS deployments did not activate cloud adapters | Added `FLOORSIGHT_CLOUD=aws` to Terraform's application environment. |
 | Bootstrap matched `simlive` as recorded `sim` | Match the complete source argument, avoiding unnecessary prerecorded-footage generation. |
 | Deployment and retention instructions were inaccurate | Documented private access, adapter verification, actual preservation defaults, and the manual update required on existing instances. Corrected command-line help. |
-| Repeated or stale approval requests looked successful | Return HTTP 409 for non-pending approvals and 404 for unknown approval IDs, under the agent lock. |
 | Shutdown could leave a producer blocked on a full queue | Use cancellable queue operations and wait for the producer before releasing its decoder. |
 | Live simulation advanced before applying control commands | Process feedback-driven frames in sequence so the next scene reflects the current command. |
 | A missing forklift track could release a speed limit | Retain the limit until the truck is seen again. For an applied simulated stop, retain its stopped pose and check the person's clearance and path before release. |
 | Tests depended on private/generated local files | Create temporary fixtures; handle Windows symlink permissions explicitly. Added Linux and Windows CI. |
 
+## Upstream review incorporated
+
+The branch includes the concurrent `ca1861a` review from `main`. Its fixes cover floor-stage stop release, alert delivery retries, readiness checks, approval conflicts, token removal from URLs, retention controls, replay admission, lens distortion, marker dictionaries and camera shutdown. Their additional tests are retained. The overlapping approval implementation uses the upstream version, which returns the server's decision record to the dashboard.
+
+The upstream [AWS test receipt](receipts/pytest-r56-20261027.txt) reports 275 passed and 2 skipped on COOL. Its [recorded-floor replay check](receipts/interlock-replay-check-20261027.txt) removes the old resume at 40.4 seconds in clip-dev-002 while preserving the slow at 37.6 seconds and stop at 38.0 seconds. The existing app video predates that fix.
+
 ## Validation
 
+- **Local tests after incorporating upstream:** 283 passed, 5 skipped. Three skips require Windows symlink privileges; one is a pre-existing research regression and one needs an optional rendered camera fixture. One dependency deprecation warning remains.
 - **Application:** 80 generated frames processed with real camera perception, local review policy and face filtering; zero drops and zero runtime errors. No AWS services were invoked.
-- **Rendered control check:** all four scenarios started. With control on, both in-path contacts were avoided (0.70 m and 0.65 m closest gaps); the tail contact remained. Current distance: 30.3 m in 40 seconds. The original controller in this local environment travelled 24.0 m; the historical AWS receipt reports 27 m. These are separate runs, not interchangeable results.
+- **Rendered control check:** all four scenarios started. With control on, both in-path contacts were avoided (0.70 m and 0.65 m closest gaps); the tail contact remained. The combined code travelled 45.0 m in 40 seconds locally. This is a separate run from the historical AWS result of 27 m, with different code and environment; it does not establish a throughput improvement.
 - **Public site:** all 35 video references, local assets, anchors and current entry-document links pass the checker. Desktop and 360 px layouts were inspected; demo playback and archive deep links worked. The demo is 4:22.168, below five minutes.
 - **Infrastructure:** Terraform formatting and validation pass using the existing provider lock. No plan or apply was run.
 - **Code/dependencies:** Python compilation, JavaScript syntax and `pip check` pass.
@@ -36,6 +42,7 @@ This review covers the public repository, demo gallery, current run instructions
 |---|---|
 | Judge access and team introduction | Owner deferred these details. Confirm a working endpoint or live screen-share and the team introduction in the video. |
 | Exact real-footage reproduction | Retrieve and sanitise the original input manifest, complete perception environment lock and model revisions. The public simulator is reproducible; the historical detector environment is not fully pinned. |
+| Replay admission | The upstream checks are opt-in (`FLOORSIGHT_REPLAY_ADMISSION=enforce`). Existing recorded clips lack the required privacy-review manifests, and floor-record files are not hash-bound. Complete that evidence chain before treating replay admission as enforced. |
 | Independent accuracy evidence | Evaluate held-out, manually labelled footage for distance error, missed incidents, false alarms and privacy misses. The six development clips cannot establish general accuracy. |
 | Live operation | Reduce and measure the full 4.1–4.6 seconds/frame perception delay before claiming live safety intervention. |
 | Real forklift control | Hardware feedback, braking validation and field testing are absent. Current control results apply to the simulator. Track identity and camera loss still require deployment-specific validation. |

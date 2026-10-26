@@ -46,6 +46,7 @@
 </nav>
 <p class="notice"><strong>Research prototype.</strong> Real factory clips are processed offline. Slow and stop commands control only the simulated forklift. No real truck integration or field safety validation is claimed. This page contains recorded demonstrations.</p>
 </header>
+<p class="lead">Recorded results · 24 October 2026</p>
 <section class="results" aria-label="Recorded results from 24 October">
 <div class="result"><strong>2 → 0 contacts</strong><p>In-path contacts in one simulated scenario. Travel fell from 80 m to 27 m.</p></div>
 <div class="result"><strong>3 reviewed warnings</strong><p>Final AWS run: three approvals and three SNS alerts. The recorded reviewer was scripted.</p></div>
@@ -57,7 +58,7 @@
 <div class="grid wide">
 <figure id="demo"><video aria-labelledby="demo-title" controls preload="none" playsinline poster="docs/report/figures/pixels-vs-floor-clip-dev-004.jpg" src="videos/floorsight-demo.mp4"><track kind="captions" src="videos/floorsight-demo.vtt" srclang="en" label="English"></video><figcaption><b id="demo-title">Floorsight demo (4 min 22 s)</b><span>The problem, the floor map in metres, danger zones, smoothing, the app (automatic slow/stop, the agent&#x27;s second look, the approval step), the simulated warehouse with the interlock off and on, failure cases, COOL, AWS, privacy. Narrated, captions burned in.</span> <a class="dl" href="videos/floorsight-demo.mp4" download>download</a></figcaption></figure>
 </div>
-<h2 id="simulation">Simulated warehouse: the forklift interlock in a closed loop</h2>
+<h2 id="simulation">Simulation: what changes when control is on</h2>
 <p class="lead">Four rendered ceiling cameras feed the simulator&#x27;s OpenCV perception pipeline; the simulated forklift obeys Floorsight&#x27;s slow/stop commands. Results: in-path contacts 2 of 2 without the interlock, 0 of 2 with it (closest 0.70 m and 0.65 m); 27 m driven in 40 s instead of 80 m.</p>
 <div class="grid">
 <figure id="sim-off"><video aria-labelledby="sim-off-title" controls preload="none" playsinline src="videos/simulator/interlock-off.mp4"></video><figcaption><b id="sim-off-title">Interlock OFF (40 s)</b><span>Floorsight sees the people, nothing brakes, and the forklift reaches both people who step into its path.</span> <a class="dl" href="videos/simulator/interlock-off.mp4" download>download</a></figcaption></figure>
@@ -65,11 +66,12 @@
 <figure id="app-sim"><video aria-labelledby="app-sim-title" controls preload="none" playsinline src="videos/app/app-simulator.webm"></video><figcaption><b id="app-sim-title">The app on the simulated warehouse (1 min 58 s)</b><span>The Floorsight app itself on the four simulated cameras, issuing AUTO-SLOW, AUTO-STOP and RESUME.</span> <a class="dl" href="videos/app/app-simulator.webm" download>download</a></figcaption></figure>
 </div>
 <h2>The app on the real factory clips</h2>
+<p class="lead">Recording correction: the old app resumes at 40.4 s in clip-dev-002. The 27 October fix keeps it stopped until the person clears the path. <a href="https://github.com/tonystark101-debug/floorsight/blob/main/docs/receipts/interlock-replay-check-20261027.txt">Replay evidence</a>.</p>
 <div class="grid wide">
 <figure id="app-real"><video aria-labelledby="app-real-title" controls preload="none" playsinline src="videos/app/app-real-clips.webm"></video><figcaption><b id="app-real-title">The app on AWS, six real clips (3 min 7 s)</b><span>Floor map, AUTO-SLOW / AUTO-STOP / RESUME banners (recorded video, so the command is logged, not applied), the agent&#x27;s one-line recommendation, approve/reject, alerts to the floor lead.</span> <a class="dl" href="videos/app/app-real-clips.webm" download>download</a></figcaption></figure>
 </div>
 <h2 id="real-clips">Real factory clips, measured on the floor (final run, 24 Oct)</h2>
-<p class="lead">Kalman-smoothed tracks and forklift danger zones drawn on each clip. Heads and faces pixelated before anything was stored.</p>
+<p class="lead">Smoothed movement and predicted risk areas drawn on each clip. These are processed copies with detected heads and faces pixelated.</p>
 <div class="grid">
 <figure id="overlay-clip-dev-002"><video aria-labelledby="overlay-clip-dev-002-title" controls preload="none" playsinline src="videos/real-clips/clip-dev-002-overlay.mp4"></video><figcaption><b id="overlay-clip-dev-002-title">clip-dev-002</b><span>2 warnings; in the app: slow, stop, resume.</span> <a class="dl" href="videos/real-clips/clip-dev-002-overlay.mp4" download>download</a></figcaption></figure>
 <figure id="overlay-clip-dev-003"><video aria-labelledby="overlay-clip-dev-003-title" controls preload="none" playsinline src="videos/real-clips/clip-dev-003-overlay.mp4"></video><figcaption><b id="overlay-clip-dev-003-title">clip-dev-003</b><span>1 warning as the forklift pulls away from a stop; in the app: auto-slow.</span> <a class="dl" href="videos/real-clips/clip-dev-003-overlay.mp4" download>download</a></figcaption></figure>

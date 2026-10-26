@@ -68,4 +68,6 @@ Use each script's `--help` for its required paths. Historical cloud jobs use acc
 
 ## Retention
 
+Use `--preservation-hold off` only when automatic deletion is intended. `--retention-h` then controls the local retention window. Terraform also supplies `FLOORSIGHT_PRESERVATION_HOLD` from its `preservation_hold` setting.
+
 Evidence preservation is enabled by default, including in the saved submission run. The configured 24-hour retention does not delete files while the hold is active. `/api/state` reports `privacy.preservation_hold` and `privacy.automatic_deletion`. Terraform also retains cloud evidence while `preservation_hold=true`. Treat a change to these settings as a deliberate retention decision.

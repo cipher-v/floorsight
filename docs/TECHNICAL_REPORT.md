@@ -6,6 +6,8 @@ Floorsight converts existing camera footage into floor distances and reviewable 
 
 The measurements below are from the saved 23–24 October runs. Repository fixes made after those runs do not change their recorded results. [Detailed methods and run history](report/Floorsight-Technical-Report-v0.5-20261024.md).
 
+**Recording correction:** the 27 October review found that the floor-stage controller could resume while a person remained in its path. The fixed code holds the stop. In clip-dev-002, the old resume at 40.4 seconds disappears; the slow at 37.6 seconds and stop at 38.0 seconds remain. The app video shows the earlier behavior. [Replay check](receipts/interlock-replay-check-20261027.txt) · [Current audit](AUDIT.md).
+
 ## Problem, users and intended benefit
 
 Safety managers and shift supervisors need to know whether a person is actually in a forklift's path. Camera perspective makes image distance misleading: objects at different depths can appear to touch.
@@ -99,6 +101,7 @@ These are development clips from one camera, not an independent test set. The he
 - Keep raw footage private. Only filtered derivatives are published.
 - Review forklift incidents before notifying the floor lead; retain the decision trace.
 - Evidence is currently held for review. The nominal 24-hour retention is inactive while preservation is enabled; automatic deletion is not claimed.
+- Replay admission checks are opt-in and the saved clips lack the required privacy-review manifests. Floor-record files are not yet hash-bound. This is an outstanding integrity gap.
 - Use the prototype for research and demonstration. Real deployment needs site-specific measurement, live-rate processing, hardware integration and independent safety validation.
 
 ## Reproduction and next work

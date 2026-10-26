@@ -81,6 +81,7 @@ cd /opt/floorsight/app
 /opt/floorsight/py -c "import cv2; print(cv2.__version__, cv2.__file__)"
 cat /opt/floorsight/OPENCV_SOURCE
 curl -fsS http://127.0.0.1:8000/healthz
+curl -fsS http://127.0.0.1:8000/readyz
 curl -fsS http://127.0.0.1:8000/api/state
 ```
 
@@ -101,7 +102,7 @@ On your computer, run the port-forward command and open http://127.0.0.1:8000/. 
 
 A screen-share of the privately forwarded application can satisfy the live demonstration route once it is actually arranged. The video gallery alone is not a working endpoint.
 
-For a **new** public deployment, configure `public_endpoint=true` and a strong nonempty `judge_token` before the first plan/apply. CloudFront adds a secret origin header; the app checks it, then checks the judge token. Share access details privately.
+For a **new** public deployment, configure `public_endpoint=true` and a random `judge_token` of at least 20 characters before the first plan/apply. CloudFront adds a secret origin header; the app checks it, then checks the judge token. Share access details privately.
 
 For an **existing** instance, changing these Terraform variables and restarting is **not enough**. The instance resource deliberately ignores `user_data` changes to avoid replacing the machine. Update the deployed code, `/etc/floorsight.env` (cloud switch, judge token, origin secret) and the service's bind address over SSM, then reload systemd and restart. Inspect the changes before applying them. Verify the CloudFront path works and direct app access is refused. Do not replace an evidence-bearing instance to refresh its configuration.
 
