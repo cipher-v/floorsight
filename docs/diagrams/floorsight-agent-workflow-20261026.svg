@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" font-family="DejaVu Sans, Arial, sans-serif">
+  <rect width="1600" height="1000" fill="#ffffff"/>
+  <defs>
+    <marker id="b" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#1f6feb"/></marker>
+    <marker id="r" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#cf222e"/></marker>
+    <marker id="g" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#6e7781"/></marker>
+  </defs>
+  <text x="40" y="44" font-size="26" font-weight="700" fill="#111">Floorsight agent workflow: perception -&gt; decision -&gt; action, and who decides what</text>
+  <text x="40" y="72" font-size="15" fill="#444">Camera evidence changes what happens next: the forklift's speed command, the agent's next tool call, and what the person is asked.</text>
+  <text x="40" y="94" font-size="15" fill="#444">Every step below is written to a JSONL trace; two unedited traces from the app on AWS are in docs/receipts/traces/.</text>
+
+  <!-- closed loop arrow -->
+  <path d="M1340,288 V122 H470 V146" fill="none" stroke="#6e7781" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#g)"/>
+  <text x="560" y="116" font-size="13" fill="#555">closed loop: the forklift slows or stops, and the next camera frames show it (proven in the simulated warehouse)</text>
+
+  <!-- PERCEPTION -->
+  <text x="40" y="140" font-size="15" font-weight="700" fill="#0b3d91">PERCEPTION (OpenCV 5, every frame)</text>
+  <g font-size="14" fill="#222">
+    <rect x="40" y="150" width="460" height="100" rx="8" fill="#f3f8ff" stroke="#1f6feb" stroke-width="2"/>
+    <text x="54" y="174" font-size="16" font-weight="700">1  Camera frame</text><text x="54" y="196">the CCTV a site already has; no new hardware</text>
+    <text x="54" y="232" font-size="13" fill="#1a7f37" font-family="DejaVu Sans Mono, Consolas, monospace">VideoCapture</text>
+
+    <rect x="40" y="262" width="460" height="100" rx="8" fill="#f3f8ff" stroke="#1f6feb" stroke-width="2"/>
+    <text x="54" y="286" font-size="16" font-weight="700">2  Privacy filter (first, fail-closed)</text><text x="54" y="308">heads and faces pixelated; filter error -&gt; black frame</text>
+    <text x="54" y="344" font-size="13" fill="#1a7f37" font-family="DejaVu Sans Mono, Consolas, monospace">FaceDetectorYN, dnn</text>
+
+    <rect x="40" y="374" width="460" height="100" rx="8" fill="#f3f8ff" stroke="#1f6feb" stroke-width="2"/>
+    <text x="54" y="398" font-size="16" font-weight="700">3  Detect + track</text><text x="54" y="420">people, forklifts, carried loads; Hungarian tracker</text>
+    <text x="54" y="456" font-size="13" fill="#1a7f37" font-family="DejaVu Sans Mono, Consolas, monospace">dnn.NMSBoxes</text>
+
+    <rect x="40" y="486" width="460" height="100" rx="8" fill="#f3f8ff" stroke="#1f6feb" stroke-width="2"/>
+    <text x="54" y="510" font-size="16" font-weight="700">4  Floor map in metres</text><text x="54" y="532">vanishing points -&gt; camera pose and scale, ±5 %</text>
+    <text x="54" y="568" font-size="13" fill="#1a7f37" font-family="DejaVu Sans Mono, Consolas, monospace">LineSegmentDetector</text>
+
+    <rect x="40" y="598" width="460" height="100" rx="8" fill="#f3f8ff" stroke="#1f6feb" stroke-width="2"/>
+    <text x="54" y="622" font-size="16" font-weight="700">5  Kalman smoothing</text><text x="54" y="644">per-track filter + turn-rate filter: no fake swerves</text>
+    <text x="54" y="666">outlier gate, missed frames bridged, re-anchoring</text>
+
+    <rect x="40" y="710" width="460" height="110" rx="8" fill="#f3f8ff" stroke="#1f6feb" stroke-width="2"/>
+    <text x="54" y="734" font-size="16" font-weight="700">6  Danger zones + 3 s prediction</text><text x="54" y="756">stopping distance, tail swing, blind zone behind</text><text x="54" y="776">the load; 64 sampled variations per frame</text>
+    <text x="54" y="804" font-size="13" fill="#1a7f37" font-family="DejaVu Sans Mono, Consolas, monospace">fillConvexPoly, findContours, pointPolygonTest</text>
+  </g>
+  <g stroke="#1f6feb" stroke-width="2" marker-end="url(#b)">
+    <line x1="270" y1="250" x2="270" y2="260"/><line x1="270" y1="362" x2="270" y2="372"/><line x1="270" y1="474" x2="270" y2="484"/>
+    <line x1="270" y1="586" x2="270" y2="596"/><line x1="270" y1="698" x2="270" y2="708"/>
+  </g>
+  <path d="M500,765 H530 V195 H558" fill="none" stroke="#1f6feb" stroke-width="2.5" marker-end="url(#b)"/>
+
+  <!-- DECISION -->
+  <text x="560" y="140" font-size="15" font-weight="700" fill="#0b3d91">DECISION</text>
+  <g font-size="14" fill="#222">
+    <rect x="560" y="150" width="520" height="90" rx="8" fill="#fff" stroke="#1f6feb" stroke-width="2"/>
+    <text x="574" y="176" font-size="16" font-weight="700">Rule: WARNING</text><text x="574" y="200">a moving forklift will pass within 0.8 m of a person in the</text><text x="574" y="220">next 3 s on its course, held 3 frames in a row</text>
+
+    <rect x="650" y="290" width="430" height="190" rx="8" fill="#ffebe9" stroke="#cf222e" stroke-width="3"/>
+    <text x="664" y="316" font-size="16" font-weight="700" fill="#a40e26">Interlock: acts in the same frame</text>
+    <text x="664" y="340">stopping distance (measured speed, 0.3 s delay,</text><text x="664" y="360">1.5 m/s² braking) against the floor gap</text>
+    <text x="664" y="386">warning -&gt; SLOW to walking pace (0.7 m/s)</text><text x="664" y="406">person in its path -&gt; STOP</text>
+    <text x="664" y="426">walking into its back as it drives away -&gt; HORN</text><text x="664" y="452" font-weight="700">RESUME only when the person is seen clear</text>
+
+    <rect x="560" y="520" width="520" height="300" rx="8" fill="#f3f8ff" stroke="#1f6feb" stroke-width="2"/>
+    <text x="574" y="546" font-size="16" font-weight="700">Agent: second look (seconds, afterwards)</text>
+    <text x="574" y="570">planner: local policy (Claude on Amazon Bedrock is built,</text><text x="574" y="590">but was not open to our account); it picks the next tool</text>
+    <g font-size="13" font-family="DejaVu Sans Mono, Consolas, monospace" fill="#1a7f37"><text x="574" y="624">short_replay</text><text x="574" y="668">sharper_crop</text><text x="574" y="712">redetect</text><text x="574" y="756">recommend</text></g>
+    <text x="700" y="624">last 1.5 s of floor measurements:</text><text x="700" y="643">sustained, or a speed / tracking jump?</text>
+    <text x="700" y="668">full-resolution close-up of the</text><text x="700" y="687">privacy-filtered frame, for the reviewer</text>
+    <text x="700" y="712">second detector on raw pixels inside the</text><text x="700" y="731">private stage; floor gap re-measured</text>
+    <text x="700" y="756">confirm or reject, in one line,</text><text x="700" y="775">with 3 numbers</text>
+  </g>
+  <path d="M820,240 V288" stroke="#cf222e" stroke-width="3" marker-end="url(#r)"/>
+  <text x="830" y="270" font-size="13" font-weight="700" fill="#a40e26">same frame, no human wait</text>
+  <path d="M600,240 V518" stroke="#1f6feb" stroke-width="2.5" marker-end="url(#b)"/>
+  <text x="572" y="300" font-size="13" fill="#0b3d91" transform="rotate(-90 572 300)" text-anchor="end">then</text>
+
+  <!-- ACTION -->
+  <text x="1120" y="140" font-size="15" font-weight="700" fill="#0b3d91">ACTION</text>
+  <g font-size="14" fill="#222">
+    <rect x="1120" y="290" width="440" height="190" rx="8" fill="#ffebe9" stroke="#cf222e" stroke-width="3"/>
+    <text x="1134" y="316" font-size="16" font-weight="700" fill="#a40e26">Forklift receiver: speed limit, stop, horn</text>
+    <text x="1134" y="344">closed loop: simulated brakes (0.2 s, 2.5 m/s²)</text>
+    <text x="1134" y="368">recorded video: logged, shown "not applied"</text>
+    <text x="1134" y="392">every command logged with "a stop now</text><text x="1134" y="412">halts it X m short"</text>
+    <text x="1134" y="444">real truck: needs a receiver on its</text><text x="1134" y="464">speed control (not in this project)</text>
+
+    <rect x="1120" y="520" width="440" height="120" rx="8" fill="#fff8e1" stroke="#1f6feb" stroke-width="2"/>
+    <text x="1134" y="546" font-size="16" font-weight="700">A person decides</text>
+    <text x="1134" y="570">request_approval: the dashboard card shows</text><text x="1134" y="590">the agent's verdict, evidence and numbers;</text><text x="1134" y="610">approve or reject</text>
+
+    <rect x="1120" y="658" width="440" height="72" rx="8" fill="#fff" stroke="#1f6feb" stroke-width="2"/>
+    <text x="1134" y="684" font-size="16" font-weight="700">send_alert -&gt; floor lead (Amazon SNS)</text>
+    <text x="1134" y="708">only after approval; rejected -&gt; no alert</text>
+
+    <rect x="1120" y="748" width="440" height="72" rx="8" fill="#fff" stroke="#1f6feb" stroke-width="2"/>
+    <text x="1134" y="774" font-size="16" font-weight="700">Trace and observability</text>
+    <text x="1134" y="798">JSONL trace, CloudWatch metrics, blurred evidence in S3</text>
+  </g>
+  <path d="M1080,385 H1118" stroke="#cf222e" stroke-width="3" marker-end="url(#r)"/>
+  <path d="M1080,580 H1118" stroke="#1f6feb" stroke-width="2.5" marker-end="url(#b)"/>
+  <path d="M1340,640 V656" stroke="#1f6feb" stroke-width="2.5" marker-end="url(#b)"/>
+
+  <!-- examples -->
+  <rect x="40" y="850" width="1520" height="120" rx="10" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1.5"/>
+  <text x="56" y="876" font-size="15" font-weight="700" fill="#222">In the published traces</text>
+  <text x="56" y="902" font-size="14" fill="#222">app-run-02, EV-0002: short_replay found the forklift's speed jumping 1.0 -&gt; 2.1 m/s between frames and the second detector disagreed -&gt; the agent</text>
+  <text x="56" y="922" font-size="14" fill="#222">recommended REJECT ("likely a tracking glitch") -&gt; the person rejected it -&gt; no alert.</text>
+  <text x="56" y="950" font-size="14" fill="#222">app-run-09, EV-0003: interlock SLOW ("a stop now halts it 4.1 m short") -&gt; short_replay found a real pull-away after a stop -&gt; CONFIRM -&gt; approved -&gt; SNS alert.</text>
+</svg>

@@ -23,6 +23,23 @@ screen-share on request (a temporary public HTTPS link is one Terraform variable
 
 Every preview on this page is a moving GIF of a real output; click it to play the full video in your browser.
 
+## For the judges: every requirement, one click away
+
+| Requirement | Where |
+|---|---|
+| Technical report | [`docs/report/Floorsight-Technical-Report-v0.5-20261024.md`](docs/report/Floorsight-Technical-Report-v0.5-20261024.md) (problem and users, architecture, OpenCV 5 implementation, AWS, evaluation, limitations, responsible use) |
+| Code, pinned dependencies, build / deploy / test instructions | this repository; [`requirements.txt`](requirements.txt) (pinned); [Run it](#run-it) below; [`docs/aws/DEPLOY.md`](docs/aws/DEPLOY.md) |
+| Architecture diagram (OpenCV 5, AWS, COOL, agent) | [`docs/diagrams/floorsight-architecture-20261026.png`](docs/diagrams/floorsight-architecture-20261026.png) |
+| Working endpoint or live demo | live screen-share on request; every recorded run plays at the [video page](https://tonystark101-debug.github.io/floorsight/) |
+| Video, at most 5 minutes | [the demo, 4 min 22 s](https://tonystark101-debug.github.io/floorsight/#demo) |
+| Evaluation, failure cases, limitations | [Honest results](#honest-results) and [Limits](#limits) below; report sections 9 and 11; every number has a receipt in [`docs/receipts/`](docs/receipts/) |
+| COOL: version and AWS configuration | [`docs/receipts/cool-opencv-build-20261023.txt`](docs/receipts/cool-opencv-build-20261023.txt): OpenCV 5.1.0-dev from `/opt/cool` on the COOL Marketplace AMI, EC2 `c8g.xlarge` (Graviton4) |
+| COOL: reproducible evaluation against a baseline | [`docs/receipts/cool-bench-20261024.json`](docs/receipts/cool-bench-20261024.json), report section 10: same instance, same code, same real frames, COOL against stock OpenCV |
+| COOL: evidence it runs the claimed workload | the perception runs on AWS imported OpenCV from the COOL build: each per-clip result records it (final run: OpenCV 5.1.0-dev from `/opt/cool/python_3.12/site-packages/cv2`); the `cv2.fillPoly` crash we found happens in COOL, not in stock OpenCV ([`docs/findings/COOL-fillPoly-crash.md`](docs/findings/COOL-fillPoly-crash.md)) |
+| Agentic: workflow diagram (perception, decision, action) | [`docs/diagrams/floorsight-agent-workflow-20261026.png`](docs/diagrams/floorsight-agent-workflow-20261026.png) |
+| Agentic: trace where OpenCV output changes a later decision | [`docs/receipts/traces/`](docs/receipts/traces/README.md): the agent rejects a warning because the floor measurements show a tracking glitch, and no alert is sent |
+| Agentic: task success, failure handling, observability, human control | report section 6; [`docs/receipts/app-run-09-summary-20261024.json`](docs/receipts/app-run-09-summary-20261024.json); a person approves every alert |
+
 ## How it works: one camera frame, start to finish
 
 | | Step | What happens | Evidence |
@@ -40,7 +57,15 @@ Every preview on this page is a moving GIF of a real output; click it to play th
 Steps 1-7 run automatically inside one frame; steps 8-9 happen afterwards and decide what the warning was, not
 whether to brake.
 
-<p align="center"><img src="docs/diagrams/floorsight-architecture-20261024.png" width="860" alt="Floorsight architecture on AWS"></p>
+<p align="center"><img src="docs/diagrams/floorsight-architecture-20261026.png" width="860" alt="Floorsight architecture on AWS"></p>
+
+### The agent loop: perception, decision, action
+
+<p align="center"><img src="docs/diagrams/floorsight-agent-workflow-20261026.png" width="860" alt="Floorsight agent workflow: perception, decision, action"></p>
+
+The camera evidence decides what happens next: the interlock's speed command in the same frame, then the agent's next
+tool call and its recommendation, then what the person is asked. Two unedited traces from the app on AWS, with a
+step-by-step reading: [`docs/receipts/traces/`](docs/receipts/traces/README.md).
 
 ## See it working
 
@@ -261,6 +286,8 @@ development: `python -m venv .venv && .venv/bin/pip install -r requirements.txt`
 `python -m floorsight.server --source sim --sim-dir data/sim/demo_001 --vision real --agent real` after rendering the
 simulated warehouse with `python -m floorsight.sim.scenario --out data/sim/demo_001`. The closed-loop interlock test:
 `python scripts/interlock_sim.py --out out/interlock-sim`; the app on it: `python -m floorsight.server --source simlive --interlock on`.
+
+Tests: `python -m pytest -q tests` (on AWS, code r55: 233 passed, 2 skipped).
 
 ## Data, licences, credit
 

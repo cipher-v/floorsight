@@ -1,0 +1,1291 @@
+{
+ "saved_utc": "2026-10-24T07:13:14Z",
+ "why": "ended",
+ "site": "real-factory-cam-a",
+ "config": {
+  "source": "realclip",
+  "vision": "replay",
+  "agent": "real",
+  "speed": 0.5
+ },
+ "privacy": {
+  "faces_blurred": true,
+  "blur": "prefiltered",
+  "prefiltered_note": "heads and faces pixelated upstream by the perception stage, which fails closed",
+  "positions_only": false,
+  "preservation_hold": true,
+  "automatic_deletion": false,
+  "retention_h": 24
+ },
+ "agent": {
+  "t": 63.803,
+  "mode": "local",
+  "rules": [
+   {
+    "rule_id": "R-floor-warning",
+    "text": "Warn when a moving forklift will come within 0.8 m of a person in the next 3 s if it keeps its course, or a person is in its stopping zone (3 frames in a row)",
+    "type": "floor_zone",
+    "zone_id": null,
+    "classes": [
+     "person",
+     "forklift"
+    ],
+    "seconds": 3.0,
+    "distance_m": 0.8,
+    "closing_mps": null,
+    "enabled": true,
+    "source": "default",
+    "confirmed": true
+   }
+  ],
+  "events": [
+   {
+    "event_id": "EV-0001",
+    "type": "floor_warning",
+    "rule_id": "R-floor-warning",
+    "t_start": 1.565,
+    "t_detect": 1.565,
+    "location": [
+     11.46,
+     9.36
+    ],
+    "zone_id": null,
+    "track_ids": [
+     "S002:P1",
+     "S002:F1"
+    ],
+    "camera_ids": [
+     "camA"
+    ],
+    "severity": "warning",
+    "status": "resolved",
+    "summary": "S002:F1 will pass within 0.8 m of S002:P1 in 2.1 s if it keeps its course (gap 7.9 m)",
+    "evidence": [
+     {
+      "kind": "replay",
+      "camera_id": null,
+      "t": 1.565,
+      "supports": true,
+      "score": 3.0,
+      "image_ref": "1792825870176-00001-replay-t1_56",
+      "note": "condition held 3 frame(s) in a row (0.12 s); floor gap 7.95-8.14 m; predicted pass 0.21-0.62 m"
+     },
+     {
+      "kind": "crop",
+      "camera_id": "camA",
+      "t": 1.565,
+      "supports": null,
+      "score": null,
+      "image_ref": "1792825870325-00002-crop-camA-t1_56",
+      "note": "full-resolution close-up (1467x610 px of the privacy-filtered frame, x1.2)"
+     },
+     {
+      "kind": "redetect",
+      "camera_id": null,
+      "t": 1.565,
+      "supports": true,
+      "score": 8.614,
+      "image_ref": "1792825891598-00003-redetect-t1_56",
+      "note": "re-detected 1 person(s), 3 forklift(s) on a x1.48 crop of the raw frame inside the private perception stage; re-measured floor gap 8.61 m; tracker said 7.95 m; agreement within 2.38 m: yes"
+     }
+    ]
+   },
+   {
+    "event_id": "EV-0002",
+    "type": "floor_warning",
+    "rule_id": "R-floor-warning",
+    "t_start": 20.195,
+    "t_detect": 20.195,
+    "location": [
+     11.29,
+     9.08
+    ],
+    "zone_id": null,
+    "track_ids": [
+     "S032:P11",
+     "S032:F1"
+    ],
+    "camera_ids": [
+     "camA"
+    ],
+    "severity": "warning",
+    "status": "rejected",
+    "summary": "S032:F1 will pass within 0.8 m of S032:P11 in 1.7 s if it keeps its course (gap 1.5 m)",
+    "evidence": [
+     {
+      "kind": "replay",
+      "camera_id": null,
+      "t": 20.195,
+      "supports": false,
+      "score": 3.0,
+      "image_ref": "1792825907417-00004-replay-t20_20",
+      "note": "condition held 3 frame(s) in a row (0.12 s); floor gap 1.55-1.70 m; predicted pass 0.00-0.95 m; speed jumped 1.0 -> 2.1 m/s; speed jumped 2.3 -> 1.3 m/s"
+     },
+     {
+      "kind": "crop",
+      "camera_id": "camA",
+      "t": 20.195,
+      "supports": null,
+      "score": null,
+      "image_ref": "1792825907509-00005-crop-camA-t20_20",
+      "note": "full-resolution close-up (902x639 px of the privacy-filtered frame, x1.1)"
+     },
+     {
+      "kind": "redetect",
+      "camera_id": null,
+      "t": 20.195,
+      "supports": false,
+      "score": 3.46,
+      "image_ref": "1792825930301-00006-redetect-t20_20",
+      "note": "re-detected 1 person(s), 8 forklift(s) on a x1.41 crop of the raw frame inside the private perception stage; re-measured floor gap 3.46 m; tracker said 1.55 m; agreement within 0.46 m: no"
+     }
+    ]
+   },
+   {
+    "event_id": "EV-0003",
+    "type": "floor_warning",
+    "rule_id": "R-floor-warning",
+    "t_start": 37.763,
+    "t_detect": 37.763,
+    "location": [
+     12.13,
+     9.86
+    ],
+    "zone_id": null,
+    "track_ids": [
+     "D002:P14",
+     "D002:F1"
+    ],
+    "camera_ids": [
+     "camA"
+    ],
+    "severity": "warning",
+    "status": "resolved",
+    "summary": "D002:F1 will pass within 0.8 m of D002:P14 in 1.5 s if it keeps its course (gap 3.9 m)",
+    "evidence": [
+     {
+      "kind": "replay",
+      "camera_id": null,
+      "t": 37.763,
+      "supports": true,
+      "score": 3.0,
+      "image_ref": "1792825942552-00007-replay-t37_76",
+      "note": "condition held 3 frame(s) in a row (0.12 s); floor gap 3.87-4.02 m; predicted pass 0.14-0.61 m"
+     },
+     {
+      "kind": "crop",
+      "camera_id": "camA",
+      "t": 37.763,
+      "supports": null,
+      "score": null,
+      "image_ref": "1792825942663-00008-crop-camA-t37_76",
+      "note": "full-resolution close-up (742x657 px of the privacy-filtered frame, x1.1)"
+     },
+     {
+      "kind": "redetect",
+      "camera_id": null,
+      "t": 37.763,
+      "supports": true,
+      "score": 3.732,
+      "image_ref": "1792825963674-00011-redetect-t37_76",
+      "note": "re-detected 3 person(s), 6 forklift(s) on a x1.37 crop of the raw frame inside the private perception stage; re-measured floor gap 3.73 m; tracker said 3.87 m; agreement within 1.16 m: yes"
+     }
+    ]
+   },
+   {
+    "event_id": "EV-0004",
+    "type": "floor_warning",
+    "rule_id": "R-floor-warning",
+    "t_start": 37.843,
+    "t_detect": 37.843,
+    "location": [
+     14.08,
+     11.37
+    ],
+    "zone_id": null,
+    "track_ids": [
+     "D002:P13",
+     "D002:F1"
+    ],
+    "camera_ids": [
+     "camA"
+    ],
+    "severity": "warning",
+    "status": "resolved",
+    "summary": "D002:F1 will pass within 0.8 m of D002:P13 in 2.2 s if it keeps its course (gap 6.2 m)",
+    "evidence": [
+     {
+      "kind": "replay",
+      "camera_id": null,
+      "t": 37.843,
+      "supports": true,
+      "score": 3.0,
+      "image_ref": "1792825942741-00009-replay-t37_84",
+      "note": "condition held 3 frame(s) in a row (0.12 s); floor gap 6.16-6.31 m; predicted pass 0.00-0.00 m"
+     },
+     {
+      "kind": "crop",
+      "camera_id": "camA",
+      "t": 37.843,
+      "supports": null,
+      "score": null,
+      "image_ref": "1792825942807-00010-crop-camA-t37_84",
+      "note": "full-resolution close-up (735x678 px of the privacy-filtered frame, x1.1)"
+     },
+     {
+      "kind": "redetect",
+      "camera_id": null,
+      "t": 37.843,
+      "supports": true,
+      "score": 7.183,
+      "image_ref": "1792825983211-00012-redetect-t37_84",
+      "note": "re-detected 2 person(s), 4 forklift(s) on a x1.33 crop of the raw frame inside the private perception stage; re-measured floor gap 7.18 m; tracker said 6.16 m; agreement within 1.85 m: yes"
+     }
+    ]
+   }
+  ],
+  "approvals": [
+   {
+    "approval_id": "AP-0001",
+    "event_id": "EV-0001",
+    "action": "confirm_incident",
+    "summary": "Agent recommends CONFIRM: S002:F1 will pass within 0.8 m of S002:P1 in 2.1 s if it keeps its course (gap 7.9 m). short replay: condition held 3 frame(s) in a row (0.12 s); floor gap 7.95-8.14 m; predicted pass 0.21-0.62 m; second detector pass agrees: re-detected 1 person(s), 3 forklift(s) on a x1.48 crop of the raw frame inside the private perception stage; re-measured floor gap 8.61 m; tracker said 7.95 m; agreement within 2.38 m: yes. Approve = real hazard, alert the floor lead; reject = false alarm.",
+    "payload": {
+     "zone_id": null,
+     "location": [
+      11.46,
+      9.36
+     ],
+     "card": {
+      "verdict": "confirm",
+      "headline": "Agent recommends CONFIRM: the warning held for 3 frames with no tracking glitch, and a second detector agrees",
+      "numbers": [
+       {
+        "label": "Floor gap at the warning",
+        "value": "7.9 m"
+       },
+       {
+        "label": "Within 0.8 m",
+        "value": "in 2.1 s"
+       },
+       {
+        "label": "Closest predicted pass",
+        "value": "0.21 m (0.00-2.02)"
+       }
+      ]
+     }
+    },
+    "status": "approved",
+    "created_t": 12.369,
+    "decided_t": 16.929
+   },
+   {
+    "approval_id": "AP-0002",
+    "event_id": "EV-0002",
+    "action": "confirm_incident",
+    "summary": "Agent recommends REJECT (false alarm): S032:F1 will pass within 0.8 m of S032:P11 in 1.7 s if it keeps its course (gap 1.5 m). short replay: condition held 3 frame(s) in a row (0.12 s); floor gap 1.55-1.70 m; predicted pass 0.00-0.95 m; speed jumped 1.0 -> 2.1 m/s; speed jumped 2.3 -> 1.3 m/s. Approve = real hazard, alert the floor lead; reject = false alarm.",
+    "payload": {
+     "zone_id": null,
+     "location": [
+      11.29,
+      9.08
+     ],
+     "card": {
+      "verdict": "reject",
+      "headline": "Agent recommends REJECT: likely a tracking glitch (speed jumped 1.0 -> 2.1 m/s)",
+      "numbers": [
+       {
+        "label": "Floor gap at the warning",
+        "value": "1.5 m"
+       },
+       {
+        "label": "Within 0.8 m",
+        "value": "in 1.7 s"
+       },
+       {
+        "label": "Closest predicted pass",
+        "value": "0.00 m (0.00-0.21)"
+       }
+      ]
+     }
+    },
+    "status": "rejected",
+    "created_t": 31.683,
+    "decided_t": 33.723
+   },
+   {
+    "approval_id": "AP-0003",
+    "event_id": "EV-0003",
+    "action": "confirm_incident",
+    "summary": "Agent recommends CONFIRM: D002:F1 will pass within 0.8 m of D002:P14 in 1.5 s if it keeps its course (gap 3.9 m). short replay: condition held 3 frame(s) in a row (0.12 s); floor gap 3.87-4.02 m; predicted pass 0.14-0.61 m; second detector pass agrees: re-detected 3 person(s), 6 forklift(s) on a x1.37 crop of the raw frame inside the private perception stage; re-measured floor gap 3.73 m; tracker said 3.87 m; agreement within 1.16 m: yes. Approve = real hazard, alert the floor lead; reject = false alarm.",
+    "payload": {
+     "zone_id": null,
+     "location": [
+      12.13,
+      9.86
+     ],
+     "card": {
+      "verdict": "confirm",
+      "headline": "Agent recommends CONFIRM: the warning held for 3 frames with no tracking glitch, and a second detector agrees",
+      "numbers": [
+       {
+        "label": "Floor gap at the warning",
+        "value": "3.9 m"
+       },
+       {
+        "label": "Within 0.8 m",
+        "value": "in 1.5 s"
+       },
+       {
+        "label": "Closest predicted pass",
+        "value": "0.14 m (0.00-0.43)"
+       }
+      ]
+     }
+    },
+    "status": "approved",
+    "created_t": 48.383,
+    "decided_t": 50.303
+   },
+   {
+    "approval_id": "AP-0004",
+    "event_id": "EV-0004",
+    "action": "confirm_incident",
+    "summary": "Agent recommends CONFIRM: D002:F1 will pass within 0.8 m of D002:P13 in 2.2 s if it keeps its course (gap 6.2 m). short replay: condition held 3 frame(s) in a row (0.12 s); floor gap 6.16-6.31 m; predicted pass 0.00-0.00 m; second detector pass agrees: re-detected 2 person(s), 4 forklift(s) on a x1.33 crop of the raw frame inside the private perception stage; re-measured floor gap 7.18 m; tracker said 6.16 m; agreement within 1.85 m: yes. Approve = real hazard, alert the floor lead; reject = false alarm.",
+    "payload": {
+     "zone_id": null,
+     "location": [
+      14.08,
+      11.37
+     ],
+     "card": {
+      "verdict": "confirm",
+      "headline": "Agent recommends CONFIRM: the warning held for 3 frames with no tracking glitch, and a second detector agrees",
+      "numbers": [
+       {
+        "label": "Floor gap at the warning",
+        "value": "6.2 m"
+       },
+       {
+        "label": "Within 0.8 m",
+        "value": "in 2.2 s"
+       },
+       {
+        "label": "Closest predicted pass",
+        "value": "0.00 m (0.00-2.30)"
+       }
+      ]
+     }
+    },
+    "status": "approved",
+    "created_t": 58.163,
+    "decided_t": 60.243
+   }
+  ],
+  "alerts": [
+   {
+    "alert_id": "AL-0001",
+    "event_id": "EV-0001",
+    "t": 16.929,
+    "channel": "dashboard",
+    "audience": "floor_lead",
+    "message": "S002:F1 will pass within 0.8 m of S002:P1 in 2.1 s if it keeps its course (gap 7.9 m)"
+   },
+   {
+    "alert_id": "AL-0002",
+    "event_id": "EV-0003",
+    "t": 50.303,
+    "channel": "dashboard",
+    "audience": "floor_lead",
+    "message": "D002:F1 will pass within 0.8 m of D002:P14 in 1.5 s if it keeps its course (gap 3.9 m)"
+   },
+   {
+    "alert_id": "AL-0003",
+    "event_id": "EV-0004",
+    "t": 60.243,
+    "channel": "dashboard",
+    "audience": "floor_lead",
+    "message": "D002:F1 will pass within 0.8 m of D002:P13 in 2.2 s if it keeps its course (gap 6.2 m)"
+   }
+  ],
+  "trace": [
+   {
+    "event_id": "EV-0001",
+    "step": 1,
+    "t": 1.565,
+    "tool": "short_replay",
+    "tool_input": {
+     "track_ids": [
+      "S002:P1",
+      "S002:F1"
+     ],
+     "seconds": 1.5
+    },
+    "tool_output": {
+     "evidence": {
+      "kind": "replay",
+      "camera_id": null,
+      "t": 1.565,
+      "supports": true,
+      "score": 3.0,
+      "image_ref": "1792825870176-00001-replay-t1_56",
+      "note": "condition held 3 frame(s) in a row (0.12 s); floor gap 7.95-8.14 m; predicted pass 0.21-0.62 m"
+     }
+    },
+    "decision": "replay: sustained",
+    "reason": "Was it sustained, or a one-frame dip or a tracking jump? Look back over the last 1.5 s of floor measurements",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0001",
+    "step": 2,
+    "t": 1.565,
+    "tool": "sharper_crop",
+    "tool_input": {
+     "camera_id": "camA",
+     "x": 11.46,
+     "y": 9.36,
+     "radius_m": 1.5
+    },
+    "tool_output": {
+     "evidence": {
+      "kind": "crop",
+      "camera_id": "camA",
+      "t": 1.565,
+      "supports": null,
+      "score": null,
+      "image_ref": "1792825870325-00002-crop-camA-t1_56",
+      "note": "full-resolution close-up (1467x610 px of the privacy-filtered frame, x1.2)"
+     }
+    },
+    "decision": "close-up from camA stored (1792825870325-00002-crop-camA-t1_56)",
+    "reason": "Full-resolution close-up (already privacy-filtered) for the human reviewer",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0001",
+    "step": 3,
+    "t": 1.565,
+    "tool": "redetect",
+    "tool_input": {
+     "track_ids": [
+      "S002:P1",
+      "S002:F1"
+     ]
+    },
+    "tool_output": {
+     "started": true
+    },
+    "decision": "second detector pass started (result in a few seconds)",
+    "reason": "Run the detectors again on a sharper crop and re-measure the floor gap independently of the tracker",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0001",
+    "step": 4,
+    "t": 12.369,
+    "tool": "redetect_result",
+    "tool_input": {
+     "token": "rd-1"
+    },
+    "tool_output": {
+     "evidence": {
+      "kind": "redetect",
+      "camera_id": null,
+      "t": 1.565,
+      "supports": true,
+      "score": 8.614,
+      "image_ref": "1792825891598-00003-redetect-t1_56",
+      "note": "re-detected 1 person(s), 3 forklift(s) on a x1.48 crop of the raw frame inside the private perception stage; re-measured floor gap 8.61 m; tracker said 7.95 m; agreement within 2.38 m: yes"
+     }
+    },
+    "decision": "second detector pass agrees",
+    "reason": "result of the second detector pass that ran beside the stream",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0001",
+    "step": 5,
+    "t": 12.369,
+    "tool": "recommend",
+    "tool_input": {
+     "verdict": "confirm",
+     "headline": "Agent recommends CONFIRM: the warning held for 3 frames with no tracking glitch, and a second detector agrees"
+    },
+    "tool_output": {
+     "verdict": "confirm"
+    },
+    "decision": "recommends confirm",
+    "reason": "short replay: condition held 3 frame(s) in a row (0.12 s); floor gap 7.95-8.14 m; predicted pass 0.21-0.62 m; second detector pass agrees: re-detected 1 person(s), 3 forklift(s) on a x1.48 crop of the raw frame inside the private perception stage; re-measured floor gap 8.61 m; tracker said 7.95 m; agreement within 2.38 m: yes",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0001",
+    "step": 6,
+    "t": 12.369,
+    "tool": "request_approval",
+    "tool_input": {
+     "action": "confirm_incident",
+     "summary": "Agent recommends CONFIRM: S002:F1 will pass within 0.8 m of S002:P1 in 2.1 s if it keeps its course (gap 7.9 m). short replay: condition held 3 frame(s) in a row (0.12 s); floor gap 7.95-8.14 m; predicted pass 0.21-0.62 m; second detector pass agrees: re-detected 1 person(s), 3 forklift(s) on a x1.48 crop of the raw frame inside the private perception stage; re-measured floor gap 8.61 m; tracker said 7.95 m; agreement within 2.38 m: yes. Approve = real hazard, alert the floor lead; reject = false alarm."
+    },
+    "tool_output": {
+     "approval": {
+      "approval_id": "AP-0001",
+      "event_id": "EV-0001",
+      "action": "confirm_incident",
+      "summary": "Agent recommends CONFIRM: S002:F1 will pass within 0.8 m of S002:P1 in 2.1 s if it keeps its course (gap 7.9 m). short replay: condition held 3 frame(s) in a row (0.12 s); floor gap 7.95-8.14 m; predicted pass 0.21-0.62 m; second detector pass agrees: re-detected 1 person(s), 3 forklift(s) on a x1.48 crop of the raw frame inside the private perception stage; re-measured floor gap 8.61 m; tracker said 7.95 m; agreement within 2.38 m: yes. Approve = real hazard, alert the floor lead; reject = false alarm.",
+      "payload": {
+       "zone_id": null,
+       "location": [
+        11.46,
+        9.36
+       ],
+       "card": {
+        "verdict": "confirm",
+        "headline": "Agent recommends CONFIRM: the warning held for 3 frames with no tracking glitch, and a second detector agrees",
+        "numbers": [
+         {
+          "label": "Floor gap at the warning",
+          "value": "7.9 m"
+         },
+         {
+          "label": "Within 0.8 m",
+          "value": "in 2.1 s"
+         },
+         {
+          "label": "Closest predicted pass",
+          "value": "0.21 m (0.00-2.02)"
+         }
+        ]
+       }
+      },
+      "status": "pending",
+      "created_t": 12.369,
+      "decided_t": null
+     }
+    },
+    "decision": "asked a human: confirm_incident (AP-0001)",
+    "reason": "Only one camera sees this spot: a human makes the final call",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0001",
+    "step": 7,
+    "t": 16.929,
+    "tool": "human_decision",
+    "tool_input": {
+     "approval_id": "AP-0001",
+     "action": "confirm_incident",
+     "approved": true,
+     "reviewer": "scripted stand-in"
+    },
+    "tool_output": {
+     "status": "approved",
+     "decided_t": 16.929
+    },
+    "decision": "approved",
+    "reason": "decided by scripted stand-in in the dashboard",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0001",
+    "step": 8,
+    "t": 16.929,
+    "tool": "confirm_event",
+    "tool_input": {},
+    "tool_output": {
+     "status": "confirmed"
+    },
+    "decision": "confirmed",
+    "reason": "A human reviewer confirmed the hazard from the agent's evidence",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0001",
+    "step": 9,
+    "t": 16.929,
+    "tool": "send_alert",
+    "tool_input": {
+     "audience": "floor_lead",
+     "message": "S002:F1 will pass within 0.8 m of S002:P1 in 2.1 s if it keeps its course (gap 7.9 m)"
+    },
+    "tool_output": {
+     "alert": {
+      "alert_id": "AL-0001",
+      "event_id": "EV-0001",
+      "t": 16.929,
+      "channel": "dashboard",
+      "audience": "floor_lead",
+      "message": "S002:F1 will pass within 0.8 m of S002:P1 in 2.1 s if it keeps its course (gap 7.9 m)"
+     }
+    },
+    "decision": "alerted floor lead",
+    "reason": "Hazard confirmed by a human reviewer",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0001",
+    "step": 10,
+    "t": 16.969,
+    "tool": "resolve_event",
+    "tool_input": {},
+    "tool_output": {
+     "status": "resolved",
+     "t_end": 3.01
+    },
+    "decision": "resolved",
+    "reason": "The person and the forklift separated 14 s ago; incident logged",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0002",
+    "step": 1,
+    "t": 20.195,
+    "tool": "short_replay",
+    "tool_input": {
+     "track_ids": [
+      "S032:P11",
+      "S032:F1"
+     ],
+     "seconds": 1.5
+    },
+    "tool_output": {
+     "evidence": {
+      "kind": "replay",
+      "camera_id": null,
+      "t": 20.195,
+      "supports": false,
+      "score": 3.0,
+      "image_ref": "1792825907417-00004-replay-t20_20",
+      "note": "condition held 3 frame(s) in a row (0.12 s); floor gap 1.55-1.70 m; predicted pass 0.00-0.95 m; speed jumped 1.0 -> 2.1 m/s; speed jumped 2.3 -> 1.3 m/s"
+     }
+    },
+    "decision": "replay: not sustained / artefact",
+    "reason": "Was it sustained, or a one-frame dip or a tracking jump? Look back over the last 1.5 s of floor measurements",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0002",
+    "step": 2,
+    "t": 20.195,
+    "tool": "sharper_crop",
+    "tool_input": {
+     "camera_id": "camA",
+     "x": 11.29,
+     "y": 9.08,
+     "radius_m": 1.5
+    },
+    "tool_output": {
+     "evidence": {
+      "kind": "crop",
+      "camera_id": "camA",
+      "t": 20.195,
+      "supports": null,
+      "score": null,
+      "image_ref": "1792825907509-00005-crop-camA-t20_20",
+      "note": "full-resolution close-up (902x639 px of the privacy-filtered frame, x1.1)"
+     }
+    },
+    "decision": "close-up from camA stored (1792825907509-00005-crop-camA-t20_20)",
+    "reason": "Full-resolution close-up (already privacy-filtered) for the human reviewer",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0002",
+    "step": 3,
+    "t": 20.195,
+    "tool": "redetect",
+    "tool_input": {
+     "track_ids": [
+      "S032:P11",
+      "S032:F1"
+     ]
+    },
+    "tool_output": {
+     "started": true
+    },
+    "decision": "second detector pass started (result in a few seconds)",
+    "reason": "Run the detectors again on a sharper crop and re-measure the floor gap independently of the tracker",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0002",
+    "step": 4,
+    "t": 31.683,
+    "tool": "redetect_result",
+    "tool_input": {
+     "token": "rd-2"
+    },
+    "tool_output": {
+     "evidence": {
+      "kind": "redetect",
+      "camera_id": null,
+      "t": 20.195,
+      "supports": false,
+      "score": 3.46,
+      "image_ref": "1792825930301-00006-redetect-t20_20",
+      "note": "re-detected 1 person(s), 8 forklift(s) on a x1.41 crop of the raw frame inside the private perception stage; re-measured floor gap 3.46 m; tracker said 1.55 m; agreement within 0.46 m: no"
+     }
+    },
+    "decision": "second detector pass disagrees",
+    "reason": "result of the second detector pass that ran beside the stream",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0002",
+    "step": 5,
+    "t": 31.683,
+    "tool": "recommend",
+    "tool_input": {
+     "verdict": "reject",
+     "headline": "Agent recommends REJECT: likely a tracking glitch (speed jumped 1.0 -> 2.1 m/s)"
+    },
+    "tool_output": {
+     "verdict": "reject"
+    },
+    "decision": "recommends reject",
+    "reason": "short replay: condition held 3 frame(s) in a row (0.12 s); floor gap 1.55-1.70 m; predicted pass 0.00-0.95 m; speed jumped 1.0 -> 2.1 m/s; speed jumped 2.3 -> 1.3 m/s",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0002",
+    "step": 6,
+    "t": 31.683,
+    "tool": "request_approval",
+    "tool_input": {
+     "action": "confirm_incident",
+     "summary": "Agent recommends REJECT (false alarm): S032:F1 will pass within 0.8 m of S032:P11 in 1.7 s if it keeps its course (gap 1.5 m). short replay: condition held 3 frame(s) in a row (0.12 s); floor gap 1.55-1.70 m; predicted pass 0.00-0.95 m; speed jumped 1.0 -> 2.1 m/s; speed jumped 2.3 -> 1.3 m/s. Approve = real hazard, alert the floor lead; reject = false alarm."
+    },
+    "tool_output": {
+     "approval": {
+      "approval_id": "AP-0002",
+      "event_id": "EV-0002",
+      "action": "confirm_incident",
+      "summary": "Agent recommends REJECT (false alarm): S032:F1 will pass within 0.8 m of S032:P11 in 1.7 s if it keeps its course (gap 1.5 m). short replay: condition held 3 frame(s) in a row (0.12 s); floor gap 1.55-1.70 m; predicted pass 0.00-0.95 m; speed jumped 1.0 -> 2.1 m/s; speed jumped 2.3 -> 1.3 m/s. Approve = real hazard, alert the floor lead; reject = false alarm.",
+      "payload": {
+       "zone_id": null,
+       "location": [
+        11.29,
+        9.08
+       ],
+       "card": {
+        "verdict": "reject",
+        "headline": "Agent recommends REJECT: likely a tracking glitch (speed jumped 1.0 -> 2.1 m/s)",
+        "numbers": [
+         {
+          "label": "Floor gap at the warning",
+          "value": "1.5 m"
+         },
+         {
+          "label": "Within 0.8 m",
+          "value": "in 1.7 s"
+         },
+         {
+          "label": "Closest predicted pass",
+          "value": "0.00 m (0.00-0.21)"
+         }
+        ]
+       }
+      },
+      "status": "pending",
+      "created_t": 31.683,
+      "decided_t": null
+     }
+    },
+    "decision": "asked a human: confirm_incident (AP-0002)",
+    "reason": "Only one camera sees this spot: a human makes the final call",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0002",
+    "step": 7,
+    "t": 33.723,
+    "tool": "human_decision",
+    "tool_input": {
+     "approval_id": "AP-0002",
+     "action": "confirm_incident",
+     "approved": false,
+     "reviewer": "scripted stand-in"
+    },
+    "tool_output": {
+     "status": "rejected",
+     "decided_t": 33.723
+    },
+    "decision": "rejected",
+    "reason": "decided by scripted stand-in in the dashboard",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0002",
+    "step": 8,
+    "t": 33.723,
+    "tool": "reject_event",
+    "tool_input": {},
+    "tool_output": {
+     "status": "rejected",
+     "reason_category": "human_verdict_false_alarm"
+    },
+    "decision": "rejected by the human reviewer as a false alarm",
+    "reason": "A human reviewer judged it a false alarm",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0003",
+    "step": 1,
+    "t": 37.763,
+    "tool": "short_replay",
+    "tool_input": {
+     "track_ids": [
+      "D002:P14",
+      "D002:F1"
+     ],
+     "seconds": 1.5
+    },
+    "tool_output": {
+     "evidence": {
+      "kind": "replay",
+      "camera_id": null,
+      "t": 37.763,
+      "supports": true,
+      "score": 3.0,
+      "image_ref": "1792825942552-00007-replay-t37_76",
+      "note": "condition held 3 frame(s) in a row (0.12 s); floor gap 3.87-4.02 m; predicted pass 0.14-0.61 m"
+     }
+    },
+    "decision": "replay: sustained",
+    "reason": "Was it sustained, or a one-frame dip or a tracking jump? Look back over the last 1.5 s of floor measurements",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0003",
+    "step": 2,
+    "t": 37.763,
+    "tool": "sharper_crop",
+    "tool_input": {
+     "camera_id": "camA",
+     "x": 12.13,
+     "y": 9.86,
+     "radius_m": 1.5
+    },
+    "tool_output": {
+     "evidence": {
+      "kind": "crop",
+      "camera_id": "camA",
+      "t": 37.763,
+      "supports": null,
+      "score": null,
+      "image_ref": "1792825942663-00008-crop-camA-t37_76",
+      "note": "full-resolution close-up (742x657 px of the privacy-filtered frame, x1.1)"
+     }
+    },
+    "decision": "close-up from camA stored (1792825942663-00008-crop-camA-t37_76)",
+    "reason": "Full-resolution close-up (already privacy-filtered) for the human reviewer",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0003",
+    "step": 3,
+    "t": 37.763,
+    "tool": "redetect",
+    "tool_input": {
+     "track_ids": [
+      "D002:P14",
+      "D002:F1"
+     ]
+    },
+    "tool_output": {
+     "started": true
+    },
+    "decision": "second detector pass started (result in a few seconds)",
+    "reason": "Run the detectors again on a sharper crop and re-measure the floor gap independently of the tracker",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0004",
+    "step": 1,
+    "t": 37.843,
+    "tool": "short_replay",
+    "tool_input": {
+     "track_ids": [
+      "D002:P13",
+      "D002:F1"
+     ],
+     "seconds": 1.5
+    },
+    "tool_output": {
+     "evidence": {
+      "kind": "replay",
+      "camera_id": null,
+      "t": 37.843,
+      "supports": true,
+      "score": 3.0,
+      "image_ref": "1792825942741-00009-replay-t37_84",
+      "note": "condition held 3 frame(s) in a row (0.12 s); floor gap 6.16-6.31 m; predicted pass 0.00-0.00 m"
+     }
+    },
+    "decision": "replay: sustained",
+    "reason": "Was it sustained, or a one-frame dip or a tracking jump? Look back over the last 1.5 s of floor measurements",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0004",
+    "step": 2,
+    "t": 37.843,
+    "tool": "sharper_crop",
+    "tool_input": {
+     "camera_id": "camA",
+     "x": 14.08,
+     "y": 11.37,
+     "radius_m": 1.5
+    },
+    "tool_output": {
+     "evidence": {
+      "kind": "crop",
+      "camera_id": "camA",
+      "t": 37.843,
+      "supports": null,
+      "score": null,
+      "image_ref": "1792825942807-00010-crop-camA-t37_84",
+      "note": "full-resolution close-up (735x678 px of the privacy-filtered frame, x1.1)"
+     }
+    },
+    "decision": "close-up from camA stored (1792825942807-00010-crop-camA-t37_84)",
+    "reason": "Full-resolution close-up (already privacy-filtered) for the human reviewer",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0004",
+    "step": 3,
+    "t": 37.843,
+    "tool": "redetect",
+    "tool_input": {
+     "track_ids": [
+      "D002:P13",
+      "D002:F1"
+     ]
+    },
+    "tool_output": {
+     "started": true
+    },
+    "decision": "second detector pass started (result in a few seconds)",
+    "reason": "Run the detectors again on a sharper crop and re-measure the floor gap independently of the tracker",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0003",
+    "step": 4,
+    "t": 48.383,
+    "tool": "redetect_result",
+    "tool_input": {
+     "token": "rd-3"
+    },
+    "tool_output": {
+     "evidence": {
+      "kind": "redetect",
+      "camera_id": null,
+      "t": 37.763,
+      "supports": true,
+      "score": 3.732,
+      "image_ref": "1792825963674-00011-redetect-t37_76",
+      "note": "re-detected 3 person(s), 6 forklift(s) on a x1.37 crop of the raw frame inside the private perception stage; re-measured floor gap 3.73 m; tracker said 3.87 m; agreement within 1.16 m: yes"
+     }
+    },
+    "decision": "second detector pass agrees",
+    "reason": "result of the second detector pass that ran beside the stream",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0003",
+    "step": 5,
+    "t": 48.383,
+    "tool": "recommend",
+    "tool_input": {
+     "verdict": "confirm",
+     "headline": "Agent recommends CONFIRM: the warning held for 3 frames with no tracking glitch, and a second detector agrees"
+    },
+    "tool_output": {
+     "verdict": "confirm"
+    },
+    "decision": "recommends confirm",
+    "reason": "short replay: condition held 3 frame(s) in a row (0.12 s); floor gap 3.87-4.02 m; predicted pass 0.14-0.61 m; second detector pass agrees: re-detected 3 person(s), 6 forklift(s) on a x1.37 crop of the raw frame inside the private perception stage; re-measured floor gap 3.73 m; tracker said 3.87 m; agreement within 1.16 m: yes",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0003",
+    "step": 6,
+    "t": 48.383,
+    "tool": "request_approval",
+    "tool_input": {
+     "action": "confirm_incident",
+     "summary": "Agent recommends CONFIRM: D002:F1 will pass within 0.8 m of D002:P14 in 1.5 s if it keeps its course (gap 3.9 m). short replay: condition held 3 frame(s) in a row (0.12 s); floor gap 3.87-4.02 m; predicted pass 0.14-0.61 m; second detector pass agrees: re-detected 3 person(s), 6 forklift(s) on a x1.37 crop of the raw frame inside the private perception stage; re-measured floor gap 3.73 m; tracker said 3.87 m; agreement within 1.16 m: yes. Approve = real hazard, alert the floor lead; reject = false alarm."
+    },
+    "tool_output": {
+     "approval": {
+      "approval_id": "AP-0003",
+      "event_id": "EV-0003",
+      "action": "confirm_incident",
+      "summary": "Agent recommends CONFIRM: D002:F1 will pass within 0.8 m of D002:P14 in 1.5 s if it keeps its course (gap 3.9 m). short replay: condition held 3 frame(s) in a row (0.12 s); floor gap 3.87-4.02 m; predicted pass 0.14-0.61 m; second detector pass agrees: re-detected 3 person(s), 6 forklift(s) on a x1.37 crop of the raw frame inside the private perception stage; re-measured floor gap 3.73 m; tracker said 3.87 m; agreement within 1.16 m: yes. Approve = real hazard, alert the floor lead; reject = false alarm.",
+      "payload": {
+       "zone_id": null,
+       "location": [
+        12.13,
+        9.86
+       ],
+       "card": {
+        "verdict": "confirm",
+        "headline": "Agent recommends CONFIRM: the warning held for 3 frames with no tracking glitch, and a second detector agrees",
+        "numbers": [
+         {
+          "label": "Floor gap at the warning",
+          "value": "3.9 m"
+         },
+         {
+          "label": "Within 0.8 m",
+          "value": "in 1.5 s"
+         },
+         {
+          "label": "Closest predicted pass",
+          "value": "0.14 m (0.00-0.43)"
+         }
+        ]
+       }
+      },
+      "status": "pending",
+      "created_t": 48.383,
+      "decided_t": null
+     }
+    },
+    "decision": "asked a human: confirm_incident (AP-0003)",
+    "reason": "Only one camera sees this spot: a human makes the final call",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0003",
+    "step": 7,
+    "t": 50.303,
+    "tool": "human_decision",
+    "tool_input": {
+     "approval_id": "AP-0003",
+     "action": "confirm_incident",
+     "approved": true,
+     "reviewer": "scripted stand-in"
+    },
+    "tool_output": {
+     "status": "approved",
+     "decided_t": 50.303
+    },
+    "decision": "approved",
+    "reason": "decided by scripted stand-in in the dashboard",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0003",
+    "step": 8,
+    "t": 50.303,
+    "tool": "confirm_event",
+    "tool_input": {},
+    "tool_output": {
+     "status": "confirmed"
+    },
+    "decision": "confirmed",
+    "reason": "A human reviewer confirmed the hazard from the agent's evidence",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0003",
+    "step": 9,
+    "t": 50.303,
+    "tool": "send_alert",
+    "tool_input": {
+     "audience": "floor_lead",
+     "message": "D002:F1 will pass within 0.8 m of D002:P14 in 1.5 s if it keeps its course (gap 3.9 m)"
+    },
+    "tool_output": {
+     "alert": {
+      "alert_id": "AL-0002",
+      "event_id": "EV-0003",
+      "t": 50.303,
+      "channel": "dashboard",
+      "audience": "floor_lead",
+      "message": "D002:F1 will pass within 0.8 m of D002:P14 in 1.5 s if it keeps its course (gap 3.9 m)"
+     }
+    },
+    "decision": "alerted floor lead",
+    "reason": "Hazard confirmed by a human reviewer",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0003",
+    "step": 10,
+    "t": 50.843,
+    "tool": "resolve_event",
+    "tool_input": {},
+    "tool_output": {
+     "status": "resolved",
+     "t_end": 37.843
+    },
+    "decision": "resolved",
+    "reason": "The person and the forklift separated 13 s ago; incident logged",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0004",
+    "step": 4,
+    "t": 58.163,
+    "tool": "redetect_result",
+    "tool_input": {
+     "token": "rd-4"
+    },
+    "tool_output": {
+     "evidence": {
+      "kind": "redetect",
+      "camera_id": null,
+      "t": 37.843,
+      "supports": true,
+      "score": 7.183,
+      "image_ref": "1792825983211-00012-redetect-t37_84",
+      "note": "re-detected 2 person(s), 4 forklift(s) on a x1.33 crop of the raw frame inside the private perception stage; re-measured floor gap 7.18 m; tracker said 6.16 m; agreement within 1.85 m: yes"
+     }
+    },
+    "decision": "second detector pass agrees",
+    "reason": "result of the second detector pass that ran beside the stream",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0004",
+    "step": 5,
+    "t": 58.163,
+    "tool": "recommend",
+    "tool_input": {
+     "verdict": "confirm",
+     "headline": "Agent recommends CONFIRM: the warning held for 3 frames with no tracking glitch, and a second detector agrees"
+    },
+    "tool_output": {
+     "verdict": "confirm"
+    },
+    "decision": "recommends confirm",
+    "reason": "short replay: condition held 3 frame(s) in a row (0.12 s); floor gap 6.16-6.31 m; predicted pass 0.00-0.00 m; second detector pass agrees: re-detected 2 person(s), 4 forklift(s) on a x1.33 crop of the raw frame inside the private perception stage; re-measured floor gap 7.18 m; tracker said 6.16 m; agreement within 1.85 m: yes",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0004",
+    "step": 6,
+    "t": 58.163,
+    "tool": "request_approval",
+    "tool_input": {
+     "action": "confirm_incident",
+     "summary": "Agent recommends CONFIRM: D002:F1 will pass within 0.8 m of D002:P13 in 2.2 s if it keeps its course (gap 6.2 m). short replay: condition held 3 frame(s) in a row (0.12 s); floor gap 6.16-6.31 m; predicted pass 0.00-0.00 m; second detector pass agrees: re-detected 2 person(s), 4 forklift(s) on a x1.33 crop of the raw frame inside the private perception stage; re-measured floor gap 7.18 m; tracker said 6.16 m; agreement within 1.85 m: yes. Approve = real hazard, alert the floor lead; reject = false alarm."
+    },
+    "tool_output": {
+     "approval": {
+      "approval_id": "AP-0004",
+      "event_id": "EV-0004",
+      "action": "confirm_incident",
+      "summary": "Agent recommends CONFIRM: D002:F1 will pass within 0.8 m of D002:P13 in 2.2 s if it keeps its course (gap 6.2 m). short replay: condition held 3 frame(s) in a row (0.12 s); floor gap 6.16-6.31 m; predicted pass 0.00-0.00 m; second detector pass agrees: re-detected 2 person(s), 4 forklift(s) on a x1.33 crop of the raw frame inside the private perception stage; re-measured floor gap 7.18 m; tracker said 6.16 m; agreement within 1.85 m: yes. Approve = real hazard, alert the floor lead; reject = false alarm.",
+      "payload": {
+       "zone_id": null,
+       "location": [
+        14.08,
+        11.37
+       ],
+       "card": {
+        "verdict": "confirm",
+        "headline": "Agent recommends CONFIRM: the warning held for 3 frames with no tracking glitch, and a second detector agrees",
+        "numbers": [
+         {
+          "label": "Floor gap at the warning",
+          "value": "6.2 m"
+         },
+         {
+          "label": "Within 0.8 m",
+          "value": "in 2.2 s"
+         },
+         {
+          "label": "Closest predicted pass",
+          "value": "0.00 m (0.00-2.30)"
+         }
+        ]
+       }
+      },
+      "status": "pending",
+      "created_t": 58.163,
+      "decided_t": null
+     }
+    },
+    "decision": "asked a human: confirm_incident (AP-0004)",
+    "reason": "Only one camera sees this spot: a human makes the final call",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0004",
+    "step": 7,
+    "t": 60.243,
+    "tool": "human_decision",
+    "tool_input": {
+     "approval_id": "AP-0004",
+     "action": "confirm_incident",
+     "approved": true,
+     "reviewer": "scripted stand-in"
+    },
+    "tool_output": {
+     "status": "approved",
+     "decided_t": 60.243
+    },
+    "decision": "approved",
+    "reason": "decided by scripted stand-in in the dashboard",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0004",
+    "step": 8,
+    "t": 60.243,
+    "tool": "confirm_event",
+    "tool_input": {},
+    "tool_output": {
+     "status": "confirmed"
+    },
+    "decision": "confirmed",
+    "reason": "A human reviewer confirmed the hazard from the agent's evidence",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0004",
+    "step": 9,
+    "t": 60.243,
+    "tool": "send_alert",
+    "tool_input": {
+     "audience": "floor_lead",
+     "message": "D002:F1 will pass within 0.8 m of D002:P13 in 2.2 s if it keeps its course (gap 6.2 m)"
+    },
+    "tool_output": {
+     "alert": {
+      "alert_id": "AL-0003",
+      "event_id": "EV-0004",
+      "t": 60.243,
+      "channel": "dashboard",
+      "audience": "floor_lead",
+      "message": "D002:F1 will pass within 0.8 m of D002:P13 in 2.2 s if it keeps its course (gap 6.2 m)"
+     }
+    },
+    "decision": "alerted floor lead",
+    "reason": "Hazard confirmed by a human reviewer",
+    "mode": "local"
+   },
+   {
+    "event_id": "EV-0004",
+    "step": 10,
+    "t": 60.283,
+    "tool": "resolve_event",
+    "tool_input": {},
+    "tool_output": {
+     "status": "resolved",
+     "t_end": 37.843
+    },
+    "decision": "resolved",
+    "reason": "The person and the forklift separated 22 s ago; incident logged",
+    "mode": "local"
+   }
+  ],
+  "remembered_spots": []
+ }
+}
