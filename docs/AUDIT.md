@@ -28,6 +28,7 @@ The upstream [AWS test receipt](receipts/pytest-r56-20261027.txt) reports 275 pa
 ## Validation
 
 - **Local tests after incorporating upstream:** 283 passed, 5 skipped. Three skips require Windows symlink privileges; one is a pre-existing research regression and one needs an optional rendered camera fixture. One dependency deprecation warning remains.
+- **GitHub CI:** [Linux/Python 3.12 and Windows/Python 3.11](https://github.com/tonystark101-debug/floorsight/actions/runs/40387775725) each passed 286 tests with 2 skips. Both also passed public-site and JavaScript checks.
 - **Application:** 80 generated frames processed with real camera perception, local review policy and face filtering; zero drops and zero runtime errors. No AWS services were invoked.
 - **Rendered control check:** all four scenarios started. With control on, both in-path contacts were avoided (0.70 m and 0.65 m closest gaps); the tail contact remained. The combined code travelled 45.0 m in 40 seconds locally. This is a separate run from the historical AWS result of 27 m, with different code and environment; it does not establish a throughput improvement.
 - **Public site:** all 35 video references, local assets, anchors and current entry-document links pass the checker. Desktop and 360 px layouts were inspected; demo playback and archive deep links worked. The demo is 4:22.168, below five minutes.
