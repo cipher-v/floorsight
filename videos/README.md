@@ -12,7 +12,16 @@ simulated warehouse is our own renderer; its people are not real.
 
 | Video | Length | What it shows |
 |---|---|---|
-| [`floorsight-demo.mp4`](floorsight-demo.mp4) | 4 min 22 s | The demo: the problem, the floor map in metres, danger zones, smoothing, the app (automatic slow/stop, the agent's second look, the approval step), the simulated warehouse with the interlock off and on, failure cases, COOL, AWS, privacy. Narrated, captions burned in; subtitles in [`floorsight-demo.srt`](floorsight-demo.srt). |
+| [`floorsight-demo.mp4`](floorsight-demo.mp4) | 3 min 41 s | 27 October submission: problem and solution, recorded app review, current agent results, simulated control, OpenCV 5, AWS architecture, both award tracks, deployment and limits. Built locally from published media, with Amazon Polly narration and captions. [SRT](floorsight-demo.srt), [WebVTT](floorsight-demo.vtt), [build receipt](../docs/receipts/submission-video-20261027.json). |
+| [`earlier/2026-10-24-submission-demo.mp4`](earlier/2026-10-24-submission-demo.mp4) | 4 min 22 s | Previous demo, retained for comparison. It predates the current agent policy and evaluation. |
+
+The [editable section script](../scripts/video/submission-20261027.json) contains
+the narration, media references and chapter structure. Rebuild with
+[`build_submission.py`](../scripts/video/build_submission.py), FFmpeg, Pillow 12.1.0
+and the pinned boto3 dependency. Amazon Polly access is required for narration.
+The new cut uses the generic team label **Team Floorsight** because individual
+names and team footage were not supplied. Historical app approvals are explicitly
+labelled as scripted; current tests are identified as synthetic.
 
 ## Simulated warehouse: the forklift interlock in a closed loop (24 Oct)
 

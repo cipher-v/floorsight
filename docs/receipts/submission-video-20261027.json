@@ -1,0 +1,103 @@
+{
+  "schema": "floorsight.submission-video.v1",
+  "voice": "Matthew",
+  "narration": "Amazon Polly synthetic voice",
+  "team": "Team Floorsight",
+  "sections": [
+    {
+      "id": "intro",
+      "start_s": 0,
+      "duration_s": 11.48,
+      "source": "generated title card",
+      "narration_s": 10.848
+    },
+    {
+      "id": "problem",
+      "start_s": 11.48,
+      "duration_s": 14.04,
+      "source": "docs/report/figures/pixels-vs-floor-clip-dev-004.jpg",
+      "narration_s": 13.416
+    },
+    {
+      "id": "vision",
+      "start_s": 25.52,
+      "duration_s": 20.0,
+      "source": "videos/real-clips/clip-dev-004-overlay.mp4",
+      "narration_s": 19.368
+    },
+    {
+      "id": "app",
+      "start_s": 45.52,
+      "duration_s": 16.4,
+      "source": "videos/app/app-real-clips.webm",
+      "narration_s": 15.768
+    },
+    {
+      "id": "agent",
+      "start_s": 61.92,
+      "duration_s": 19.88,
+      "source": "generated title card",
+      "narration_s": 19.248
+    },
+    {
+      "id": "results",
+      "start_s": 81.8,
+      "duration_s": 16.32,
+      "source": "generated title card",
+      "narration_s": 15.72
+    },
+    {
+      "id": "floorresults",
+      "start_s": 98.12,
+      "duration_s": 17.0,
+      "source": "generated title card",
+      "narration_s": 16.368
+    },
+    {
+      "id": "control",
+      "start_s": 115.12,
+      "duration_s": 13.76,
+      "source": "videos/simulator/interlock-off.mp4",
+      "narration_s": 13.128
+    },
+    {
+      "id": "controlon",
+      "start_s": 128.88,
+      "duration_s": 17.24,
+      "source": "videos/simulator/interlock-on.mp4",
+      "narration_s": 16.608
+    },
+    {
+      "id": "aws",
+      "start_s": 146.12,
+      "duration_s": 19.68,
+      "source": "generated title card",
+      "narration_s": 19.056
+    },
+    {
+      "id": "cool",
+      "start_s": 165.8,
+      "duration_s": 19.08,
+      "source": "generated title card",
+      "narration_s": 18.456
+    },
+    {
+      "id": "reproduce",
+      "start_s": 184.88,
+      "duration_s": 18.2,
+      "source": "generated title card",
+      "narration_s": 17.592
+    },
+    {
+      "id": "close",
+      "start_s": 203.08,
+      "duration_s": 18.44,
+      "source": "generated title card",
+      "narration_s": 17.832
+    }
+  ],
+  "duration_s": 221.621333,
+  "bytes": 7401200,
+  "sha256": "80d4990f45a6751bc914a10a0cdbc15bac6e9ea4f0633c5fff3b1776a113fb40",
+  "spec_sha256": "918b530e0d6135bbeab0bd29a34dbace70ed5fe1f40e459540ea486da0747b90"
+}

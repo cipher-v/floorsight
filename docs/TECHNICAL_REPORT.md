@@ -52,7 +52,7 @@ In the earlier AWS run, a second check identified a tracking glitch and led to r
 
 [Trace walkthrough and raw traces](receipts/traces/README.md) · [Earlier run](receipts/app-run-02-summary-20261024.json) · [Final run](receipts/app-run-09-summary-20261024.json).
 
-The recorded reviewer was a scripted stand-in following the recommendation. A real person can use the same approval controls, but no supervisor usability study has been completed. These demonstrations establish orchestration and traceability, not general agent accuracy. The saved video predates the stricter recommendation policy below.
+The recorded reviewer was a scripted stand-in following the recommendation. A real person can use the same approval controls, but no supervisor usability study has been completed. These demonstrations establish orchestration and traceability, not general agent accuracy. The historical app footage predates the stricter policy below; the 27 October submission video labels that footage and explains the current policy and new results separately.
 
 The 27 October code change makes conflicting or missing measurements uncertain.
 A tracking jump alone can no longer justify a rejection recommendation, and a

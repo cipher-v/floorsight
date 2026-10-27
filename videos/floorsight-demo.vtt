@@ -1,242 +1,281 @@
 WEBVTT
 
 1
-00:00:00.000 --> 00:00:03.178
-Floorsight measures how close forklifts come to people,
-slows or stops the forklift in time, and
+00:00:00.000 --> 00:00:03.937
+Meet Floorsight, our entry for the OpenCV AI Competition.
 
 2
-00:00:03.228 --> 00:00:06.406
-lets a person review.
+00:00:03.967 --> 00:00:07.378
+We help safety teams measure forklift risk from existing cameras,
+check the evidence, and
 
 3
-00:00:07.067 --> 00:00:12.273
-Forklifts and people share the same floor. Most
-factories already record CCTV, but nobody
+00:00:07.408 --> 00:00:10.818
+review a warning before alerting a supervisor.
 
 4
-00:00:12.323 --> 00:00:17.529
-watches it live, and a camera image cannot tell you how
-far a person really is from a forklift.
+00:00:11.480 --> 00:00:14.065
+A worker can look almost touching a forklift in a camera image,
+while being metres away on
 
 5
-00:00:18.179 --> 00:00:23.337
-On screen, this seated operator seems to touch the
-forklift. On the floor map they are about
+00:00:14.095 --> 00:00:16.680
+the floor.
 
 6
-00:00:23.387 --> 00:00:28.545
-three metres away. A pixel rule would alarm all day.
-Floorsight measures in metres.
+00:00:16.710 --> 00:00:19.485
+Pixel distance can create misleading alarms.
 
 7
-00:00:29.212 --> 00:00:34.018
-OpenCV 5's line-segment detector finds the floor's main
-directions. Their vanishing points and
+00:00:19.515 --> 00:00:22.176
+Floorsight maps the scene onto the floor, so a reviewer gets an
+estimated distance and its
 
 8
-00:00:34.068 --> 00:00:38.874
-two size references turn one ordinary camera into a
-floor map in metres, with its error: the
+00:00:22.206 --> 00:00:24.866
+uncertainty.
 
 9
-00:00:38.924 --> 00:00:43.730
-camera sits 3.56 metres up, plus or minus five percent.
+00:00:25.520 --> 00:00:29.005
+OpenCV five handles camera geometry, motion, tracking, risk
+zones, privacy filtering and
 
 10
-00:00:44.380 --> 00:00:48.326
-Every moving forklift carries its danger zone: where it
-travels before it can stop, where its
+00:00:29.035 --> 00:00:32.520
+video.
 
 11
-00:00:48.376 --> 00:00:52.322
-rear swings, and what a tall load hides, each drawn from
-sixty-four sampled variations. If it
+00:00:32.550 --> 00:00:36.412
+Separate PyTorch models detect people, forklifts and loads.
 
 12
-00:00:52.372 --> 00:00:56.318
-will pass within 0.8 metres of a person in the next
-three seconds on its course, Floorsight
+00:00:36.442 --> 00:00:41.405
+We estimate a close pass, including stopping distance, turning
+space and hidden areas.
 
 13
-00:00:56.368 --> 00:01:00.314
-warns.
+00:00:41.435 --> 00:00:44.858
+Real footage is processed offline; this is not live braking.
 
 14
-00:01:01.647 --> 00:01:05.683
-The detectors redraw every outline from scratch, so the
-raw zones jittered. A Kalman filter on
+00:00:45.520 --> 00:00:49.082
+Here is the working dashboard replaying recorded factory footage.
 
 15
-00:01:05.733 --> 00:01:09.769
-every track, and a second one on the turn rate, now hold
-them steady: the outline's jump between
+00:00:49.112 --> 00:00:53.575
+A warning links the camera view, floor map, measurements and
+review history.
 
 16
-00:01:09.819 --> 00:01:13.855
-frames fell from about 43 centimetres to about 12, and
-false turns that bent the zone toward
+00:00:53.605 --> 00:00:57.567
+The agent requests a short replay, a close-up and a second
+measurement.
 
 17
-00:01:13.905 --> 00:01:17.941
-people are gone.
+00:00:57.597 --> 00:01:01.258
+A reviewer can inspect the evidence, then approve or reject the
+warning.
 
 18
-00:01:21.413 --> 00:01:25.815
-This is the app, on an AWS Graviton4 instance with the
-Cloud Optimized OpenCV build. Six real
+00:01:01.920 --> 00:01:04.295
+The agent does more than describe a picture.
 
 19
-00:01:25.865 --> 00:01:30.267
-clips replay as a live feed onto the floor map.
+00:01:04.325 --> 00:01:07.762
+Visual evidence changes what it asks for and recommends next.
 
 20
-00:01:31.413 --> 00:01:36.051
-When a warning is confirmed, the machine acts first:
-Floorsight slows the forklift to walking
+00:01:07.792 --> 00:01:10.567
+A tracking jump alone cannot dismiss a hazard.
 
 21
-00:01:36.101 --> 00:01:40.739
-pace, or stops it if the person is in its path. Then the
-agent replays the last one and a half
+00:01:10.597 --> 00:01:13.410
+Conflicting or missing measurements stay uncertain.
 
 22
-00:01:40.789 --> 00:01:45.427
-seconds, takes a close-up, measures again, and
-recommends in one line.
+00:01:13.440 --> 00:01:16.165
+Floor-warning alerts require human approval.
 
 23
-00:01:50.413 --> 00:01:53.507
-A person approves or rejects afterwards. Only approved
-warnings reach the floor lead, through
+00:01:16.195 --> 00:01:21.138
+The demonstrated planner is local; live Bedrock access remains
+blocked by account settings.
 
 24
-00:01:53.557 --> 00:01:56.651
-Amazon SNS.
+00:01:21.800 --> 00:01:25.203
+In controlled two-camera scenes, false exit alerts fell from
+eight to zero, while all eight
 
 25
-00:01:57.301 --> 00:02:00.923
-On the third warning, the forklift pulled away from a
-stop in a new direction; the agent
+00:01:25.233 --> 00:01:28.637
+visible hazards still produced alerts.
 
 26
-00:02:00.973 --> 00:02:04.595
-recognises that as real motion, not a tracking glitch.
+00:01:28.667 --> 00:01:32.380
+All sixteen cases without a second camera went to human review.
 
 27
-00:02:07.301 --> 00:02:10.227
-In this run: 3 warnings, each saved with every step to a
-trace, and the morning report sums up
+00:01:32.410 --> 00:01:34.935
+These are executable synthetic tests with saved evidence and
+traces, not a field accuracy
 
 28
-00:02:10.277 --> 00:02:13.203
-the shift.
+00:01:34.965 --> 00:01:37.490
+claim.
 
 29
-00:02:13.868 --> 00:02:18.750
-Recorded video cannot show a forklift being stopped, so
-we built a simulated warehouse whose
+00:01:38.120 --> 00:01:40.874
+On eighty synthetic floor warnings, hazardous rejection
+recommendations fell from sixteen to
 
 30
-00:02:18.800 --> 00:02:23.682
-forklift obeys Floorsight. Without the interlock, it
-hits the picker who steps into its path.
+00:01:40.904 --> 00:01:43.657
+zero.
 
 31
-00:02:26.001 --> 00:02:30.241
-With it, the same vision pipeline sees the picker, the
-forklift stops, waits until the picker is
+00:01:43.687 --> 00:01:47.150
+False candidates recommended for action fell by forty percent.
 
 32
-00:02:30.291 --> 00:02:34.531
-seen clear of its path, then drives on, slowing as it
-passes. Both people who stepped into its
+00:01:47.180 --> 00:01:49.417
+All cases still require review.
 
 33
-00:02:34.581 --> 00:02:38.821
-path were passed without contact. It costs time: in
-forty seconds it drove 27 metres instead of
+00:01:49.447 --> 00:01:51.938
+We count uncertainty as actionable, so the score cannot improve
+just by hiding difficult
 
 34
-00:02:38.871 --> 00:02:43.111
-80.
+00:01:51.968 --> 00:01:54.458
+cases.
 
 35
-00:02:46.668 --> 00:02:51.826
-It is the same app and the same stop logic. Braking
-cannot help someone who walks into the back
+00:01:55.120 --> 00:01:58.332
+To test intervention, we built a simulated warehouse.
 
 36
-00:02:51.876 --> 00:02:57.034
-of a forklift driving away, and nothing can stop for a
-person no camera sees. We report both.
+00:01:58.362 --> 00:02:02.500
+Without control, the forklift contacts two people who enter its
+path.
 
 37
-00:03:02.668 --> 00:03:07.538
-Our hardest real case: on the twentieth of October the
-forklift's outline swerved toward this
+00:02:02.530 --> 00:02:05.359
+This lets us test feedback from vision to movement without
+claiming that software can stop a
 
 38
-00:03:07.588 --> 00:03:12.458
-operator in its last forty milliseconds, 0.67 metres,
-and the warning came too late.
+00:02:05.389 --> 00:02:08.218
+truck in recorded video.
 
 39
-00:03:13.108 --> 00:03:18.080
-Measured again with the publishable detectors and
-smoothed tracks, the same clip never comes
+00:02:08.880 --> 00:02:13.292
+With control on, both in-path contacts were avoided in that saved
+scenario.
 
 40
-00:03:18.130 --> 00:03:23.102
-closer than 1.55 metres. Our earlier warnings here came
-from a turn the new filter shows was
+00:02:13.322 --> 00:02:18.147
+The cost was slower work: twenty-seven metres travelled instead
+of eighty in forty seconds.
 
 41
-00:03:23.152 --> 00:03:28.124
-noise. With one camera we cannot say which outline is
-right; at that moment they disagree by
+00:02:18.177 --> 00:02:22.902
+The system cannot prevent every contact, or react to a person no
+camera sees.
 
 42
-00:03:28.174 --> 00:03:33.146
-about 1.2 metres, and no warning based on a forklift's
-course can foresee a real swerve.
+00:02:22.932 --> 00:02:25.458
+Real forklift integration has not been performed.
 
 43
-00:03:33.808 --> 00:03:38.486
-On the same Graviton4 instance, the COOL build runs
-adaptive threshold seven times as fast and
+00:02:26.120 --> 00:02:30.174
+The architecture connects cameras, OpenCV perception, floor-risk
+estimates and the review
 
 44
-00:03:38.536 --> 00:03:43.214
-one stream of our OpenCV chain ten percent faster, but
-resize and four parallel processes are
+00:02:30.204 --> 00:02:34.257
+agent on an AWS Graviton instance using COOL.
 
 45
-00:03:43.264 --> 00:03:47.942
-slower, and our whole perception stage, spent in neural
-detectors, was three percent slower. We
+00:02:34.287 --> 00:02:37.997
+S3 stores evidence, DynamoDB keeps track history, CloudWatch
+records activity, and SNS
 
 46
-00:03:47.992 --> 00:03:52.670
-also reproduced a crash in COOL's polygon fill.
+00:02:38.027 --> 00:02:41.737
+delivers approved alerts.
 
 47
-00:03:53.320 --> 00:03:59.222
-Everything runs in one private AWS deployment, built
-with Terraform: evidence in S3, track
+00:02:41.767 --> 00:02:45.146
+The recorded AWS run exercised all four adapters.
 
 48
-00:03:59.272 --> 00:04:05.174
-history in DynamoDB, alerts through SNS, metrics in
-CloudWatch, and no open inbound port.
+00:02:45.800 --> 00:02:48.691
+For the COOL track, we publish the imported build, Graviton
+configuration and baseline
 
 49
-00:04:05.824 --> 00:04:10.118
-Privacy runs first and fails closed: heads and faces are
-pixelated before anything is stored or
+00:02:48.721 --> 00:02:51.612
+comparisons.
 
 50
-00:04:10.168 --> 00:04:14.462
-shown, covering 98 percent of the heads the earlier
-detectors found.
+00:02:51.642 --> 00:02:54.609
+The historical OpenCV chain improved by one point one times, but
+full perception did not
+
+51
+00:02:54.639 --> 00:02:57.605
+improve.
+
+52
+00:02:57.635 --> 00:03:01.822
+New quality-checked experiments also found no meaningful pipeline
+speedup.
+
+53
+00:03:01.852 --> 00:03:04.226
+Detector inference remains the main bottleneck.
+
+54
+00:03:04.880 --> 00:03:09.771
+The public repository includes a self-contained simulator, three
+hundred and six passing
+
+55
+00:03:09.801 --> 00:03:14.692
+tests on both Linux and Windows, evaluation scripts, model
+revisions and raw receipts.
+
+56
+00:03:14.722 --> 00:03:19.322
+Terraform, bootstrap code and a deployment guide are included for
+AWS.
+
+57
+00:03:19.352 --> 00:03:22.442
+No private footage or credentials are needed to run the
+simulator.
+
+58
+00:03:23.080 --> 00:03:27.442
+Floorsight turns existing cameras into measured, reviewable
+safety evidence.
+
+59
+00:03:27.472 --> 00:03:30.069
+Our contribution is the combination of floor geometry, an
+evidence-driven agent and human
+
+60
+00:03:30.099 --> 00:03:32.697
+control.
+
+61
+00:03:32.727 --> 00:03:37.002
+The code, deployment instructions, demo and limitations are
+public.
+
+62
+00:03:37.032 --> 00:03:40.882
+The next step is independent labelled footage and testing with
+real safety teams.
 

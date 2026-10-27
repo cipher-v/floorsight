@@ -2,7 +2,7 @@
 
 The saved 23–24 October runs used COOL on EC2 Graviton4. [Build evidence](../receipts/cool-opencv-build-20261023.txt) · [App receipt](../receipts/app-run-09-summary-20261024.json).
 
-This guide describes a fresh deployment from the public repository. The repository review validated Terraform locally; it did not inspect, start or change the existing AWS account. Existing instances may use older code bundles.
+This guide describes a fresh deployment from the public repository. Terraform formatting and validation passed on 27 October. Separate evaluation jobs used the existing Graviton instance and then stopped it; they did not deploy this repository revision as a running judge endpoint. Existing instances may use older code bundles.
 
 ## What Terraform creates
 

@@ -39,7 +39,7 @@
 <h1>Floorsight</h1>
 <p class="intro">Measure forklift risk from existing CCTV. See floor distances, check a predicted close pass, and review the evidence before sending an alert.</p>
 <nav aria-label="Project links">
-<a href="#demo">Watch the 4:22 demo</a>
+<a href="#demo">Watch the 3:41 submission video</a>
 <a href="https://github.com/tonystark101-debug/floorsight/blob/main/docs/TECHNICAL_REPORT.md">Read the report</a>
 <a href="https://github.com/tonystark101-debug/floorsight">Get the code</a>
 <a href="https://github.com/tonystark101-debug/floorsight/blob/main/docs/JUDGING.md">Judge guide</a>
@@ -53,12 +53,12 @@
 <div class="result"><strong>3 reviewed warnings</strong><p>Final AWS run: three approvals and three SNS alerts. The recorded reviewer was scripted.</p></div>
 <div class="result"><strong>Measured in metres</strong><p>Floor geometry accounts for camera perspective. Distances still depend on calibration and detection quality.</p></div>
 </section>
-<p class="lead">New controlled agent checks · 27 October: false exit alerts fell from 8 to 0, with all 8 visible hazards retained. Floor-warning rejection recommendations fell from 16 hazardous cases to 0. These are synthetic tests; the saved video predates the new policy. <a href="https://github.com/tonystark101-debug/floorsight/blob/main/docs/EVALUATION.md">Protocol, limits and traces</a>.</p>
+<p class="lead">New controlled agent checks · 27 October: false exit alerts fell from 8 to 0, with all 8 visible hazards retained. Floor-warning rejection recommendations fell from 16 hazardous cases to 0. These synthetic results and the current policy are explained in the new submission video. <a href="https://github.com/tonystark101-debug/floorsight/blob/main/docs/EVALUATION.md">Protocol, limits and traces</a>.</p>
 <p class="lead"><a href="#simulation">Control comparison</a> · <a href="#real-clips">Real clips</a> · <a href="#privacy">Privacy checks</a> · <a href="#archive">Earlier work</a></p>
 <h2>The demo</h2>
 
 <div class="grid wide">
-<figure id="demo"><video aria-labelledby="demo-title" controls preload="none" playsinline poster="docs/report/figures/pixels-vs-floor-clip-dev-004.jpg" src="videos/floorsight-demo.mp4"><track kind="captions" src="videos/floorsight-demo.vtt" srclang="en" label="English"></video><figcaption><b id="demo-title">Floorsight demo (4 min 22 s)</b><span>The problem, the floor map in metres, danger zones, smoothing, the app (automatic slow/stop, the agent&#x27;s second look, the approval step), the simulated warehouse with the interlock off and on, failure cases, COOL, AWS, privacy. Narrated, captions burned in.</span> <a class="dl" href="videos/floorsight-demo.mp4" download>download</a></figcaption></figure>
+<figure id="demo"><video aria-labelledby="demo-title" controls preload="none" playsinline poster="videos/floorsight-demo-poster.jpg" src="videos/floorsight-demo.mp4"><track kind="captions" src="videos/floorsight-demo.vtt" srclang="en" label="English"></video><figcaption><b id="demo-title">Floorsight submission video · 27 October (3 min 41 s)</b><span>The problem and solution, recorded app review, current agent results, simulated control, OpenCV 5, AWS architecture, COOL measurements, deployment code and limitations. Historical app footage is labelled; narrated with Amazon Polly, with captions.</span> <a class="dl" href="videos/floorsight-demo.mp4" download>download</a></figcaption></figure>
 </div>
 <h2 id="simulation">Simulation: what changes when control is on</h2>
 <p class="lead">Four rendered ceiling cameras feed the simulator&#x27;s OpenCV perception pipeline; the simulated forklift obeys Floorsight&#x27;s slow/stop commands. Results: in-path contacts 2 of 2 without the interlock, 0 of 2 with it (closest 0.70 m and 0.65 m); 27 m driven in 40 s instead of 80 m.</p>
@@ -96,6 +96,7 @@
 <figure id="fail-closed-filtered"><video aria-labelledby="fail-closed-filtered-title" controls preload="none" playsinline src="videos/real-clips/privacy-filtered/fail-closed-test-filtered.mp4"></video><figcaption><b id="fail-closed-filtered-title">Fail-closed test, filter output only</b> <a class="dl" href="videos/real-clips/privacy-filtered/fail-closed-test-filtered.mp4" download>download</a></figcaption></figure>
 </div>
 <details id="archive"><summary>Earlier videos (superseded)</summary>
+<p class="lead"><a href="videos/earlier/2026-10-24-submission-demo.mp4">24 October demo (4:22)</a>: preserved for reference; superseded by the 27 October submission video above.</p>
 <p class="lead">Superseded: some numbers in these were corrected later (for example, screen-002 no longer warns once the turn-rate noise is filtered). The final historical numbers are in the demo and <a href="https://github.com/tonystark101-debug/floorsight/blob/main/docs/TECHNICAL_REPORT.md">report</a>.</p>
 <div class="grid">
 <figure id="cameras-demo_001"><video aria-labelledby="cameras-demo_001-title" controls preload="none" playsinline src="videos/simulator/cameras-demo_001/cam1.mp4"></video><figcaption><b id="cameras-demo_001-title">17 Oct: simulated camera 1 (3 min)</b><span>The first simulated scenario, rendered.</span> <a class="dl" href="videos/simulator/cameras-demo_001/cam1.mp4" download>download</a></figcaption></figure>

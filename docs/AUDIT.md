@@ -31,7 +31,7 @@ The upstream [AWS test receipt](receipts/pytest-r56-20261027.txt) reports 275 pa
 - **GitHub CI:** [Linux/Python 3.12 and Windows/Python 3.11](https://github.com/tonystark101-debug/floorsight/actions/runs/40387775725) each passed 286 tests with 2 skips. Both also passed public-site and JavaScript checks.
 - **Application:** 80 generated frames processed with real camera perception, local review policy and face filtering; zero drops and zero runtime errors. No AWS services were invoked.
 - **Rendered control check:** all four scenarios started. With control on, both in-path contacts were avoided (0.70 m and 0.65 m closest gaps); the tail contact remained. The combined code travelled 45.0 m in 40 seconds locally. This is a separate run from the historical AWS result of 27 m, with different code and environment; it does not establish a throughput improvement.
-- **Public site:** all 35 video references, local assets, anchors and current entry-document links pass the checker. Desktop and 360 px layouts were inspected; demo playback and archive deep links worked. The demo is 4:22.168, below five minutes.
+- **Public site:** all 35 video references, local assets, anchors and current entry-document links pass the checker. Desktop and 360 px layouts were inspected; demo playback and archive deep links worked. The initial 4:22.168 demo was replaced by the final edit described below.
 - **Infrastructure:** Terraform formatting and validation pass using the existing provider lock. No plan or apply was run.
 - **Code/dependencies:** Python compilation, JavaScript syntax and `pip check` pass.
 
@@ -66,6 +66,25 @@ warning on each. Agent evaluation, artifact upload, gallery and JavaScript check
 also passed.
 The new cloud jobs used an isolated directory on the existing Graviton instance;
 they did not deploy the application or send SNS alerts.
+
+## Final submission publication
+
+PR #1 was merged on 27 October. The README now maps OpenCV 5, AWS, Agentic Vision
+and COOL directly to implementation and evidence. Terraform formatting and
+validation passed again; [the infrastructure map](../infra/README.md) identifies
+the deployment, bootstrap and verification code.
+
+The new [3:41 submission video](https://tonystark101-debug.github.io/floorsight/#demo)
+replaces the older demo. It explains the current agent evaluation, labels the
+historical app recording and scripted approvals, and distinguishes simulated
+control from offline real footage. It has narration, burned-in captions, WebVTT,
+an editable section script and a [build receipt](receipts/submission-video-20261027.json).
+Representative frames from every section were inspected and the complete file
+passed FFmpeg decoding. The previous demo remains in the video archive.
+
+The video uses Team Floorsight; individual names and footage were not supplied.
+Publication does not confirm a working judge endpoint, a live-demo arrangement,
+or completion of the owner's Devpost submission. [Submission links](SUBMISSION.md).
 
 ## What still needs work
 

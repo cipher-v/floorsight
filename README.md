@@ -4,7 +4,9 @@
 
 Floorsight maps people and forklifts onto the floor, predicts close passes, and gives a reviewer the measurements behind each warning. In the simulator, it also slows and stops the forklift.
 
-[Watch the 4:22 demo](https://tonystark101-debug.github.io/floorsight/#demo) · [Technical report](docs/TECHNICAL_REPORT.md) · [Judge guide](docs/JUDGING.md) · [All videos](https://tonystark101-debug.github.io/floorsight/)
+[Watch the submission video](https://tonystark101-debug.github.io/floorsight/#demo) · [Technical report](docs/TECHNICAL_REPORT.md) · [Judge guide](docs/JUDGING.md) · [AWS deployment](docs/aws/DEPLOY.md)
+
+[Submission links and concise project description](docs/SUBMISSION.md)
 
 > **Prototype:** six recorded factory clips and a simulated warehouse. Real clips are processed offline; braking commands are applied only in simulation. No field safety validation has been completed.
 
@@ -15,6 +17,20 @@ A person who looks close to a forklift in a camera image may be metres away on t
 Floorsight uses OpenCV 5 to recover floor geometry, smooth movement, and estimate distance with uncertainty. It flags a predicted pass within 0.8 m over the next 3 seconds. A review agent checks the recent track, requests a close-up and a second detector measurement, then recommends a decision. The reviewer approves or rejects the incident; approved forklift warnings go to the floor lead through Amazon SNS.
 
 ![Floor measurements compared with the camera image](docs/report/figures/pixels-vs-floor-clip-dev-004.jpg)
+
+## What to inspect for each track
+
+| Component or award path | What it contributes | Evidence and code |
+|---|---|---|
+| **OpenCV 5** | Floor mapping, motion and tracking, risk geometry, privacy filtering and video I/O. These measurements drive the review workflow. | [Technical implementation](docs/TECHNICAL_REPORT.md#substantive-opencv-5-work), [perception code](scripts/real_clip_perception.py) |
+| **AWS** | Runs the vision and review app on Graviton; stores evidence in S3 and track history in DynamoDB; sends approved alerts through SNS; records logs and metrics in CloudWatch. | [Deployment code](infra/terraform/), [bootstrap](infra/terraform/user_data.sh.tftpl), [verified app receipt](docs/receipts/app-run-09-summary-20261024.json) |
+| **Agentic Vision** | Uses replay, close-up and independent measurement tools. Evidence changes the next tool call and recommendation; missing or conflicting evidence requests human review. | [Workflow](docs/diagrams/floorsight-agent-workflow-20261026.png), [agent code](floorsight/agent/), [measured effectiveness and traces](docs/EVALUATION.md#agent-comparison) |
+| **Best Use of COOL** | Executes OpenCV workloads on the COOL Graviton AMI and compares them with stock OpenCV. Publishes build identity, latency, output checks and failed experiments. | [COOL build proof](docs/receipts/cool-opencv-build-20261023.txt), [benchmark code](scripts/benchmark/), [results and limits](docs/EVALUATION.md#complete-perception-benchmark) |
+
+We target both special awards alongside the overall competition. The agent tests
+are controlled synthetic evaluations. COOL integration is verified, but a full
+pipeline speedup has **not** been demonstrated. The shown planner uses the local
+policy; live Bedrock access was denied by the account.
 
 ## What the evidence shows
 
@@ -76,6 +92,11 @@ python scripts/interlock_sim.py --out data/interlock-check
 ```
 
 [Setup and troubleshooting](docs/DEVELOPMENT.md) · [AWS deployment](docs/aws/DEPLOY.md)
+
+For an AWS deployment, start with [the infrastructure map](infra/README.md), copy
+the example variables, supply your region's subscribed COOL AMI and pin
+`app_git_ref` to the submitted commit. The example runs the public simulator;
+private factory footage is not needed. Terraform validation passed on 27 October.
 
 ## How it is built
 
