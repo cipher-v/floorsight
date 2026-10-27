@@ -253,27 +253,40 @@ class SimLiveSource:
     realtime = False
     feedback_driven = True  # advance the next frame only after applying this frame's commands
 
-    def __init__(self, duration_s: float = 50.0, site: SitePlan | None = None):
+    def __init__(self, duration_s: float = 50.0, site: SitePlan | None = None, loop: bool = False):
+        if loop and duration_s * FPS < 2:
+            raise ValueError("A looping scenario needs at least two frames")
         self.sim = ClosedLoopSim(render=True)
         self.site = self.sim.site
         self.fps = FPS
         self.duration_s = duration_s
+        self.loop = loop
+        self._closed = False
 
     def setup_plates(self) -> dict:
         return self.sim.plates()
 
     def __iter__(self) -> Iterator[dict[str, FramePacket]]:
         dt = 1.0 / FPS
-        for i in range(int(self.duration_s * FPS)):
-            t = i * dt
-            state = self.sim.advance(t, dt)
-            yield self.sim.packets(self.sim.render(state), t)
+        while not self._closed:
+            for i in range(int(self.duration_s * FPS)):
+                if self._closed:
+                    return
+                t = i * dt
+                state = self.sim.advance(t, dt)
+                yield self.sim.packets(self.sim.render(state), t)
+            if not self.loop or self._closed:
+                return
+            # Frame index returns to zero, so Runtime starts a fresh vision,
+            # agent and interlock session. No brake requests or walkers carry
+            # over from the previous scenario.
+            self.sim = ClosedLoopSim(render=True)
 
     def command(self, cmd: dict) -> bool:
         return self.sim.fork.command(cmd, cmd.get("t", 0.0))
 
     def close(self) -> None:
-        pass
+        self._closed = True
 
 
 __all__ = ["ClosedLoopSim", "ControlledForklift", "RouteFollower", "SimLiveSource", "interlock_walkers", "LEVEL"]

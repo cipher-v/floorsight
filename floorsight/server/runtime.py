@@ -187,7 +187,7 @@ class Runtime:
             # closed-loop simulator: frames are rendered as the app runs and the interlock drives its forklift
             from floorsight.sim.live import SimLiveSource
 
-            self._simlive = SimLiveSource(duration_s=cfg.sim_duration_s)
+            self._simlive = SimLiveSource(duration_s=cfg.sim_duration_s, loop=cfg.loop)
             self.site = self._simlive.site
         else:
             site_path = cfg.site_path or os.path.join(cfg.sim_dir, "site.json")

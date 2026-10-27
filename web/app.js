@@ -138,6 +138,7 @@
   function applyState(st) {
     st = obj(st);
     S.components = obj(st.components);
+    S.config = obj(st.config);
     S.warnings = arr(st.warnings);
     if (st.privacy) applyPrivacy(st.privacy);
     renderWarnings();
@@ -358,6 +359,9 @@
     } else if (S.ended) {
       pill.className = "pill pill-ended";
       text.textContent = "Recording ended";
+    } else if (S.config && S.config.source === "simlive") {
+      pill.className = "pill pill-recorded";
+      text.textContent = "Live simulation";
     } else if (S.components && S.components.vision === "replay") {
       pill.className = "pill pill-recorded";  // recorded real clips, not a live camera
       text.textContent = "Recorded clips";
