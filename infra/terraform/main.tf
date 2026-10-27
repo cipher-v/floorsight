@@ -455,6 +455,7 @@ resource "random_password" "origin_secret" {
 
 locals {
   app_env = {
+    FLOORSIGHT_CLOUD            = "aws"
     AWS_REGION                  = var.region
     AWS_DEFAULT_REGION          = var.region
     FLOORSIGHT_S3_BUCKET        = aws_s3_bucket.evidence.bucket

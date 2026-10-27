@@ -1,0 +1,174 @@
+{
+  "schema": "floorsight.bedrock-live.v1",
+  "model": "anthropic.claude-opus-5-5",
+  "region": "us-east-1",
+  "live": true,
+  "success": false,
+  "scope": "Synthetic tool evidence; real Bedrock calls; no human review or delivery.",
+  "cases": [
+    {
+      "family": "hazard_stable",
+      "label": {
+        "hazard": true,
+        "gap_m": 0.23
+      },
+      "calls": 1,
+      "fallbacks": 6,
+      "elapsed_s": 1.9968313000281341,
+      "recommendation": {
+        "verdict": "confirm",
+        "reason": "[Bedrock access denied (PermissionDeniedError); disabled until planner restart; local policy used] short replay: condition held 3 frame(s) in a row (0.12 s); floor gap 0.55-0.55 m; predicted pass 0.30-0.30 m; second detector pass agrees: OpenCV re-measured 0.23 m; tracker reported 0.55 m.",
+        "headline": "Agent recommends CONFIRM: the warning held for 3 frames with no tracking glitch, and a second detector agrees",
+        "t": 0.56
+      },
+      "alerts": 0,
+      "approvals_pending": 1,
+      "steps": [
+        {
+          "event_id": "EV-0001",
+          "step": 1,
+          "t": 0.56,
+          "tool": "short_replay",
+          "tool_input": {
+            "track_ids": [
+              "P1",
+              "F1"
+            ],
+            "seconds": 1.5
+          },
+          "tool_output": {
+            "evidence": {
+              "kind": "replay",
+              "camera_id": null,
+              "t": 0.56,
+              "supports": true,
+              "score": 3.0,
+              "image_ref": null,
+              "note": "condition held 3 frame(s) in a row (0.12 s); floor gap 0.55-0.55 m; predicted pass 0.30-0.30 m"
+            }
+          },
+          "decision": "replay: sustained",
+          "reason": "[Bedrock access denied (PermissionDeniedError); disabled until planner restart; local policy used] Was it sustained, or a one-frame dip or a tracking jump? Look back over the last 1.5 s of floor measurements",
+          "mode": "local"
+        },
+        {
+          "event_id": "EV-0001",
+          "step": 2,
+          "t": 0.56,
+          "tool": "sharper_crop",
+          "tool_input": {
+            "camera_id": "camA",
+            "x": 5.0,
+            "y": 5.0,
+            "radius_m": 1.5
+          },
+          "tool_output": {
+            "evidence": {
+              "kind": "crop",
+              "camera_id": "camA",
+              "t": 0.56,
+              "supports": null,
+              "score": null,
+              "image_ref": null,
+              "note": "Synthetic top-down camera crop; no real people."
+            }
+          },
+          "decision": "close-up from camA stored",
+          "reason": "[Bedrock access denied (PermissionDeniedError); disabled until planner restart; local policy used] Full-resolution close-up (already privacy-filtered) for the human reviewer",
+          "mode": "local"
+        },
+        {
+          "event_id": "EV-0001",
+          "step": 3,
+          "t": 0.56,
+          "tool": "redetect",
+          "tool_input": {
+            "track_ids": [
+              "P1",
+              "F1"
+            ]
+          },
+          "tool_output": {
+            "evidence": {
+              "kind": "redetect",
+              "camera_id": null,
+              "t": 0.56,
+              "supports": true,
+              "score": 0.23,
+              "image_ref": null,
+              "note": "OpenCV re-measured 0.23 m; tracker reported 0.55 m."
+            }
+          },
+          "decision": "second detector pass agrees",
+          "reason": "[Bedrock access denied (PermissionDeniedError); disabled until planner restart; local policy used] Run the detectors again on a sharper crop and re-measure the floor gap independently of the tracker",
+          "mode": "local"
+        },
+        {
+          "event_id": "EV-0001",
+          "step": 4,
+          "t": 0.56,
+          "tool": "recommend",
+          "tool_input": {
+            "verdict": "confirm",
+            "headline": "Agent recommends CONFIRM: the warning held for 3 frames with no tracking glitch, and a second detector agrees"
+          },
+          "tool_output": {
+            "verdict": "confirm"
+          },
+          "decision": "recommends confirm",
+          "reason": "[Bedrock access denied (PermissionDeniedError); disabled until planner restart; local policy used] short replay: condition held 3 frame(s) in a row (0.12 s); floor gap 0.55-0.55 m; predicted pass 0.30-0.30 m; second detector pass agrees: OpenCV re-measured 0.23 m; tracker reported 0.55 m.",
+          "mode": "local"
+        },
+        {
+          "event_id": "EV-0001",
+          "step": 5,
+          "t": 0.56,
+          "tool": "request_approval",
+          "tool_input": {
+            "action": "confirm_incident",
+            "summary": "Agent recommends CONFIRM: Candidate: predicted close pass.. [Bedrock access denied (PermissionDeniedError); disabled until planner restart; local policy used] short replay: condition held 3 frame(s) in a row (0.12 s); floor gap 0.55-0.55 m; predicted pass 0.30-0.30 m; second detector pass agrees: OpenCV re-measured 0.23 m; tracker reported 0.55 m.. Approve = real hazard, alert the floor lead; reject = false alarm."
+          },
+          "tool_output": {
+            "approval": {
+              "approval_id": "AP-0001",
+              "event_id": "EV-0001",
+              "action": "confirm_incident",
+              "summary": "Agent recommends CONFIRM: Candidate: predicted close pass.. [Bedrock access denied (PermissionDeniedError); disabled until planner restart; local policy used] short replay: condition held 3 frame(s) in a row (0.12 s); floor gap 0.55-0.55 m; predicted pass 0.30-0.30 m; second detector pass agrees: OpenCV re-measured 0.23 m; tracker reported 0.55 m.. Approve = real hazard, alert the floor lead; reject = false alarm.",
+              "payload": {
+                "zone_id": null,
+                "location": [
+                  5.0,
+                  5.0
+                ],
+                "card": {
+                  "verdict": "confirm",
+                  "headline": "Agent recommends CONFIRM: the warning held for 3 frames with no tracking glitch, and a second detector agrees",
+                  "numbers": [
+                    {
+                      "label": "Floor gap at the warning",
+                      "value": "n/a"
+                    },
+                    {
+                      "label": "Within 0.8 m",
+                      "value": "n/a"
+                    },
+                    {
+                      "label": "Closest predicted pass",
+                      "value": "n/a"
+                    }
+                  ]
+                }
+              },
+              "status": "pending",
+              "created_t": 0.56,
+              "decided_t": null
+            }
+          },
+          "decision": "asked a human: confirm_incident (AP-0001)",
+          "reason": "[Bedrock access denied (PermissionDeniedError); disabled until planner restart; local policy used] Only one camera sees this spot: a human makes the final call",
+          "mode": "local"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "schema": "floorsight.privacy-pixel-comparison.v1",
+  "comparisons": [
+    {
+      "label": "optimized-cool",
+      "reference": "baseline-cool",
+      "clip": "screen-002",
+      "repeat": 0,
+      "same_frames": true,
+      "frames": 20,
+      "reference_pixels_uncovered": 0,
+      "additional_covered_pixels": 0,
+      "identical_covered_pixels": true
+    },
+    {
+      "label": "optimized-stock",
+      "reference": "baseline-cool",
+      "clip": "screen-002",
+      "repeat": 0,
+      "same_frames": true,
+      "frames": 20,
+      "reference_pixels_uncovered": 378,
+      "additional_covered_pixels": 472,
+      "identical_covered_pixels": false
+    },
+    {
+      "label": "optimized-stock",
+      "reference": "baseline-cool",
+      "clip": "screen-002",
+      "repeat": 1,
+      "same_frames": true,
+      "frames": 20,
+      "reference_pixels_uncovered": 378,
+      "additional_covered_pixels": 472,
+      "identical_covered_pixels": false
+    },
+    {
+      "label": "optimized-cool",
+      "reference": "baseline-cool",
+      "clip": "screen-002",
+      "repeat": 1,
+      "same_frames": true,
+      "frames": 20,
+      "reference_pixels_uncovered": 0,
+      "additional_covered_pixels": 0,
+      "identical_covered_pixels": true
+    }
+  ]
+}

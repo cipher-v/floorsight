@@ -1,20 +1,15 @@
-"""Pending regression contract for missing perception. Run on GCP only.
-
-These tests describe the prepared correction. They have not run on the changed
-source; no validated fix or test pass is claimed.
-"""
+"""Regression contract for missing perception; uses only a generated site plan."""
 import json
 from types import SimpleNamespace
 
 from floorsight.contracts import CameraStatus
 from floorsight.server.components import NullVision
 from floorsight.server.runtime import to_jsonable
-from floorsight.site import load_site
 from floorsight.formatting import floor_error_text
 
 
-def test_missing_vision_cannot_report_connected_camera_healthy():
-    site = load_site("data/sim/demo_001/site.json")
+def test_missing_vision_cannot_report_connected_camera_healthy(demo_plan):
+    site = demo_plan
     camera = site.cameras[0].camera_id
     vision = NullVision(site)
     world = vision.process({camera: SimpleNamespace(meta=SimpleNamespace(t=5.0))})
@@ -23,8 +18,8 @@ def test_missing_vision_cannot_report_connected_camera_healthy():
     assert world.tracks == []  # No fabricated detections or truth fallback.
 
 
-def test_unavailable_calibration_has_json_null_not_zero_or_nan():
-    site = load_site("data/sim/demo_001/site.json")
+def test_unavailable_calibration_has_json_null_not_zero_or_nan(demo_plan):
+    site = demo_plan
     vision = NullVision(site)
     payload = to_jsonable(vision.process({}))
     json.dumps(payload, allow_nan=False)
@@ -34,14 +29,14 @@ def test_unavailable_calibration_has_json_null_not_zero_or_nan():
     json.dumps(result, allow_nan=False)
 
 
-def test_no_packets_cannot_report_nominal_camera_rate():
-    vision = NullVision(load_site("data/sim/demo_001/site.json"))
+def test_no_packets_cannot_report_nominal_camera_rate(demo_plan):
+    vision = NullVision(demo_plan)
     health = vision.process({}).cameras
     assert all(h.status == CameraStatus.offline and h.fps == 0 for h in health)
 
 
-def test_last_seen_time_belongs_to_each_camera():
-    site = load_site("data/sim/demo_001/site.json")
+def test_last_seen_time_belongs_to_each_camera(demo_plan):
+    site = demo_plan
     first, second = [c.camera_id for c in site.cameras[:2]]
     vision = NullVision(site)
     world = vision.process({first: SimpleNamespace(meta=SimpleNamespace(t=5.0)),
@@ -60,10 +55,10 @@ def test_unknown_floor_error_is_not_formatted_as_measured_zero():
     assert floor_error_text(0.0) == "0.00 m"
 
 
-def test_camera_moved_summary_accepts_unknown_calibration():
+def test_camera_moved_summary_accepts_unknown_calibration(demo_plan):
     from floorsight.agent.rules import RulesEngine
     from floorsight.contracts import EventType
-    site = load_site("data/sim/demo_001/site.json")
+    site = demo_plan
     world = NullVision(site).process({})
     world.cameras[0].status = CameraStatus.moved
     new, continuing = RulesEngine(site).update(world)

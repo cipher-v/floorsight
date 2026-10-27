@@ -188,10 +188,10 @@
 
   // ---- forklift interlock: the machine slows or stops a forklift itself; people review afterwards
   const LOCK_TEXT = {
-    stop: ["AUTO-STOP", "braking now"],
-    slow: ["AUTO-SLOW", "limited to walking pace"],
-    horn: ["HORN", "warning the person"],
-    resume: ["RESUME", "way clear, driving on"],
+    stop: ["AUTO-STOP", "stop requested"],
+    slow: ["AUTO-SLOW", "speed limit requested"],
+    horn: ["HORN", "warning requested"],
+    resume: ["RESUME", "resume requested"],
   };
   function updateInterlock(lock, t) {
     const box = $("interlock-banner");
@@ -202,13 +202,15 @@
     for (const [vid, v] of vehicles) rows.push({ cmd: v.state, vehicle: vid, reason: v.waiting ? `Stopped and ${v.waiting}` : v.reason });
     for (const c of recent) if ((c.command === "horn" || c.command === "resume") && !rows.some((r) => r.vehicle === c.vehicle && r.cmd === c.command)) rows.push({ cmd: c.command, vehicle: c.vehicle, reason: c.reason, applied: c.applied });
     if (!rows.length) { box.hidden = true; box.replaceChildren(); return; }
-    const last = arr(lock.recent).slice(-1)[0] || {};
     const top = rows.find((r) => r.cmd === "stop") || rows.find((r) => r.cmd === "slow") || rows[0];
+    const last = arr(lock.recent).slice().reverse().find((c) => c.vehicle === top.vehicle && c.command === top.cmd) || {};
     box.className = `interlock-banner lock-${top.cmd}`;
     const [title, what] = LOCK_TEXT[top.cmd] || [top.cmd, ""];
-    const note = last.applied === false ? "Recorded video: the command is logged, not applied" : "Sent to the forklift by Floorsight, no approval needed; a person reviews afterwards";
+    const note = last.applied === true ? "Applied in the simulator. Incident review follows separately."
+      : last.applied === false ? "Command logged; no vehicle receiver applied it."
+      : "Command logged; no receiver confirmation.";
     const short = typeof last.stopsShortBy_m === "number" && (top.cmd === "stop" || top.cmd === "slow")
-      ? ` · a stop now halts it ${last.stopsShortBy_m >= 0 ? `${last.stopsShortBy_m.toFixed(1)} m short` : `${(-last.stopsShortBy_m).toFixed(1)} m too late`}` : "";
+      ? ` · braking model estimates ${last.stopsShortBy_m >= 0 ? `${last.stopsShortBy_m.toFixed(1)} m to spare` : `${(-last.stopsShortBy_m).toFixed(1)} m overrun`}` : "";
     box.replaceChildren(
       el("b", {}, `${title} · ${top.vehicle} ${what}`),
       el("span", {}, `${str(top.reason, "")}${short}`),
@@ -343,7 +345,7 @@
     $("stat-fps").textContent = isFinite(fps) ? `${fps.toFixed(fps >= 100 ? 0 : 1)} fps` : "-- fps";
     $("stat-latency").textContent = isFinite(lat) ? `${Math.round(lat)} ms` : "-- ms";
     $("stat-fps").title = `Frames processed per second. Dropped so far: ${num(m.dropped)}`;
-    $("stat-latency").title = `Time to blur, locate and check one set of frames. Vision layer: ${Math.round(num(m.vision_latency_ms))} ms`;
+    $("stat-latency").title = `Tracking, control and review after face filtering. Vision: ${Math.round(num(m.vision_latency_ms))} ms. Excludes camera, filtering and receiver delay.`;
     S.ended = m.mode === "ended";
     renderModePill();
   }
@@ -373,8 +375,9 @@
 
   function renderComponents() {
     const c = S.components;
-    const agent = c.agent === "demo" ? "demo script" : str(c.agent, "?");
-    $("components").textContent = `Vision: ${str(c.vision, "?")} · Agent: ${agent}`;
+    const vision = { real: "Camera measurements", replay: "Saved detections", fake: "Simulator truth" }[c.vision] || str(c.vision, "Unknown input");
+    const agent = { real: "Review workflow", demo: "Scripted review", stub: "Review disabled" }[c.agent] || str(c.agent, "Unknown review mode");
+    $("components").textContent = `${vision} · ${agent}`;
   }
 
   async function pollMetrics() {

@@ -1,0 +1,232 @@
+{
+  "date": "2026-10-27",
+  "scope": "Local repository review, not a new AWS or COOL benchmark",
+  "environment": {
+    "os": "Windows",
+    "python": "3.11.9",
+    "opencv": "5.0.0"
+  },
+  "baseline_commit": "199c11d0e121723d63740f905835591d44ebf870",
+  "current_code": "The final code on codex/hackathon-readiness, incorporating ca1861a",
+  "tests": {
+    "passed": 283,
+    "skipped": 5,
+    "warnings": 1,
+    "command": "python -m pytest -q tests"
+  },
+  "simulation_command": "python scripts/interlock_sim.py --out data/interlock-check --no-video",
+  "simulation": {
+    "off": {
+      "mode": "off",
+      "duration_s": 40.0,
+      "frames": 400,
+      "scenes": {
+        "S2 crossing": {
+          "person": "w2",
+          "started": true,
+          "startedT": 2.9,
+          "closestGap_m": 0.0,
+          "closestT": 4.7,
+          "forkliftSpeedAtClosest_mps": 2.0,
+          "contact": true
+        },
+        "S4 tail": {
+          "person": "w4",
+          "started": true,
+          "startedT": 6.6,
+          "closestGap_m": 0.0,
+          "closestT": 7.4,
+          "forkliftSpeedAtClosest_mps": 2.0,
+          "contact": true
+        },
+        "S1 in path": {
+          "person": "w1",
+          "started": true,
+          "startedT": 8.1,
+          "closestGap_m": 0.0,
+          "closestT": 10.7,
+          "forkliftSpeedAtClosest_mps": 2.0,
+          "contact": true
+        },
+        "S3 alongside": {
+          "person": "w3",
+          "started": true,
+          "startedT": 7.8,
+          "closestGap_m": 1.15,
+          "closestT": 27.2,
+          "forkliftSpeedAtClosest_mps": 2.0,
+          "contact": false
+        }
+      },
+      "counts": {
+        "slow": 0,
+        "stop": 0,
+        "resume": 0,
+        "horn": 0
+      },
+      "forkliftDistance_m": 79.8,
+      "stoppedSeconds": 0.0,
+      "slowSeconds": 0.0
+    },
+    "original_controller_on": {
+      "mode": "on",
+      "duration_s": 40.0,
+      "frames": 400,
+      "scenes": {
+        "S2 crossing": {
+          "person": "w2",
+          "started": true,
+          "startedT": 3.5,
+          "closestGap_m": 0.65,
+          "closestT": 16.2,
+          "forkliftSpeedAtClosest_mps": 2.0,
+          "contact": false
+        },
+        "S4 tail": {
+          "person": "w4",
+          "started": true,
+          "startedT": 16.3,
+          "closestGap_m": 0.0,
+          "closestT": 17.1,
+          "forkliftSpeedAtClosest_mps": 2.0,
+          "contact": true
+        },
+        "S1 in path": {
+          "person": "w1",
+          "started": true,
+          "startedT": 17.8,
+          "closestGap_m": 0.7,
+          "closestT": 30.4,
+          "forkliftSpeedAtClosest_mps": 2.0,
+          "contact": false
+        },
+        "S3 alongside": {
+          "person": "w3",
+          "started": true,
+          "startedT": 17.5,
+          "closestGap_m": 1.15,
+          "closestT": 19.9,
+          "forkliftSpeedAtClosest_mps": 0.0,
+          "contact": false
+        }
+      },
+      "counts": {
+        "slow": 3,
+        "stop": 3,
+        "resume": 3,
+        "horn": 1
+      },
+      "forkliftDistance_m": 24.0,
+      "stoppedSeconds": 23.7,
+      "slowSeconds": 2.2
+    },
+    "revised_controller_on": {
+      "mode": "on",
+      "duration_s": 40.0,
+      "frames": 400,
+      "scenes": {
+        "S2 crossing": {
+          "person": "w2",
+          "started": true,
+          "startedT": 3.5,
+          "closestGap_m": 0.65,
+          "closestT": 13.6,
+          "forkliftSpeedAtClosest_mps": 2.0,
+          "contact": false
+        },
+        "S4 tail": {
+          "person": "w4",
+          "started": true,
+          "startedT": 13.7,
+          "closestGap_m": 0.0,
+          "closestT": 14.5,
+          "forkliftSpeedAtClosest_mps": 2.0,
+          "contact": true
+        },
+        "S1 in path": {
+          "person": "w1",
+          "started": true,
+          "startedT": 15.2,
+          "closestGap_m": 0.7,
+          "closestT": 28.1,
+          "forkliftSpeedAtClosest_mps": 2.0,
+          "contact": false
+        },
+        "S3 alongside": {
+          "person": "w3",
+          "started": true,
+          "startedT": 14.9,
+          "closestGap_m": 1.15,
+          "closestT": 17.8,
+          "forkliftSpeedAtClosest_mps": 0.0,
+          "contact": false
+        }
+      },
+      "counts": {
+        "slow": 2,
+        "stop": 2,
+        "resume": 2,
+        "horn": 1
+      },
+      "forkliftDistance_m": 45.0,
+      "stoppedSeconds": 13.3,
+      "slowSeconds": 3.3
+    }
+  },
+  "application": {
+    "command": "python -m floorsight.server --source simlive --vision real --agent real --interlock on --sim-duration 8 --port 18770 --runtime-dir data/review-app-integrated",
+    "mode": "ended",
+    "components": {
+      "vision": "real",
+      "agent": "real",
+      "blur": "on"
+    },
+    "metrics": {
+      "fps": 2.52,
+      "target_fps": 10.0,
+      "latency_ms": 33.07,
+      "vision_latency_ms": 37.82,
+      "t": 7.9,
+      "frame_index": 79,
+      "frames": 80,
+      "dropped": 0,
+      "errors": 0,
+      "last_error": null,
+      "lag_s": 0.0,
+      "speed": 1.0,
+      "session": 0,
+      "ws_clients": 1,
+      "mode": "ended",
+      "running": false,
+      "history": {
+        "t_min": 0.0,
+        "t_max": 7.5,
+        "count": 16
+      }
+    },
+    "privacy": {
+      "faces_blurred": true,
+      "blur": "on",
+      "prefiltered_note": null,
+      "positions_only": false,
+      "preservation_hold": true,
+      "automatic_deletion": false,
+      "retention_h": 24
+    },
+    "cloud": {
+      "adapters": [],
+      "errors": {},
+      "evidence_mirrored": 0,
+      "evidence_mirror_errors": 0,
+      "sns_sent": 0
+    }
+  },
+  "notes": [
+    "Baseline uses the initial checkout and original controller; the final run also includes the concurrent upstream review.",
+    "Off and on were run separately to limit memory use; each uses 400 rendered frames.",
+    "Historical AWS on-distance was 27 m; the original controller on this local environment was 24 m.",
+    "Distance differences cannot be attributed to a single fix. This scenario does not establish general improvement.",
+    "All scenarios started; both in-path contacts are avoided, but the scripted tail contact remains.",
+    "Application smoke check used stock OpenCV, local policy, no cloud adapters and the default face filter."
+  ]
+}

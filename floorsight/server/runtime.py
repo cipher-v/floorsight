@@ -180,6 +180,7 @@ class Runtime:
         self.agent_lock = threading.RLock()  # serialises every agent call
         self._stop = threading.Event()
         self._thread: threading.Thread | None = None
+        self._edge_thread: threading.Thread | None = None
 
         self._simlive = None
         if cfg.source == "simlive":
@@ -232,7 +233,7 @@ class Runtime:
                 # one edge device per camera in reality; threads approximate that here
                 self._blur_pool = ThreadPoolExecutor(max_workers=max(1, len(self.site.cameras)), thread_name_prefix="blur")
             if err:
-                self.warnings.append("Face blur module not loaded: camera previews are NOT face-blurred")
+                self.warnings.append("Face filter unavailable: camera frames are withheld (black)")
                 log.warning(err)
         else:
             self.warnings.append("Face blur turned off (--blur off)")
@@ -336,8 +337,11 @@ class Runtime:
             self._close_source()  # live readers only set flags; unblocks the iterator
         if self._thread:
             self._thread.join(timeout)
+        if self._edge_thread:
+            self._edge_thread.join(timeout)
         if not self.running:
-            self._close_source()  # decoders must not be released while the runtime thread reads them
+            if not self._edge_thread or not self._edge_thread.is_alive():
+                self._close_source()  # never release a decoder while its producer still reads it
             self._close_vision(self.vision)
         if self._blur_pool is not None:
             self._blur_pool.shutdown(wait=False)
@@ -523,8 +527,27 @@ class Runtime:
         On a real site each camera's edge device does this before upload; here it
         overlaps with vision so blur cost does not add to the pipeline period.
         """
+        if getattr(self.source, "feedback_driven", False):
+            # A simulated scene responds to commands from _tick. Prefetching it
+            # would advance the forklift several frames before those commands
+            # arrive, changing the control-loop timing and racing its state.
+            for packets in self.source:
+                if self._stop.is_set():
+                    return
+                yield self._edge_blur(packets) if packets else packets
+            return
+
         q: queue.Queue = queue.Queue(maxsize=depth)
         done = object()
+
+        def enqueue(item):
+            while not self._stop.is_set():
+                try:
+                    q.put(item, timeout=0.2)
+                    return True
+                except queue.Full:
+                    continue
+            return False
 
         def produce():
             try:
@@ -532,20 +555,20 @@ class Runtime:
                     if self._stop.is_set():
                         break
                     item = self._edge_blur(packets) if packets else packets
-                    while not self._stop.is_set():
-                        try:
-                            q.put(item, timeout=0.2)
-                            break
-                        except queue.Full:
-                            continue
+                    if not enqueue(item):
+                        break
             except Exception as exc:  # surfaced through the consumer
-                q.put(exc)
+                enqueue(exc)
             finally:
-                q.put(done)
+                enqueue(done)
 
-        threading.Thread(target=produce, name="edge", daemon=True).start()
-        while True:
-            item = q.get()
+        self._edge_thread = threading.Thread(target=produce, name="edge", daemon=True)
+        self._edge_thread.start()
+        while not self._stop.is_set():
+            try:
+                item = q.get(timeout=0.2)
+            except queue.Empty:
+                continue
             if item is done:
                 return
             if isinstance(item, Exception):

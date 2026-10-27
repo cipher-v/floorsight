@@ -251,6 +251,7 @@ class SimLiveSource:
     runtime's interlock drive the forklift (``command``). Not real time: every frame is processed (closed loop)."""
 
     realtime = False
+    feedback_driven = True  # advance the next frame only after applying this frame's commands
 
     def __init__(self, duration_s: float = 50.0, site: SitePlan | None = None):
         self.sim = ClosedLoopSim(render=True)

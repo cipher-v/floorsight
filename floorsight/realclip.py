@@ -510,6 +510,8 @@ class ReplayVision:
                 res = subprocess.run(shlex.split(cmd) + [req_path], capture_output=True, text=True, timeout=180,
                                      cwd=os.environ.get("FLOORSIGHT_REDETECT_CWD") or None)
                 out = json.loads(res.stdout.strip().splitlines()[-1]) if res.stdout.strip() else {"error": res.stderr[-400:]}
+                if res.returncode != 0:
+                    out = {"error": f"second detector exited with status {res.returncode}"}
             except Exception as exc:  # the tool reports, never decides
                 out = {"error": f"{type(exc).__name__}: {exc}"}
             ann = cv2.imread(req["annotated"]) if os.path.exists(req["annotated"]) else None
@@ -519,7 +521,12 @@ class ReplayVision:
         if out.get("error") or out.get("clearance_m") is None:
             return Evidence(kind="redetect", t=t, supports=None, image_ref=self.evidence.put(ann, f"redetect-t{t:.2f}") if ann is not None else None,
                             note=f"second detector pass ({where}) inconclusive: {out.get('error') or out.get('note', 'no measurement')}")
-        c = float(out["clearance_m"])
+        try:
+            c = float(out["clearance_m"])
+        except (TypeError, ValueError):
+            c = math.nan
+        if not math.isfinite(c) or c < 0:
+            return Evidence(kind="redetect", t=t, supports=None, note="second detector returned an invalid clearance")
         if track_clear is None:
             supports, why = None, "no tracker clearance to compare"
         else:

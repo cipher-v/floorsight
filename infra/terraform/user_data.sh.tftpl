@@ -74,8 +74,8 @@ exec /opt/floorsight/venv/bin/python "$@"
 PYEOF
 chmod 755 /opt/floorsight/py
 
-%{ if length(regexall("--source sim( |$)", app_start_command)) > 0 ~}
-# ---- demo footage (data/ is not in git; --source simlive renders its own) ----------
+%{ if length(regexall("--source[ =]+sim([ ]|$)", app_start_command)) > 0 ~}
+# ---- demo footage (data/ is not in git) -------------------------------------------
 sudo -u floorsight /opt/floorsight/py -m floorsight.sim.scenario --out data/sim/demo_001 \
   || echo "WARNING: footage render failed (videoio/FFmpeg missing in this OpenCV build?)"
 %{ endif ~}

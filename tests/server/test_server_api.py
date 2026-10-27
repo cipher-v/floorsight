@@ -137,6 +137,14 @@ def test_rule_approval_round_trip_with_demo_agent(sim_truth_dir, tmp_path):
         rule = next(m["data"] for m in r.json()["messages"] if m["kind"] == "rule")
         assert rule["confirmed"] is True
         assert client.post("/api/approvals/nope", json={"approved": False}).status_code == 404
+        assert client.post(f"/api/approvals/{approval.approval_id}", json={"approved": False}).status_code == 409
+
+
+def test_unknown_approval_with_real_agent_returns_404(sim_truth_dir, tmp_path, monkeypatch):
+    monkeypatch.delenv("FLOORSIGHT_LLM", raising=False)
+    with make_client(sim_truth_dir, tmp_path, agent="real") as client:
+        assert client.get("/api/state").json()["components"]["agent"] == "real"
+        assert client.post("/api/approvals/missing", json={"approved": True}).status_code == 404
 
 
 @pytest.mark.skipif(importlib.util.find_spec("floorsight.agent") is None, reason="real agent not built yet")

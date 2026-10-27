@@ -1,0 +1,123 @@
+[
+  {
+    "clip": "screen-002",
+    "different_samples": [
+      {
+        "sample": 5,
+        "index": 47,
+        "different_channels": 3367326,
+        "max_delta": 245,
+        "mean_delta": 2.556975790895062
+      },
+      {
+        "sample": 6,
+        "index": 56,
+        "different_channels": 3462529,
+        "max_delta": 252,
+        "mean_delta": 2.641998617541152
+      },
+      {
+        "sample": 7,
+        "index": 66,
+        "different_channels": 3416091,
+        "max_delta": 233,
+        "mean_delta": 2.7452854938271605
+      },
+      {
+        "sample": 8,
+        "index": 75,
+        "different_channels": 2556064,
+        "max_delta": 225,
+        "mean_delta": 2.2197625707304525
+      },
+      {
+        "sample": 9,
+        "index": 85,
+        "different_channels": 2830386,
+        "max_delta": 251,
+        "mean_delta": 2.536902649176955
+      }
+    ],
+    "background_different_channels": 1083705,
+    "mask_equal": true,
+    "fractions": [
+      0.0,
+      0.0
+    ],
+    "stats": [
+      {},
+      {}
+    ]
+  },
+  {
+    "clip": "screen-032",
+    "different_samples": [
+      {
+        "sample": 4,
+        "index": 50,
+        "different_channels": 3234766,
+        "max_delta": 238,
+        "mean_delta": 4.134248006687243
+      },
+      {
+        "sample": 5,
+        "index": 62,
+        "different_channels": 3229036,
+        "max_delta": 255,
+        "mean_delta": 3.8302681327160495
+      },
+      {
+        "sample": 6,
+        "index": 75,
+        "different_channels": 3143759,
+        "max_delta": 255,
+        "mean_delta": 3.4492537937242798
+      },
+      {
+        "sample": 7,
+        "index": 87,
+        "different_channels": 2476249,
+        "max_delta": 251,
+        "mean_delta": 2.73465518904321
+      },
+      {
+        "sample": 8,
+        "index": 100,
+        "different_channels": 3317214,
+        "max_delta": 251,
+        "mean_delta": 3.1583736818415638
+      },
+      {
+        "sample": 9,
+        "index": 112,
+        "different_channels": 2942823,
+        "max_delta": 232,
+        "mean_delta": 2.7244743441358024
+      },
+      {
+        "sample": 10,
+        "index": 125,
+        "different_channels": 2965277,
+        "max_delta": 241,
+        "mean_delta": 2.590062371399177
+      },
+      {
+        "sample": 11,
+        "index": 137,
+        "different_channels": 2416647,
+        "max_delta": 237,
+        "mean_delta": 2.052399530606996
+      }
+    ],
+    "background_different_channels": 1373975,
+    "mask_equal": true,
+    "fractions": [
+      0.0,
+      0.0
+    ],
+    "stats": [
+      {},
+      {}
+    ]
+  }
+]

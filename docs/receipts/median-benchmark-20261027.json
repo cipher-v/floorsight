@@ -1,0 +1,198 @@
+{
+  "schema": "floorsight.median-bench.v1",
+  "opencv": "5.1.0-dev",
+  "runs": [
+    {
+      "clip": "screen-002",
+      "samples": 25,
+      "repeat": 0,
+      "runs": {
+        "numpy": {
+          "seconds": 1.1149040750001404,
+          "sha256": "cffcff3556d5f3d1d3c15994ed4586cff4fcfc6f8a0d99eb688299e7b65eb78d"
+        },
+        "compact": {
+          "seconds": 1.0961106810000274,
+          "sha256": "cffcff3556d5f3d1d3c15994ed4586cff4fcfc6f8a0d99eb688299e7b65eb78d"
+        }
+      },
+      "identical": true
+    },
+    {
+      "clip": "screen-002",
+      "samples": 25,
+      "repeat": 1,
+      "runs": {
+        "compact": {
+          "seconds": 1.0968635290000748,
+          "sha256": "cffcff3556d5f3d1d3c15994ed4586cff4fcfc6f8a0d99eb688299e7b65eb78d"
+        },
+        "numpy": {
+          "seconds": 1.1139991529998952,
+          "sha256": "cffcff3556d5f3d1d3c15994ed4586cff4fcfc6f8a0d99eb688299e7b65eb78d"
+        }
+      },
+      "identical": true
+    },
+    {
+      "clip": "screen-032",
+      "samples": 25,
+      "repeat": 0,
+      "runs": {
+        "numpy": {
+          "seconds": 1.2095260440000857,
+          "sha256": "2ef0408ad311396f7c42fad31ac90d9f693bbcf2c99a408ec1c15618283f72ec"
+        },
+        "compact": {
+          "seconds": 1.1923100030003297,
+          "sha256": "2ef0408ad311396f7c42fad31ac90d9f693bbcf2c99a408ec1c15618283f72ec"
+        }
+      },
+      "identical": true
+    },
+    {
+      "clip": "screen-032",
+      "samples": 25,
+      "repeat": 1,
+      "runs": {
+        "compact": {
+          "seconds": 1.191510166000171,
+          "sha256": "2ef0408ad311396f7c42fad31ac90d9f693bbcf2c99a408ec1c15618283f72ec"
+        },
+        "numpy": {
+          "seconds": 1.2099371809999866,
+          "sha256": "2ef0408ad311396f7c42fad31ac90d9f693bbcf2c99a408ec1c15618283f72ec"
+        }
+      },
+      "identical": true
+    },
+    {
+      "clip": "screen-033",
+      "samples": 25,
+      "repeat": 0,
+      "runs": {
+        "numpy": {
+          "seconds": 1.191626737000206,
+          "sha256": "8cbc6bdf4862f327ddbe72f244f5687175085a8e7101850e4febe3a9a4766fbc"
+        },
+        "compact": {
+          "seconds": 1.1702050450003298,
+          "sha256": "8cbc6bdf4862f327ddbe72f244f5687175085a8e7101850e4febe3a9a4766fbc"
+        }
+      },
+      "identical": true
+    },
+    {
+      "clip": "screen-033",
+      "samples": 25,
+      "repeat": 1,
+      "runs": {
+        "compact": {
+          "seconds": 1.1707485690003523,
+          "sha256": "8cbc6bdf4862f327ddbe72f244f5687175085a8e7101850e4febe3a9a4766fbc"
+        },
+        "numpy": {
+          "seconds": 1.191916153999955,
+          "sha256": "8cbc6bdf4862f327ddbe72f244f5687175085a8e7101850e4febe3a9a4766fbc"
+        }
+      },
+      "identical": true
+    },
+    {
+      "clip": "clip-dev-002",
+      "samples": 25,
+      "repeat": 0,
+      "runs": {
+        "numpy": {
+          "seconds": 1.1864171160000296,
+          "sha256": "9f4de9b8be38fd3c18bfa4bde5ee1a38d9253df0dcaa64b5c4843d806cea315d"
+        },
+        "compact": {
+          "seconds": 1.1651903570000286,
+          "sha256": "9f4de9b8be38fd3c18bfa4bde5ee1a38d9253df0dcaa64b5c4843d806cea315d"
+        }
+      },
+      "identical": true
+    },
+    {
+      "clip": "clip-dev-002",
+      "samples": 25,
+      "repeat": 1,
+      "runs": {
+        "compact": {
+          "seconds": 1.1656034689999615,
+          "sha256": "9f4de9b8be38fd3c18bfa4bde5ee1a38d9253df0dcaa64b5c4843d806cea315d"
+        },
+        "numpy": {
+          "seconds": 1.186112127999877,
+          "sha256": "9f4de9b8be38fd3c18bfa4bde5ee1a38d9253df0dcaa64b5c4843d806cea315d"
+        }
+      },
+      "identical": true
+    },
+    {
+      "clip": "clip-dev-003",
+      "samples": 25,
+      "repeat": 0,
+      "runs": {
+        "numpy": {
+          "seconds": 1.20206971899961,
+          "sha256": "1bcb245a51507d08437539ec371ee9f76fd96bc5f7494b827e5ae04e0a84693a"
+        },
+        "compact": {
+          "seconds": 1.1836137029999918,
+          "sha256": "1bcb245a51507d08437539ec371ee9f76fd96bc5f7494b827e5ae04e0a84693a"
+        }
+      },
+      "identical": true
+    },
+    {
+      "clip": "clip-dev-003",
+      "samples": 25,
+      "repeat": 1,
+      "runs": {
+        "compact": {
+          "seconds": 1.1830602959998942,
+          "sha256": "1bcb245a51507d08437539ec371ee9f76fd96bc5f7494b827e5ae04e0a84693a"
+        },
+        "numpy": {
+          "seconds": 1.2011041719997593,
+          "sha256": "1bcb245a51507d08437539ec371ee9f76fd96bc5f7494b827e5ae04e0a84693a"
+        }
+      },
+      "identical": true
+    },
+    {
+      "clip": "clip-dev-004",
+      "samples": 25,
+      "repeat": 0,
+      "runs": {
+        "numpy": {
+          "seconds": 1.0769257709998783,
+          "sha256": "7cbc29bdbb86907f27369c5701efb3f9ff312539910fbf42ac81bf02d0f7367a"
+        },
+        "compact": {
+          "seconds": 1.0592014580001887,
+          "sha256": "7cbc29bdbb86907f27369c5701efb3f9ff312539910fbf42ac81bf02d0f7367a"
+        }
+      },
+      "identical": true
+    },
+    {
+      "clip": "clip-dev-004",
+      "samples": 25,
+      "repeat": 1,
+      "runs": {
+        "compact": {
+          "seconds": 1.0591857519998484,
+          "sha256": "7cbc29bdbb86907f27369c5701efb3f9ff312539910fbf42ac81bf02d0f7367a"
+        },
+        "numpy": {
+          "seconds": 1.0778590549998626,
+          "sha256": "7cbc29bdbb86907f27369c5701efb3f9ff312539910fbf42ac81bf02d0f7367a"
+        }
+      },
+      "identical": true
+    }
+  ]
+}
