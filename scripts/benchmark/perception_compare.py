@@ -53,6 +53,13 @@ def compare_jsonl(a, b, tolerance=.001):
             'reference_sha256': digest(a), 'candidate_sha256': digest(b)}
 
 
+def environment_differences(reference, candidate):
+    # Only the OpenCV library may differ in a controlled COOL/stock comparison.
+    keys = ('python', 'machine', 'numpy', 'scipy', 'torch', 'transformers')
+    return {key: {'reference': reference.get(key), 'candidate': candidate.get(key)}
+            for key in keys if key not in reference or key not in candidate or reference[key] != candidate[key]}
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--variant', action='append', required=True, help='label,python-wrapper,workers,threads[,torch-layout,background-sampling,background-median]')
@@ -134,8 +141,11 @@ def main():
                                           for r in report['runs'])
     report['encoders_succeeded'] = all(r.get('encoder_exit') and all(v == 0 for v in r['encoder_exit'].values())
                                        for r in report['runs'])
+    reference_env = report['runs'][0].get('environment', {})
+    report['environment_differences'] = [{'label': r['label'], 'repeat': r['repeat'], 'differences': differences}
+        for r in report['runs'] if (differences := environment_differences(reference_env, r.get('environment', {})))]
     save()
-    if not report['outputs_equivalent'] or not report['all_frames_processed'] or not report['encoders_succeeded'] or any(
+    if report['environment_differences'] or not report['outputs_equivalent'] or not report['all_frames_processed'] or not report['encoders_succeeded'] or any(
             r['exit_code'] != 0 or r.get('privacy', {}).get('framesWithheld', 1) != 0 for r in report['runs']):
         return 1
     return 0

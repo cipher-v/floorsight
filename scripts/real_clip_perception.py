@@ -1,13 +1,13 @@
-"""Real-footage perception for Floorsight: privacy first; pixel-level, or floor-calibrated with --calibration (v6). GCP ONLY.
+"""Real-footage perception for Floorsight, with optional floor calibration.
 
 Raw pixels never leave this process. Each frame is privacy-filtered (YuNet faces plus the head
 region of every person detection, at a deliberately low confidence) before any overlay, video,
 image or contact sheet is written. If detection or filtering fails, that frame is withheld as
 black and the per-frame health record says so (fail closed).
 
-Observations are image-plane only. "Person-heights" is a perspective-relative pixel ratio, not a
-distance: there is no camera calibration, so no metres, speeds, time-to-contact or near-miss
-claims. Folder/class labels of the publisher never enter this script; it sees a neutral name.
+Without --calibration, observations stay in the image plane; "person-heights" is
+a pixel ratio, not metres. With calibration, floor estimates include measurement
+uncertainty. Publisher folder/class labels never enter this script.
 """
 from __future__ import annotations
 
