@@ -55,7 +55,7 @@ def compare_jsonl(a, b, tolerance=.001):
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument('--variant', action='append', required=True, help='label,python-wrapper,workers,threads[,torch-layout,background-sampling]')
+    p.add_argument('--variant', action='append', required=True, help='label,python-wrapper,workers,threads[,torch-layout,background-sampling,background-median]')
     p.add_argument('--clip', type=Path, action='append', required=True)
     p.add_argument('--models', type=Path, required=True)
     p.add_argument('--hf-index', type=Path, required=True)
@@ -66,9 +66,9 @@ def main():
     p.add_argument('--vocab-every', type=int, default=5)
     args = p.parse_args()
     variants = [v.split(',') for v in args.variant]
-    if any(len(v) not in (4, 5, 6) for v in variants) or args.frames < 1 or args.repeats < 1:
-        p.error('variants need four to six fields; frames and repeats must be positive')
-    variants = [v + ['contiguous', 'auto'] if len(v) == 4 else v + ['auto'] if len(v) == 5 else v for v in variants]
+    if len(variants) < 2 or any(len(v) not in (4, 5, 6, 7) for v in variants) or args.frames < 1 or args.repeats < 1:
+        p.error('at least two variants need four to seven fields; frames and repeats must be positive')
+    variants = [v + ['contiguous', 'seek', 'compact'][len(v)-4:] for v in variants]
     args.out.mkdir(parents=True, exist_ok=False)
     report = {'schema': 'floorsight.perception-compare.v1',
         'started_utc': datetime.now(timezone.utc).isoformat(), 'machine': platform.machine(),
@@ -85,7 +85,7 @@ def main():
         for clip in args.clip:
             reference = None
             run_outputs = []
-            for label, py, workers, threads, layout, background in variants[::1 if repeat % 2 == 0 else -1]:
+            for label, py, workers, threads, layout, background, median in variants[::1 if repeat % 2 == 0 else -1]:
                 output = args.out / f'{clip.stem}-{repeat}-{label}'
                 command = [py, str(ROOT/'scripts/real_clip_perception.py'), '--clip', str(clip),
                     '--name', clip.stem, '--output', str(output), '--models', str(args.models),
@@ -93,13 +93,18 @@ def main():
                     '--max-frames', str(args.frames), '--vocab', 'gdino', '--segmenter', 'slimsam77',
                     '--person-model', 'rtdetrv2', '--privacy-extra', 'yolox_s', '--vehicle-source', 'confirmed',
                     '--vocab-every', str(args.vocab_every), '--detector-workers', workers, '--cpu-threads', threads,
-                    '--torch-layout', layout, '--background-sampling', background]
+                    '--torch-layout', layout, '--background-sampling', background, '--background-median', median]
                 start = time.perf_counter()
                 with (args.out/f'{output.name}.log').open('w') as log:
-                    proc = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, timeout=1800)
+                    try:
+                        proc = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, timeout=1800)
+                        exit_code = proc.returncode
+                    except (OSError, subprocess.TimeoutExpired) as error:
+                        log.write(f'\n{type(error).__name__}: {error}\n')
+                        exit_code = -1
                 row = {'label': label, 'clip': clip.stem, 'clip_sha256': digest(clip), 'repeat': repeat,
-                       'command': command, 'exit_code': proc.returncode, 'process_wall_s': time.perf_counter()-start}
-                if proc.returncode == 0:
+                       'command': command, 'exit_code': exit_code, 'process_wall_s': time.perf_counter()-start}
+                if exit_code == 0:
                     result = json.loads((output/f'{clip.stem}-result.json').read_text())
                     row.update(result_seconds=result['seconds'], timing=result['timing'], environment=result['environment'],
                         privacy=result['privacy'], encoder_exit=result['encoderExit'])
@@ -127,8 +132,10 @@ def main():
                                        for k in ['detections', 'privacy-regions'])
     report['all_frames_processed'] = all(r.get('timing', {}).get('detector_stages_s', {}).get('frames') == args.frames
                                           for r in report['runs'])
+    report['encoders_succeeded'] = all(r.get('encoder_exit') and all(v == 0 for v in r['encoder_exit'].values())
+                                       for r in report['runs'])
     save()
-    if not report['outputs_equivalent'] or not report['all_frames_processed'] or any(
+    if not report['outputs_equivalent'] or not report['all_frames_processed'] or not report['encoders_succeeded'] or any(
             r['exit_code'] != 0 or r.get('privacy', {}).get('framesWithheld', 1) != 0 for r in report['runs']):
         return 1
     return 0

@@ -88,11 +88,12 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def background_samples(cap, total: int, count: int = 25, mode: str = "auto"):
-    """Identical sample indices; avoid repeatedly decoding short clips' GOPs.
+def background_samples(cap, total: int, count: int = 25, mode: str = "seek"):
+    """Collect calibration samples; sequential decoding is experimental.
 
-    Long recordings still seek, so a 25-frame calibration sample never requires
-    decoding an hour of video. Duplicate indices retain their original weight.
+    Some variable-rate files return different pixels for seeking and sequential
+    decoding. Keep seeking as the default until a clip passes the equality check.
+    Long recordings always seek. Duplicate indices retain their original weight.
     """
     targets = np.linspace(0, max(0, total - 1), count).astype(int).tolist()
     if mode == "seek" or total > count * 64:
@@ -114,6 +115,20 @@ def background_samples(cap, total: int, count: int = 25, mode: str = "auto"):
             if ok:
                 frames[index] = frame
     return [frames[index] for index in targets if index in frames]
+
+
+def temporal_median(samples, mode: str = "compact"):
+    """Exact uint8 median with contiguous sample rows and no float64 image.
+
+    The usual 25 samples have an odd count, so the median is an existing value.
+    Keep NumPy's averaging semantics if a damaged clip yields an even count.
+    """
+    if mode == "numpy" or len(samples) % 2 == 0:
+        return np.median(np.stack(samples), axis=0).astype(np.uint8)
+    pixels = np.stack(samples, axis=-1)
+    middle = len(samples) // 2
+    pixels.partition(middle, axis=-1)
+    return pixels[..., middle].copy()
 
 
 def iou_matrix(a: np.ndarray, b: np.ndarray) -> np.ndarray:
@@ -531,7 +546,8 @@ def main() -> int:
     parser.add_argument("--privacy-extra", default=None, help="YOLOX ONNX name (e.g. yolox_s) used as a second, blur-only person source via cv2.dnn")
     parser.add_argument("--detector-workers", type=int, choices=[1, 2], default=1, help="independent detector tasks per frame; privacy checks still run on every frame")
     parser.add_argument("--torch-layout", choices=["contiguous", "channels-last"], default="contiguous", help="model/input memory layout; same weights and precision")
-    parser.add_argument("--background-sampling", choices=["auto", "seek"], default="auto", help="auto decodes short clips once for the same 25 calibration samples; seek is the comparison baseline")
+    parser.add_argument("--background-sampling", choices=["auto", "seek"], default="seek", help="seek preserves prior decoding; auto is experimental and requires a per-clip sample equality check")
+    parser.add_argument("--background-median", choices=["compact", "numpy"], default="compact", help="exact uint8 temporal median; numpy selects the previous implementation for comparison")
     parser.add_argument("--cpu-threads", type=int, default=None, help="threads per model/OpenCV operation; benchmark 1 and 2 on a 4-core Graviton before increasing")
     parser.add_argument("--hf-index", type=Path, default=None, help="hf-models.json (local snapshot paths)")
     parser.add_argument("--save-detections", type=Path, default=None, help="write every frame's detector output (boxes and outlines, no pixels) to this pickle")
@@ -582,7 +598,11 @@ def main() -> int:
     background_start = time.perf_counter()
     samples = background_samples(cap, total, mode=args.background_sampling)
     background_sample_s = time.perf_counter() - background_start
-    walkway, walkway_fraction, walkway_stats = segment_walkway(np.median(np.stack(samples), axis=0).astype(np.uint8))
+    median_start = time.perf_counter()
+    background = temporal_median(samples, mode=args.background_median)
+    background_median_s = time.perf_counter() - median_start
+    walkway, walkway_fraction, walkway_stats = segment_walkway(background)
+    del background
     motion = cv2.createBackgroundSubtractorMOG2(history=300, varThreshold=24, detectShadows=True)
     for frame in samples:
         motion.apply(cv2.resize(frame, MOTION_SIZE, interpolation=cv2.INTER_AREA))
@@ -1081,7 +1101,8 @@ def main() -> int:
                    "opencv_build": cv2.getBuildInformation().split("Custom HAL:")[-1].split("\n")[0].strip() if "Custom HAL:" in cv2.getBuildInformation() else "none",
                    "cv2_file": cv2.__file__, "opencv_threads": cv2.getNumThreads(),
                    "cpu_threads_requested": args.cpu_threads, "detector_workers": args.detector_workers,
-                   "background_sampling": args.background_sampling, "background_sample_s": background_sample_s},
+                   "background_sampling": args.background_sampling, "background_sample_s": background_sample_s,
+                   "background_median": args.background_median, "background_median_s": background_median_s},
         "thresholds": {"privacyPersonConf": PRIVACY_PERSON_CONF, "displayPersonConf": DISPLAY_PERSON_CONF, "trackPersonConf": TRACK_PERSON_CONF,
                        "forkliftConf": FORKLIFT_CONF, "forkliftPrompts": FORKLIFT_PROMPTS, "motionMaxFrames": MOTION_MAX_FRAMES,
                        "movingFraction": MOVING_FRACTION, "movingMemoryFrames": MOVING_MEMORY, "staticShowConf": STATIC_SHOW_CONF, "motionWarmupFrames": MOTION_WARMUP,
