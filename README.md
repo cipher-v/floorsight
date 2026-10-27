@@ -4,7 +4,7 @@
 
 Floorsight maps people and forklifts onto the floor, predicts close passes, and gives a reviewer the measurements behind each warning. In the simulator, it also slows and stops the forklift.
 
-[Watch the submission video](https://tonystark101-debug.github.io/floorsight/#demo) · [Technical report](docs/TECHNICAL_REPORT.md) · [Judge guide](docs/JUDGING.md) · [AWS deployment](docs/aws/DEPLOY.md)
+[Watch the submission video](https://youtu.be/W07fWDXOHyY) · [Technical report](docs/TECHNICAL_REPORT.md) · [Judge guide](docs/JUDGING.md) · [AWS deployment](docs/aws/DEPLOY.md)
 
 [Submission links and concise project description](docs/SUBMISSION.md)
 

@@ -2,7 +2,7 @@
 
 **Project:** Floorsight — forklift risk measured from existing CCTV.
 
-Start with the [3:41 submission video](https://tonystark101-debug.github.io/floorsight/#demo), then the [technical report](TECHNICAL_REPORT.md). The demo gallery is a static video page, not the running application. [Submission links and short description](SUBMISSION.md).
+Start with the [3:41 submission video](https://youtu.be/W07fWDXOHyY), then the [technical report](TECHNICAL_REPORT.md). The demo gallery is a static video page, not the running application. [Submission links and short description](SUBMISSION.md).
 
 ## Competition paths
 
@@ -35,7 +35,7 @@ The [competition page](https://opencv26.devpost.com/) calls for substantive Open
 | Dependencies/build/tests | [Application pins](../requirements.txt), [run guide](DEVELOPMENT.md), recovered [perception packages](receipts/perception-historical-environment-20261023.txt) and [model revisions](receipts/perception-models-20261023.json) |
 | Architecture | [System diagram](diagrams/floorsight-architecture-20261026.png) |
 | Working app access | [Live AWS simulator](https://dz0itcb127dm1.cloudfront.net/), verified 27 October; access token supplied privately in submission testing instructions |
-| Video | [3:41 submission video](https://tonystark101-debug.github.io/floorsight/#demo), updated 27 October; introduces Team Floorsight. Owner must confirm registered member details; individual footage was not supplied. |
+| Video | [3:41 submission video](https://youtu.be/W07fWDXOHyY), updated 27 October; introduces Team Floorsight. Owner must confirm registered member details; individual footage was not supplied. |
 | Evaluation and failures | [Results](TECHNICAL_REPORT.md#results-and-limits), [receipts](receipts/) |
 | COOL evidence | Version/path, Graviton configuration and stock comparison linked above |
 | Agent evidence | Workflow, traces and evaluation linked above |

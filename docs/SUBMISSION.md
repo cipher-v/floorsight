@@ -9,8 +9,8 @@ vision tools, and give a supervisor the evidence before sending an alert.
 |---|---|
 | Code and setup | [GitHub repository](https://github.com/tonystark101-debug/floorsight) |
 | Running judge simulator | [Protected HTTPS demo](https://dz0itcb127dm1.cloudfront.net/) — token supplied privately in testing instructions |
-| Submission video | [Watch the 3:41 video](https://tonystark101-debug.github.io/floorsight/#demo) |
-| Direct MP4 | [Download or play](https://tonystark101-debug.github.io/floorsight/videos/floorsight-demo.mp4) |
+| Submission video | [Watch the 3:41 video](https://youtu.be/W07fWDXOHyY) |
+| Direct MP4 | [Download or play](https://github.com/tonystark101-debug/floorsight/releases/download/v1.0-opencv2026/floorsight-submission-20261027.mp4) |
 | Technical report | [Problem, implementation, results and limits](TECHNICAL_REPORT.md) |
 | Architecture | [System](diagrams/floorsight-architecture-20261026.png), [agent workflow](diagrams/floorsight-agent-workflow-20261026.png) |
 | AWS deployment | [Guide](aws/DEPLOY.md), [infrastructure code](../infra/README.md) |
