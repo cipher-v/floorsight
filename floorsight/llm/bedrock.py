@@ -1,8 +1,9 @@
 """Claude on Amazon Bedrock as the agent's planner and rule parser.
 
-PREPARED, NOT CALLED: used only when FLOORSIGHT_LLM=bedrock (or when a client
+Opt-in: used only when FLOORSIGHT_LLM=bedrock (or when a client
 is injected, as the tests do with a stub). Nothing here runs on import and the
-anthropic SDK is imported lazily.
+anthropic SDK is imported lazily. Live access checks are saved in docs/receipts;
+account denial disables further calls until the planner is restarted.
 
     planner = BedrockPlanner(region="us-east-1")
     action = planner.next_action(view)   # same view the LocalPlanner gets

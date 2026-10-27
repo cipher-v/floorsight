@@ -140,6 +140,26 @@ def test_unknown_camera_is_overridden():
     assert a.mode == "local" and "unknown camera" in a.reason and a.tool == "sharper_crop" and a.input["camera_id"] == "cam2"
 
 
+def test_access_denied_is_not_retried_for_every_tool():
+    class Denied(Exception):
+        status_code = 403
+    def denied(params):
+        raise Denied('account has no model access')
+    stub = StubClient(denied)
+    planner = BedrockPlanner(client=stub)
+    for _ in range(3):
+        action = planner.next_action(_blocked_view())
+        assert action.mode == 'local' and action.tool == 'sharper_crop'
+        assert 'access denied' in action.reason
+    assert len(stub.requests) == planner.calls == 1
+
+
+def test_model_cannot_abandon_required_second_look():
+    planner = BedrockPlanner(client=StubClient(lambda p: tool_use('wait', {'reason': 'done'})))
+    action = planner.next_action(_blocked_view())
+    assert action.tool == 'sharper_crop' and action.mode == 'local'
+
+
 def test_refusal_falls_back_to_local():
     resp = SimpleNamespace(stop_reason="refusal", stop_details=SimpleNamespace(category="cyber", explanation=None), content=[])
     planner = BedrockPlanner(client=StubClient(lambda p: resp))

@@ -510,6 +510,8 @@ class ReplayVision:
                 res = subprocess.run(shlex.split(cmd) + [req_path], capture_output=True, text=True, timeout=180,
                                      cwd=os.environ.get("FLOORSIGHT_REDETECT_CWD") or None)
                 out = json.loads(res.stdout.strip().splitlines()[-1]) if res.stdout.strip() else {"error": res.stderr[-400:]}
+                if res.returncode != 0:
+                    out = {"error": f"second detector exited with status {res.returncode}"}
             except Exception as exc:  # the tool reports, never decides
                 out = {"error": f"{type(exc).__name__}: {exc}"}
             ann = cv2.imread(req["annotated"]) if os.path.exists(req["annotated"]) else None

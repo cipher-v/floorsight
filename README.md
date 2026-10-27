@@ -30,6 +30,12 @@ These measurements come from the saved 23–24 October 2026 runs. New code check
 
 [Results, evidence files and failure cases](docs/TECHNICAL_REPORT.md#results-and-limits)
 
+**New agent check, 27 October:** in controlled two-camera scenes, false alert
+records fell from 8 to 0 while all 8 visible hazards still produced alerts.
+Missing-camera cases stayed pending review. On 80 synthetic floor warnings,
+false flags recommended for action fell by 40%, with no hazardous case recommended
+for rejection. These are synthetic checks, not field accuracy. [Method and receipts](docs/EVALUATION.md).
+
 ## Run a local demo
 
 Requires Python 3.11 or 3.12. Run from the repository root. This simulator needs no AWS account, downloaded footage or large detector models.

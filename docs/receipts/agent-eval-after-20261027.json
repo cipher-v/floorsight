@@ -12,9 +12,9 @@
   },
   "source_sha256": {
     "scripts\\benchmark\\agent_eval.py": "827155b75953348d981a7973dd058ea6750729238796c0074389fa72e4724274",
-    "floorsight\\agent\\planner.py": "c9d1f89249cc2e43e266b1d7c1b6bb825c04e2291b4b38dc316c0e2224ccf155",
+    "floorsight\\agent\\planner.py": "df1b8ceb7beec8e2c3d7723e3cd7adf03cd218305d5bd40fbf3cebb95bc5005d",
     "floorsight\\agent\\runtime.py": "f93c79579dc2fd37ee680a8b6983f2a4170dfdd1be1f6ba55b681bd65f07836d",
-    "floorsight\\realclip.py": "d996f73fa94fd83423ed17bc4579530a20f0bb42d34eae90c250cc3b00c1339b"
+    "floorsight\\realclip.py": "0b8031d92cbcd46cdce160a7ed6387875d999e6b29c8a1e452e52a85ba0ade35"
   },
   "metrics": {
     "cases": 80,
@@ -41,7 +41,7 @@
     },
     "actual_alerts_before_approval": 0,
     "tool_calls": 400,
-    "p50_review_ms": 0.5435000000000001
+    "p50_review_ms": 0.539
   },
   "cases": [
     {
@@ -55,7 +55,7 @@
       "recommendation": "confirm",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 66.314,
+      "elapsed_ms": 59.487,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -245,7 +245,7 @@
       "recommendation": "confirm",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.754,
+      "elapsed_ms": 0.807,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -435,7 +435,7 @@
       "recommendation": "confirm",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.668,
+      "elapsed_ms": 1.593,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -625,7 +625,7 @@
       "recommendation": "confirm",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.63,
+      "elapsed_ms": 0.652,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -815,7 +815,7 @@
       "recommendation": "confirm",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.564,
+      "elapsed_ms": 0.578,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -1005,7 +1005,7 @@
       "recommendation": "confirm",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.551,
+      "elapsed_ms": 0.616,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -1195,7 +1195,7 @@
       "recommendation": "confirm",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.556,
+      "elapsed_ms": 0.553,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -1385,7 +1385,7 @@
       "recommendation": "confirm",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.558,
+      "elapsed_ms": 0.574,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -1575,7 +1575,7 @@
       "recommendation": "confirm",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.557,
+      "elapsed_ms": 0.554,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -1955,7 +1955,7 @@
       "recommendation": "confirm",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.523,
+      "elapsed_ms": 0.525,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -2145,7 +2145,7 @@
       "recommendation": "confirm",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.533,
+      "elapsed_ms": 0.557,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -2335,7 +2335,7 @@
       "recommendation": "confirm",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.544,
+      "elapsed_ms": 0.572,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -2525,7 +2525,7 @@
       "recommendation": "confirm",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.555,
+      "elapsed_ms": 0.872,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -2715,7 +2715,7 @@
       "recommendation": "confirm",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.702,
+      "elapsed_ms": 0.662,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -2905,7 +2905,7 @@
       "recommendation": "confirm",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.62,
+      "elapsed_ms": 0.59,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -3095,7 +3095,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.637,
+      "elapsed_ms": 0.549,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -3285,7 +3285,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.629,
+      "elapsed_ms": 0.609,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -3475,7 +3475,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.554,
+      "elapsed_ms": 0.537,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -3665,7 +3665,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.536,
+      "elapsed_ms": 0.526,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -3855,7 +3855,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.533,
+      "elapsed_ms": 0.569,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -4045,7 +4045,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.58,
+      "elapsed_ms": 0.533,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -4235,7 +4235,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.54,
+      "elapsed_ms": 0.616,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -4425,7 +4425,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.543,
+      "elapsed_ms": 0.56,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -4615,7 +4615,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.561,
+      "elapsed_ms": 0.529,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -4805,7 +4805,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.534,
+      "elapsed_ms": 0.589,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -4995,7 +4995,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.518,
+      "elapsed_ms": 0.556,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -5185,7 +5185,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.532,
+      "elapsed_ms": 0.525,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -5375,7 +5375,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.515,
+      "elapsed_ms": 0.525,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -5565,7 +5565,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.528,
+      "elapsed_ms": 0.532,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -5755,7 +5755,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.543,
+      "elapsed_ms": 0.523,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -5945,7 +5945,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.557,
+      "elapsed_ms": 0.536,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -6135,7 +6135,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.54,
+      "elapsed_ms": 0.468,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -6325,7 +6325,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.454,
+      "elapsed_ms": 0.426,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -6515,7 +6515,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.418,
+      "elapsed_ms": 0.385,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -6705,7 +6705,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.391,
+      "elapsed_ms": 0.379,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -6895,7 +6895,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.399,
+      "elapsed_ms": 0.393,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -7085,7 +7085,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.386,
+      "elapsed_ms": 0.397,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -7275,7 +7275,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.399,
+      "elapsed_ms": 0.478,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -7465,7 +7465,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.403,
+      "elapsed_ms": 0.416,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -7655,7 +7655,7 @@
       "recommendation": "reject",
       "retained_for_review": false,
       "tool_calls": 5,
-      "elapsed_ms": 0.563,
+      "elapsed_ms": 0.557,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -7845,7 +7845,7 @@
       "recommendation": "reject",
       "retained_for_review": false,
       "tool_calls": 5,
-      "elapsed_ms": 0.534,
+      "elapsed_ms": 0.551,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -8225,7 +8225,7 @@
       "recommendation": "reject",
       "retained_for_review": false,
       "tool_calls": 5,
-      "elapsed_ms": 0.559,
+      "elapsed_ms": 0.545,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -8415,7 +8415,7 @@
       "recommendation": "reject",
       "retained_for_review": false,
       "tool_calls": 5,
-      "elapsed_ms": 0.545,
+      "elapsed_ms": 0.564,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -8605,7 +8605,7 @@
       "recommendation": "reject",
       "retained_for_review": false,
       "tool_calls": 5,
-      "elapsed_ms": 0.527,
+      "elapsed_ms": 0.535,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -8795,7 +8795,7 @@
       "recommendation": "reject",
       "retained_for_review": false,
       "tool_calls": 5,
-      "elapsed_ms": 0.561,
+      "elapsed_ms": 0.539,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -8985,7 +8985,7 @@
       "recommendation": "reject",
       "retained_for_review": false,
       "tool_calls": 5,
-      "elapsed_ms": 0.579,
+      "elapsed_ms": 0.597,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -9175,7 +9175,7 @@
       "recommendation": "reject",
       "retained_for_review": false,
       "tool_calls": 5,
-      "elapsed_ms": 0.55,
+      "elapsed_ms": 0.561,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -9365,7 +9365,7 @@
       "recommendation": "reject",
       "retained_for_review": false,
       "tool_calls": 5,
-      "elapsed_ms": 0.557,
+      "elapsed_ms": 0.536,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -9555,7 +9555,7 @@
       "recommendation": "reject",
       "retained_for_review": false,
       "tool_calls": 5,
-      "elapsed_ms": 0.738,
+      "elapsed_ms": 0.683,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -9745,7 +9745,7 @@
       "recommendation": "reject",
       "retained_for_review": false,
       "tool_calls": 5,
-      "elapsed_ms": 0.645,
+      "elapsed_ms": 0.83,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -9935,7 +9935,7 @@
       "recommendation": "reject",
       "retained_for_review": false,
       "tool_calls": 5,
-      "elapsed_ms": 0.637,
+      "elapsed_ms": 0.605,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -10125,7 +10125,7 @@
       "recommendation": "reject",
       "retained_for_review": false,
       "tool_calls": 5,
-      "elapsed_ms": 0.549,
+      "elapsed_ms": 0.572,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -10315,7 +10315,7 @@
       "recommendation": "reject",
       "retained_for_review": false,
       "tool_calls": 5,
-      "elapsed_ms": 0.536,
+      "elapsed_ms": 0.54,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -10505,7 +10505,7 @@
       "recommendation": "reject",
       "retained_for_review": false,
       "tool_calls": 5,
-      "elapsed_ms": 0.549,
+      "elapsed_ms": 0.539,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -10695,7 +10695,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.539,
+      "elapsed_ms": 0.526,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -10885,7 +10885,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.526,
+      "elapsed_ms": 0.574,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -11075,7 +11075,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.552,
+      "elapsed_ms": 0.539,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -11265,7 +11265,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.652,
+      "elapsed_ms": 0.538,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -11455,7 +11455,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.614,
+      "elapsed_ms": 0.531,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -11645,7 +11645,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.615,
+      "elapsed_ms": 0.557,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -11835,7 +11835,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.737,
+      "elapsed_ms": 0.715,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -12025,7 +12025,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.565,
+      "elapsed_ms": 0.57,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -12215,7 +12215,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.399,
+      "elapsed_ms": 0.403,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -12405,7 +12405,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.398,
+      "elapsed_ms": 0.392,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -12595,7 +12595,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.379,
+      "elapsed_ms": 0.396,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -12785,7 +12785,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.405,
+      "elapsed_ms": 0.387,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -12975,7 +12975,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.38,
+      "elapsed_ms": 0.384,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -13165,7 +13165,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.377,
+      "elapsed_ms": 0.383,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -13355,7 +13355,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.412,
+      "elapsed_ms": 0.394,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -13545,7 +13545,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.406,
+      "elapsed_ms": 0.391,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -13735,7 +13735,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.537,
+      "elapsed_ms": 0.538,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -13925,7 +13925,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.541,
+      "elapsed_ms": 0.533,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -14115,7 +14115,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.539,
+      "elapsed_ms": 0.527,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -14305,7 +14305,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.525,
+      "elapsed_ms": 0.519,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -14495,7 +14495,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.521,
+      "elapsed_ms": 0.525,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -14685,7 +14685,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.611,
+      "elapsed_ms": 0.616,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -14875,7 +14875,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.593,
+      "elapsed_ms": 0.554,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [
@@ -15065,7 +15065,7 @@
       "recommendation": "uncertain",
       "retained_for_review": true,
       "tool_calls": 5,
-      "elapsed_ms": 0.549,
+      "elapsed_ms": 0.53,
       "pending_approvals": 1,
       "actual_alerts_before_approval": 0,
       "evidence": [

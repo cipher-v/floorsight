@@ -34,11 +34,17 @@ python -m floorsight.server --source sim --sim-dir data/sim/demo_001 --vision re
 python -m pytest -q tests
 python scripts/check_public_site.py
 python scripts/interlock_sim.py --out data/interlock-check --no-video
+python scripts/benchmark/agent_eval.py --out data/agent-evaluation.json --check
 ```
 
 The tests create synthetic fixtures in temporary folders. They do not require AWS credentials or `data/sim/demo_001`. Face-detector integration tests may fetch OpenCV sample images; if the network is unavailable, those tests skip. `FLOORSIGHT_TEST_ARTIFACT_ROOT` optionally keeps acquisition fixtures in a directory you choose. Explicitly skipped research regressions remain labelled as unresolved.
 
 The simulation command evaluates the current code and writes `interlock-sim-results.json`. Historical numbers in `docs/receipts/` refer to their dated runs; a new run must be reported separately.
+
+The agent evaluation renders its own controlled evidence and needs no cloud
+account or large models. It includes blind-camera and conflicting-measurement
+cases. The opt-in live Bedrock and full perception benchmark commands are in the
+[evaluation guide](EVALUATION.md).
 
 ## Real-footage perception
 

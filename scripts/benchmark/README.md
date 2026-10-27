@@ -1,5 +1,10 @@
 # COOL benchmark
 
+For the complete real-clip pipeline (including all models), use
+[`perception_compare.py`](perception_compare.py). For the agent baseline comparison,
+use [`agent_eval.py`](agent_eval.py). Commands and interpretation are in
+the [evaluation guide](../../docs/EVALUATION.md).
+
 `cool_bench.py` times the OpenCV work Floorsight does on every camera frame, on the
 same recorded footage, and writes one JSON file per machine. The JSON proves which
 OpenCV build ran: `cv2.__version__`, the module path, and a SHA-256 of

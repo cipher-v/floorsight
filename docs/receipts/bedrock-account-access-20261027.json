@@ -1,0 +1,28 @@
+{
+  "schema": "floorsight.account-access-check.v1",
+  "date": "2026-10-27",
+  "region": "us-east-1",
+  "collection": "Observed errors from live SDK smoke calls during repository review; synthetic text only.",
+  "checks": [
+    {
+      "model": "anthropic.claude-opus-5-5",
+      "endpoint": "bedrock-mantle",
+      "http_status": 403,
+      "error_type": "permission_error",
+      "message_excerpt": "anthropic.claude-opus-5-5 is not available for this account."
+    },
+    {
+      "model": "anthropic.claude-sonnet-5",
+      "result": "No live model step succeeded; the local policy handled every step.",
+      "receipt": "bedrock-sonnet-live-20261027.json"
+    },
+    {
+      "model": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "endpoint": "bedrock-runtime",
+      "http_status": 403,
+      "message_excerpt": "Model access is denied due to INVALID_PAYMENT_INSTRUMENT:A valid payment instrument must be provided.. Your AWS Marketplace subscription for this model cannot be completed at this time."
+    }
+  ],
+  "required_owner_action": "Resolve AWS payment/model access, then rerun scripts/benchmark/bedrock_smoke.py.",
+  "live_model_verified": false
+}

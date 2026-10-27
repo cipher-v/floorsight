@@ -17,6 +17,7 @@ View layout (plain JSON so it can be sent to a model unchanged):
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+import math
 from typing import Protocol
 from floorsight.formatting import floor_error_text
 
@@ -148,6 +149,7 @@ def floor_recommendation(view: dict) -> tuple[str, str]:
     tracked = view.get("facts", {}).get("min_clearance_m")
     measured = d.get("score") if d else None
     larger_gap = (isinstance(tracked, (int, float)) and isinstance(measured, (int, float))
+                  and math.isfinite(tracked) and math.isfinite(measured)
                   and measured > max(.8, tracked + max(.4, .3 * tracked)))
     if r is not None and d is not None:
         if r["supports"] is False and d["supports"] is False and larger_gap:

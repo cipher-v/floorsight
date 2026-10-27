@@ -54,6 +54,21 @@ In the earlier AWS run, a second check identified a tracking glitch and led to r
 
 The recorded reviewer was a scripted stand-in following the recommendation. A real person can use the same approval controls, but no supervisor usability study has been completed. These demonstrations establish orchestration and traceability, not general agent accuracy.
 
+The 27 October code change makes conflicting or missing measurements uncertain.
+A tracking jump alone can no longer justify a rejection recommendation, and a
+second detector finding a *closer* person cannot count as evidence of safety.
+In a controlled 80-case floor-warning evaluation, hazardous rejection
+recommendations fell from 16 to 0. Sixteen of 40 false candidates were recommended
+for rejection; confirm and uncertain both count as retained. All cases still
+require human review. A separate two-camera test produced 0 false alert records
+versus 8 for the baseline, while retaining all 8 visible-hazard alerts. Sixteen
+blind-camera cases requested human review. [Evaluation and raw traces](EVALUATION.md).
+
+Live Bedrock calls were attempted on 27 October. The account denied access to
+the configured models; a Haiku access probe reported a payment-instrument issue.
+The live check is recorded as failed. The app continues with the local policy and
+stops repeating denied calls. No real-model success or real-reviewer study is claimed.
+
 ## AWS and COOL
 
 The saved runs used a COOL Marketplace AMI on an EC2 `c8g.xlarge` with four Graviton4 cores. The imported OpenCV version was `5.1.0-dev`, under `/opt/cool/python_3.12/site-packages/cv2`. The baseline was stock OpenCV 5.0.0 on the same instance. [Build evidence](receipts/cool-opencv-build-20261023.txt).

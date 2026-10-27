@@ -20,7 +20,7 @@ The project targets the overall awards, Agentic Vision and Best Use of COOL. The
 | Special award | Weighted criteria | Floorsight evidence |
 |---|---|---|
 | COOL | Integration 30%; architecture 25%; measured value 20%; innovation 15%; reproducibility/demo 10% | [Build](receipts/cool-opencv-build-20261023.txt), [baseline comparison](receipts/cool-bench-20261024.json), [crash workaround](findings/COOL-fillPoly-crash.md) |
-| Agentic Vision | Integration 30%; orchestration 25%; effectiveness 20%; safeguards/control 15%; UX/docs/demo 10% | [Workflow](diagrams/floorsight-agent-workflow-20261026.png), [decision-changing traces](receipts/traces/README.md), approval controls and tests |
+| Agentic Vision | Integration 30%; orchestration 25%; effectiveness 20%; safeguards/control 15%; UX/docs/demo 10% | [Controlled baseline comparison](EVALUATION.md), [workflow](diagrams/floorsight-agent-workflow-20261026.png), [recorded traces](receipts/traces/README.md), approval controls and tests |
 
 Source: [published judging rubrics](https://opencv26.devpost.com/rules), checked 27 October 2026.
 
@@ -56,7 +56,7 @@ The [competition page](https://opencv26.devpost.com/) calls for substantive Open
 - **Reproducibility:** retrieve the historical perception freeze and model revision manifest from the existing private run artifacts. Publish a sanitised copy only after checking it, or give judges an access arrangement.
 - **Evaluation:** add a held-out labelled clip set only if time allows a real evaluation. Do not relabel the six development clips as independent validation.
 - **COOL positioning:** quote 1.10× for the single-stream OpenCV chain alongside 0.97× end to end. Explain the detector bottleneck.
-- **Agent positioning:** use the existing rejection trace to prove that visual output changes a later action. Do not describe the recorded run as Bedrock-powered.
+- **Agent positioning:** show the new baseline comparison and uncertainty cases alongside the recorded rejection trace. The new accuracy checks are synthetic. Live Bedrock access was denied by the account; the recorded demo uses the local policy.
 - **Submission:** select both special awards if pursuing them and supply their extra evidence. Eligibility remains the judges' decision.
 
 ## Review status
