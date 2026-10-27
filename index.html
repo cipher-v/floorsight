@@ -40,10 +40,10 @@
 <p class="intro">Measure forklift risk from existing CCTV. See floor distances, check a predicted close pass, and review the evidence before sending an alert.</p>
 <nav aria-label="Project links">
 <a href="#demo">Watch the 3:41 submission video</a>
-<a href="https://github.com/tonystark101-debug/floorsight/blob/main/docs/TECHNICAL_REPORT.md">Read the report</a>
-<a href="https://github.com/tonystark101-debug/floorsight">Get the code</a>
-<a href="https://github.com/tonystark101-debug/floorsight/blob/main/docs/JUDGING.md">Judge guide</a>
-<a href="https://github.com/tonystark101-debug/floorsight/blob/main/docs/EVALUATION.md">Agent and performance tests</a>
+<a href="https://github.com/cipher-v/floorsight/blob/main/docs/TECHNICAL_REPORT.md">Read the report</a>
+<a href="https://github.com/cipher-v/floorsight">Get the code</a>
+<a href="https://github.com/cipher-v/floorsight/blob/main/docs/JUDGING.md">Judge guide</a>
+<a href="https://github.com/cipher-v/floorsight/blob/main/docs/EVALUATION.md">Agent and performance tests</a>
 </nav>
 <p class="notice"><strong>Research prototype.</strong> Real factory clips are processed offline. Slow and stop commands control only the simulated forklift. No real truck integration or field safety validation is claimed. This page contains recorded demonstrations.</p>
 </header>
@@ -53,7 +53,7 @@
 <div class="result"><strong>3 reviewed warnings</strong><p>Final AWS run: three approvals and three SNS alerts. The recorded reviewer was scripted.</p></div>
 <div class="result"><strong>Measured in metres</strong><p>Floor geometry accounts for camera perspective. Distances still depend on calibration and detection quality.</p></div>
 </section>
-<p class="lead">New controlled agent checks · 27 October: false exit alerts fell from 8 to 0, with all 8 visible hazards retained. Floor-warning rejection recommendations fell from 16 hazardous cases to 0. These synthetic results and the current policy are explained in the new submission video. <a href="https://github.com/tonystark101-debug/floorsight/blob/main/docs/EVALUATION.md">Protocol, limits and traces</a>.</p>
+<p class="lead">New controlled agent checks · 27 October: false exit alerts fell from 8 to 0, with all 8 visible hazards retained. Floor-warning rejection recommendations fell from 16 hazardous cases to 0. These synthetic results and the current policy are explained in the new submission video. <a href="https://github.com/cipher-v/floorsight/blob/main/docs/EVALUATION.md">Protocol, limits and traces</a>.</p>
 <p class="lead"><a href="#simulation">Control comparison</a> · <a href="#real-clips">Real clips</a> · <a href="#privacy">Privacy checks</a> · <a href="#archive">Earlier work</a></p>
 <h2>The demo</h2>
 
@@ -68,7 +68,7 @@
 <figure id="app-sim"><video aria-labelledby="app-sim-title" controls preload="none" playsinline src="videos/app/app-simulator.webm"></video><figcaption><b id="app-sim-title">The app on the simulated warehouse (1 min 58 s)</b><span>The Floorsight app itself on the four simulated cameras, issuing AUTO-SLOW, AUTO-STOP and RESUME.</span> <a class="dl" href="videos/app/app-simulator.webm" download>download</a></figcaption></figure>
 </div>
 <h2>The app on the real factory clips</h2>
-<p class="lead">Recording correction: the old app resumes at 40.4 s in clip-dev-002. The 27 October fix keeps it stopped until the person clears the path. <a href="https://github.com/tonystark101-debug/floorsight/blob/main/docs/receipts/interlock-replay-check-20261027.txt">Replay evidence</a>.</p>
+<p class="lead">Recording correction: the old app resumes at 40.4 s in clip-dev-002. The 27 October fix keeps it stopped until the person clears the path. <a href="https://github.com/cipher-v/floorsight/blob/main/docs/receipts/interlock-replay-check-20261027.txt">Replay evidence</a>.</p>
 <div class="grid wide">
 <figure id="app-real"><video aria-labelledby="app-real-title" controls preload="none" playsinline src="videos/app/app-real-clips.webm"></video><figcaption><b id="app-real-title">The app on AWS, six real clips (3 min 7 s)</b><span>Floor map, AUTO-SLOW / AUTO-STOP / RESUME banners (recorded video, so the command is logged, not applied), the agent&#x27;s one-line recommendation, approve/reject, alerts to the floor lead.</span> <a class="dl" href="videos/app/app-real-clips.webm" download>download</a></figcaption></figure>
 </div>
@@ -97,7 +97,7 @@
 </div>
 <details id="archive"><summary>Earlier videos (superseded)</summary>
 <p class="lead"><a href="videos/earlier/2026-10-24-submission-demo.mp4">24 October demo (4:22)</a>: preserved for reference; superseded by the 27 October submission video above.</p>
-<p class="lead">Superseded: some numbers in these were corrected later (for example, screen-002 no longer warns once the turn-rate noise is filtered). The final historical numbers are in the demo and <a href="https://github.com/tonystark101-debug/floorsight/blob/main/docs/TECHNICAL_REPORT.md">report</a>.</p>
+<p class="lead">Superseded: some numbers in these were corrected later (for example, screen-002 no longer warns once the turn-rate noise is filtered). The final historical numbers are in the demo and <a href="https://github.com/cipher-v/floorsight/blob/main/docs/TECHNICAL_REPORT.md">report</a>.</p>
 <div class="grid">
 <figure id="cameras-demo_001"><video aria-labelledby="cameras-demo_001-title" controls preload="none" playsinline src="videos/simulator/cameras-demo_001/cam1.mp4"></video><figcaption><b id="cameras-demo_001-title">17 Oct: simulated camera 1 (3 min)</b><span>The first simulated scenario, rendered.</span> <a class="dl" href="videos/simulator/cameras-demo_001/cam1.mp4" download>download</a></figcaption></figure>
 <figure id="cameras-demo_001-cam2"><video aria-labelledby="cameras-demo_001-cam2-title" controls preload="none" playsinline src="videos/simulator/cameras-demo_001/cam2.mp4"></video><figcaption><b id="cameras-demo_001-cam2-title">17 Oct: simulated camera 2 (3 min)</b> <a class="dl" href="videos/simulator/cameras-demo_001/cam2.mp4" download>download</a></figcaption></figure>
@@ -118,7 +118,7 @@
 </details>
 <footer class="footer">
 <p>Real footage: Önal &amp; Dandıl (2024), <a href="https://doi.org/10.17632/xjmtb22pff.1">Video Dataset for Safe and Unsafe Behaviours</a>, CC BY 4.0. Clips trimmed; heads and faces pixelated. No endorsement implied. Simulated people are rendered.</p>
-<p><a href="https://github.com/tonystark101-debug/floorsight/blob/main/docs/TECHNICAL_REPORT.md#results-and-limits">Evidence and limitations</a> · <a href="videos/floorsight-demo.srt" download>Download demo transcript</a></p>
+<p><a href="https://github.com/cipher-v/floorsight/blob/main/docs/TECHNICAL_REPORT.md#results-and-limits">Evidence and limitations</a> · <a href="videos/floorsight-demo.srt" download>Download demo transcript</a></p>
 </footer>
 </main>
 <script>

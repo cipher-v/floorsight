@@ -63,7 +63,7 @@ for rejection. These are synthetic checks, not field accuracy. [Method and recei
 Requires Python 3.11 or 3.12. Run from the repository root. This simulator needs no AWS account, downloaded footage or large detector models.
 
 ```bash
-git clone https://github.com/tonystark101-debug/floorsight.git
+git clone https://github.com/cipher-v/floorsight.git
 cd floorsight
 python -m venv .venv
 ```
