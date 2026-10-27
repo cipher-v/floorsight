@@ -1,0 +1,32 @@
+{
+ "omlab/omdet-turbo-swin-tiny-hf": {
+  "license": "apache-2.0",
+  "sha": "7fe93cecfb770c4d76cf71163956221249cab566",
+  "path": "/opt/floorsight/models/hf/hub/models--omlab--omdet-turbo-swin-tiny-hf/snapshots/7fe93cecfb770c4d76cf71163956221249cab566"
+ },
+ "IDEA-Research/grounding-dino-tiny": {
+  "license": "apache-2.0",
+  "sha": "a2bb814dd30d776dcf7e30523b00659f4f141c71",
+  "path": "/opt/floorsight/models/hf/hub/models--IDEA-Research--grounding-dino-tiny/snapshots/a2bb814dd30d776dcf7e30523b00659f4f141c71"
+ },
+ "google/owlv2-base-patch16-ensemble": {
+  "license": "apache-2.0",
+  "sha": "cfd3195ba4ea9592eec887ded089f4c08eff231d",
+  "path": "/opt/floorsight/models/hf/hub/models--google--owlv2-base-patch16-ensemble/snapshots/cfd3195ba4ea9592eec887ded089f4c08eff231d"
+ },
+ "Zigeng/SlimSAM-uniform-77": {
+  "license": "apache-2.0",
+  "sha": "79c09c1ce6b4ae51f00634ed171d9b8e888f6911",
+  "path": "/opt/floorsight/models/hf/hub/models--Zigeng--SlimSAM-uniform-77/snapshots/79c09c1ce6b4ae51f00634ed171d9b8e888f6911"
+ },
+ "facebook/sam-vit-base": {
+  "license": "apache-2.0",
+  "sha": "70c1a07f894ebb5b307fd9eaaee97b9dfc16068f",
+  "path": "/opt/floorsight/models/hf/hub/models--facebook--sam-vit-base/snapshots/70c1a07f894ebb5b307fd9eaaee97b9dfc16068f"
+ },
+ "PekingU/rtdetr_v2_r50vd": {
+  "license": "apache-2.0",
+  "sha": "282494075698cab9faa1096ae26856890030c817",
+  "path": "/opt/floorsight/models/hf/hub/models--PekingU--rtdetr_v2_r50vd/snapshots/282494075698cab9faa1096ae26856890030c817"
+ }
+}

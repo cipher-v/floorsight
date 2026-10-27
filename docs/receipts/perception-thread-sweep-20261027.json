@@ -1,0 +1,99 @@
+{
+  "schema": "floorsight.thread-sweep.v1",
+  "frames_per_run": 12,
+  "vocab_every": 1,
+  "runs": [
+    {
+      "configuration": "tune-1-1",
+      "seconds": 206.9,
+      "timing": {
+        "detector_s": 198.31,
+        "detector_stages_s": {
+          "person_s": 18.94,
+          "person_backend": "torch",
+          "privacy_extra_cv2dnn_s": 38.61,
+          "vocab_torch_s": 95.24,
+          "segment_torch_s": 43.51,
+          "faces_cv2dnn_s": 2.0,
+          "frames": 12,
+          "workers": 1
+        },
+        "opencv_build": "YES (carotene (ver 0.0.1) KleidiCV (ver 0.7.0))",
+        "cv2_file": "/opt/cool/python_3.12/site-packages/cv2/__init__.py",
+        "opencv_threads": 1,
+        "cpu_threads_requested": 1,
+        "detector_workers": 1
+      },
+      "privacy_frames_withheld": 0
+    },
+    {
+      "configuration": "tune-1-2",
+      "seconds": 146.5,
+      "timing": {
+        "detector_s": 138.13,
+        "detector_stages_s": {
+          "person_s": 12.4,
+          "person_backend": "torch",
+          "privacy_extra_cv2dnn_s": 21.85,
+          "vocab_torch_s": 75.26,
+          "segment_torch_s": 27.43,
+          "faces_cv2dnn_s": 1.19,
+          "frames": 12,
+          "workers": 1
+        },
+        "opencv_build": "YES (carotene (ver 0.0.1) KleidiCV (ver 0.7.0))",
+        "cv2_file": "/opt/cool/python_3.12/site-packages/cv2/__init__.py",
+        "opencv_threads": 2,
+        "cpu_threads_requested": 2,
+        "detector_workers": 1
+      },
+      "privacy_frames_withheld": 0
+    },
+    {
+      "configuration": "tune-1-4",
+      "seconds": 121.6,
+      "timing": {
+        "detector_s": 108.34,
+        "detector_stages_s": {
+          "person_s": 11.31,
+          "person_backend": "torch",
+          "privacy_extra_cv2dnn_s": 12.4,
+          "vocab_torch_s": 66.06,
+          "segment_torch_s": 17.8,
+          "faces_cv2dnn_s": 0.76,
+          "frames": 12,
+          "workers": 1
+        },
+        "opencv_build": "YES (carotene (ver 0.0.1) KleidiCV (ver 0.7.0))",
+        "cv2_file": "/opt/cool/python_3.12/site-packages/cv2/__init__.py",
+        "opencv_threads": 4,
+        "cpu_threads_requested": 4,
+        "detector_workers": 1
+      },
+      "privacy_frames_withheld": 0
+    },
+    {
+      "configuration": "tune-2-2",
+      "seconds": 137.5,
+      "timing": {
+        "detector_s": 129.12,
+        "detector_stages_s": {
+          "person_s": 22.73,
+          "person_backend": "torch",
+          "privacy_extra_cv2dnn_s": 25.37,
+          "vocab_torch_s": 78.94,
+          "segment_torch_s": 27.44,
+          "faces_cv2dnn_s": 1.36,
+          "frames": 12,
+          "workers": 2
+        },
+        "opencv_build": "YES (carotene (ver 0.0.1) KleidiCV (ver 0.7.0))",
+        "cv2_file": "/opt/cool/python_3.12/site-packages/cv2/__init__.py",
+        "opencv_threads": 2,
+        "cpu_threads_requested": 2,
+        "detector_workers": 2
+      },
+      "privacy_frames_withheld": 0
+    }
+  ]
+}

@@ -48,7 +48,7 @@ cases. The opt-in live Bedrock and full perception benchmark commands are in the
 
 ## Real-footage perception
 
-The default requirements cover the app, simulator and tests. They do **not** include the large PyTorch/Transformers detector stack. The historical setup is in `infra/aws/jobs/setup_perception.sh`, with `transformers==4.57.3`; several other perception dependencies and model revisions were resolved at run time. Their exact environment cannot be reconstructed from the public tree alone. Do not describe this as a fully locked reproduction of the six-clip run.
+The default requirements cover the app, simulator and tests. They do **not** include the large PyTorch/Transformers detector stack. The historical setup is in `infra/aws/jobs/setup_perception.sh`. The recovered [package freeze](receipts/perception-historical-environment-20261023.txt) and [model revisions](receipts/perception-models-20261023.json) identify the original environment. These are audit records, not a portable installer: COOL comes from its AMI, and private footage and calibration still require access. The public simulator remains the self-contained reproduction path.
 
 The processing path is:
 

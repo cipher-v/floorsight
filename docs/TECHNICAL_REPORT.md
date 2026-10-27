@@ -52,7 +52,7 @@ In the earlier AWS run, a second check identified a tracking glitch and led to r
 
 [Trace walkthrough and raw traces](receipts/traces/README.md) · [Earlier run](receipts/app-run-02-summary-20261024.json) · [Final run](receipts/app-run-09-summary-20261024.json).
 
-The recorded reviewer was a scripted stand-in following the recommendation. A real person can use the same approval controls, but no supervisor usability study has been completed. These demonstrations establish orchestration and traceability, not general agent accuracy.
+The recorded reviewer was a scripted stand-in following the recommendation. A real person can use the same approval controls, but no supervisor usability study has been completed. These demonstrations establish orchestration and traceability, not general agent accuracy. The saved video predates the stricter recommendation policy below.
 
 The 27 October code change makes conflicting or missing measurements uncertain.
 A tracking jump alone can no longer justify a rejection recommendation, and a
@@ -94,6 +94,15 @@ COOL accelerated some operations, but the detector-heavy end-to-end workload was
 
 A reproduced `fillPoly` crash in the COOL build led to polygon clipping before rasterisation. [Reproduction and workaround](findings/COOL-fillPoly-crash.md).
 
+The 27 October experiments time complete processes and compare detections and
+privacy coverage. Lower thread counts were slower. Sequential decoding was
+about 2% faster overall but changed calibration pixels on two clips, so it
+remains disabled by default. The accepted median calculation preserves exact
+background pixels on all six clips and makes that initialization stage about
+1.6% faster. This is not a meaningful overall COOL speed claim. The new stock
+comparison also exposed privacy-region differences. [All results and quality
+checks](EVALUATION.md#complete-perception-benchmark).
+
 ## Results and limits
 
 | Question | Recorded result | Evidence |
@@ -123,7 +132,7 @@ These are development clips from one camera, not an independent test set. The he
 
 The [development guide](DEVELOPMENT.md) provides a self-contained simulator, application tests and a control on/off run. [AWS instructions](aws/DEPLOY.md) describe a fresh private deployment and how to verify COOL and cloud adapters.
 
-Exact reconstruction of the historical real-clip run still needs the owner's input manifest, detector/model revisions and full perception package lock. The public setup script does not pin every dependency. This is an outstanding reproducibility gap.
+The historical [perception package freeze](receipts/perception-historical-environment-20261023.txt) and [model revisions](receipts/perception-models-20261023.json) have now been recovered. The private input manifest and calibration still require owner access; these records do not make the six-clip experiment a fully public reproduction.
 
 The next evidence should be a held-out, manually labelled evaluation of distances and warnings, a measured latency budget, and testing with safety supervisors. A production braking claim requires separate hardware and field work.
 

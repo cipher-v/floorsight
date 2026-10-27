@@ -1,0 +1,393 @@
+{
+  "schema": "floorsight.perception-compare.v1",
+  "started_utc": "2026-10-27T04:24:18.241832+00:00",
+  "machine": "aarch64",
+  "protocol": "Same input frames/models/thresholds. Full processes run sequentially. Variant order reversed each repeat.",
+  "repeats": 1,
+  "frames_per_clip": 20,
+  "model_index": {
+    "omlab/omdet-turbo-swin-tiny-hf": {
+      "license": "apache-2.0",
+      "sha": "7fe93cecfb770c4d76cf71163956221249cab566",
+      "path": "/opt/floorsight/models/hf/hub/models--omlab--omdet-turbo-swin-tiny-hf/snapshots/7fe93cecfb770c4d76cf71163956221249cab566"
+    },
+    "IDEA-Research/grounding-dino-tiny": {
+      "license": "apache-2.0",
+      "sha": "a2bb814dd30d776dcf7e30523b00659f4f141c71",
+      "path": "/opt/floorsight/models/hf/hub/models--IDEA-Research--grounding-dino-tiny/snapshots/a2bb814dd30d776dcf7e30523b00659f4f141c71"
+    },
+    "google/owlv2-base-patch16-ensemble": {
+      "license": "apache-2.0",
+      "sha": "cfd3195ba4ea9592eec887ded089f4c08eff231d",
+      "path": "/opt/floorsight/models/hf/hub/models--google--owlv2-base-patch16-ensemble/snapshots/cfd3195ba4ea9592eec887ded089f4c08eff231d"
+    },
+    "Zigeng/SlimSAM-uniform-77": {
+      "license": "apache-2.0",
+      "sha": "79c09c1ce6b4ae51f00634ed171d9b8e888f6911",
+      "path": "/opt/floorsight/models/hf/hub/models--Zigeng--SlimSAM-uniform-77/snapshots/79c09c1ce6b4ae51f00634ed171d9b8e888f6911"
+    },
+    "facebook/sam-vit-base": {
+      "license": "apache-2.0",
+      "sha": "70c1a07f894ebb5b307fd9eaaee97b9dfc16068f",
+      "path": "/opt/floorsight/models/hf/hub/models--facebook--sam-vit-base/snapshots/70c1a07f894ebb5b307fd9eaaee97b9dfc16068f"
+    },
+    "PekingU/rtdetr_v2_r50vd": {
+      "license": "apache-2.0",
+      "sha": "282494075698cab9faa1096ae26856890030c817",
+      "path": "/opt/floorsight/models/hf/hub/models--PekingU--rtdetr_v2_r50vd/snapshots/282494075698cab9faa1096ae26856890030c817"
+    }
+  },
+  "calibration_sha256": "7fca595ef8e6b320f9a6225c5dab396eb86318366b83e7e0f3d17b5ba584996b",
+  "source_sha256": {
+    "scripts/open_detectors.py": "b3f5e7f9b33944cbe66e0cb036d2965e4f10a0549c1fcc8c6a00d76310bc3159",
+    "scripts/real_clip_perception.py": "069b808f89f56f4cfa80c5e63714121e80cb4a144d10c6a2da3813a46097f7e4",
+    "scripts/benchmark/perception_compare.py": "f07d8faf509271c008f6eb70e8ffdb64b38903456602ed2434d6240562cd3f31"
+  },
+  "runs": [
+    {
+      "label": "baseline-cool",
+      "clip": "screen-002",
+      "clip_sha256": "dc2c270536353ee21882458b744ceb34636f545ec474e4a917e0d1c1624c072a",
+      "repeat": 0,
+      "command": [
+        "/opt/floorsight/perc",
+        "/opt/floorsight/jobs/track-strengthening-20261027/final-code/scripts/real_clip_perception.py",
+        "--clip",
+        "/opt/floorsight/data/private/clips/screen-002.mp4",
+        "--name",
+        "screen-002",
+        "--output",
+        "/opt/floorsight/jobs/track-strengthening-20261027/layout-pilot/screen-002-0-baseline-cool",
+        "--models",
+        "/opt/floorsight/models",
+        "--hf-index",
+        "/opt/floorsight/jobs/setup-01/hf-models.json",
+        "--calibration",
+        "/opt/floorsight/jobs/bench-03/cal.json",
+        "--max-frames",
+        "20",
+        "--vocab",
+        "gdino",
+        "--segmenter",
+        "slimsam77",
+        "--person-model",
+        "rtdetrv2",
+        "--privacy-extra",
+        "yolox_s",
+        "--vehicle-source",
+        "confirmed",
+        "--vocab-every",
+        "5",
+        "--detector-workers",
+        "1",
+        "--cpu-threads",
+        "4",
+        "--torch-layout",
+        "contiguous"
+      ],
+      "exit_code": 0,
+      "process_wall_s": 99.35656849599991,
+      "result_seconds": 97.3,
+      "timing": {
+        "detector_s": 87.41,
+        "detector_stages_s": {
+          "person_s": 18.11,
+          "person_backend": "torch",
+          "privacy_extra_cv2dnn_s": 20.72,
+          "vocab_torch_s": 21.52,
+          "segment_torch_s": 25.83,
+          "faces_cv2dnn_s": 1.22,
+          "frames": 20,
+          "workers": 1,
+          "torch_layout": "contiguous"
+        },
+        "opencv_build": "YES (carotene (ver 0.0.1) KleidiCV (ver 0.7.0))",
+        "cv2_file": "/opt/cool/python_3.12/site-packages/cv2/__init__.py",
+        "opencv_threads": 4,
+        "cpu_threads_requested": 4,
+        "detector_workers": 1
+      },
+      "environment": {
+        "opencv": "5.1.0-dev",
+        "numpy": "2.5.1",
+        "scipy": "1.18.1",
+        "python": "3.12.3",
+        "torch": "2.14.1+cu130",
+        "transformers": "4.57.3",
+        "ultralytics": "unavailable: ModuleNotFoundError"
+      },
+      "privacy": {
+        "framesOk": 20,
+        "framesWithheld": 0,
+        "withheld": [],
+        "headsBlurredTotal": 948,
+        "facesBlurredTotal": 5,
+        "vehicleCabsBlurredTotal": 0,
+        "framesWithEstimatedVehicle": 0,
+        "framesWithDetectedVehicle": 0,
+        "framesWithNoPersonCandidate": 0,
+        "failClosedSelfTest": "pass",
+        "auditFramesSaved": [],
+        "trackCrops": 6,
+        "forcedFailureFrames": [],
+        "approval": "NOT APPROVED by this script: requires human review of filtered frames; an empty detection list is not a pass."
+      },
+      "encoder_exit": {
+        "h264": 0,
+        "vp9": 0,
+        "poster": 0,
+        "filtered": 0
+      }
+    },
+    {
+      "label": "layout-cool",
+      "clip": "screen-002",
+      "clip_sha256": "dc2c270536353ee21882458b744ceb34636f545ec474e4a917e0d1c1624c072a",
+      "repeat": 0,
+      "command": [
+        "/opt/floorsight/perc",
+        "/opt/floorsight/jobs/track-strengthening-20261027/final-code/scripts/real_clip_perception.py",
+        "--clip",
+        "/opt/floorsight/data/private/clips/screen-002.mp4",
+        "--name",
+        "screen-002",
+        "--output",
+        "/opt/floorsight/jobs/track-strengthening-20261027/layout-pilot/screen-002-0-layout-cool",
+        "--models",
+        "/opt/floorsight/models",
+        "--hf-index",
+        "/opt/floorsight/jobs/setup-01/hf-models.json",
+        "--calibration",
+        "/opt/floorsight/jobs/bench-03/cal.json",
+        "--max-frames",
+        "20",
+        "--vocab",
+        "gdino",
+        "--segmenter",
+        "slimsam77",
+        "--person-model",
+        "rtdetrv2",
+        "--privacy-extra",
+        "yolox_s",
+        "--vehicle-source",
+        "confirmed",
+        "--vocab-every",
+        "5",
+        "--detector-workers",
+        "1",
+        "--cpu-threads",
+        "4",
+        "--torch-layout",
+        "channels-last"
+      ],
+      "exit_code": 0,
+      "process_wall_s": 97.30724319900003,
+      "result_seconds": 95.2,
+      "timing": {
+        "detector_s": 85.33,
+        "detector_stages_s": {
+          "person_s": 16.02,
+          "person_backend": "torch",
+          "privacy_extra_cv2dnn_s": 20.7,
+          "vocab_torch_s": 21.43,
+          "segment_torch_s": 25.95,
+          "faces_cv2dnn_s": 1.22,
+          "frames": 20,
+          "workers": 1,
+          "torch_layout": "channels-last"
+        },
+        "opencv_build": "YES (carotene (ver 0.0.1) KleidiCV (ver 0.7.0))",
+        "cv2_file": "/opt/cool/python_3.12/site-packages/cv2/__init__.py",
+        "opencv_threads": 4,
+        "cpu_threads_requested": 4,
+        "detector_workers": 1
+      },
+      "environment": {
+        "opencv": "5.1.0-dev",
+        "numpy": "2.5.1",
+        "scipy": "1.18.1",
+        "python": "3.12.3",
+        "torch": "2.14.1+cu130",
+        "transformers": "4.57.3",
+        "ultralytics": "unavailable: ModuleNotFoundError"
+      },
+      "privacy": {
+        "framesOk": 20,
+        "framesWithheld": 0,
+        "withheld": [],
+        "headsBlurredTotal": 948,
+        "facesBlurredTotal": 5,
+        "vehicleCabsBlurredTotal": 0,
+        "framesWithEstimatedVehicle": 0,
+        "framesWithDetectedVehicle": 0,
+        "framesWithNoPersonCandidate": 0,
+        "failClosedSelfTest": "pass",
+        "auditFramesSaved": [],
+        "trackCrops": 6,
+        "forcedFailureFrames": [],
+        "approval": "NOT APPROVED by this script: requires human review of filtered frames; an empty detection list is not a pass."
+      },
+      "encoder_exit": {
+        "h264": 0,
+        "vp9": 0,
+        "poster": 0,
+        "filtered": 0
+      }
+    },
+    {
+      "label": "parallel-cool",
+      "clip": "screen-002",
+      "clip_sha256": "dc2c270536353ee21882458b744ceb34636f545ec474e4a917e0d1c1624c072a",
+      "repeat": 0,
+      "command": [
+        "/opt/floorsight/perc",
+        "/opt/floorsight/jobs/track-strengthening-20261027/final-code/scripts/real_clip_perception.py",
+        "--clip",
+        "/opt/floorsight/data/private/clips/screen-002.mp4",
+        "--name",
+        "screen-002",
+        "--output",
+        "/opt/floorsight/jobs/track-strengthening-20261027/layout-pilot/screen-002-0-parallel-cool",
+        "--models",
+        "/opt/floorsight/models",
+        "--hf-index",
+        "/opt/floorsight/jobs/setup-01/hf-models.json",
+        "--calibration",
+        "/opt/floorsight/jobs/bench-03/cal.json",
+        "--max-frames",
+        "20",
+        "--vocab",
+        "gdino",
+        "--segmenter",
+        "slimsam77",
+        "--person-model",
+        "rtdetrv2",
+        "--privacy-extra",
+        "yolox_s",
+        "--vehicle-source",
+        "confirmed",
+        "--vocab-every",
+        "5",
+        "--detector-workers",
+        "2",
+        "--cpu-threads",
+        "4",
+        "--torch-layout",
+        "channels-last"
+      ],
+      "exit_code": 0,
+      "process_wall_s": 98.72491836199993,
+      "result_seconds": 96.6,
+      "timing": {
+        "detector_s": 86.8,
+        "detector_stages_s": {
+          "person_s": 38.79,
+          "person_backend": "torch",
+          "privacy_extra_cv2dnn_s": 34.62,
+          "vocab_torch_s": 29.5,
+          "segment_torch_s": 26.0,
+          "faces_cv2dnn_s": 2.14,
+          "frames": 20,
+          "workers": 2,
+          "torch_layout": "channels-last"
+        },
+        "opencv_build": "YES (carotene (ver 0.0.1) KleidiCV (ver 0.7.0))",
+        "cv2_file": "/opt/cool/python_3.12/site-packages/cv2/__init__.py",
+        "opencv_threads": 4,
+        "cpu_threads_requested": 4,
+        "detector_workers": 2
+      },
+      "environment": {
+        "opencv": "5.1.0-dev",
+        "numpy": "2.5.1",
+        "scipy": "1.18.1",
+        "python": "3.12.3",
+        "torch": "2.14.1+cu130",
+        "transformers": "4.57.3",
+        "ultralytics": "unavailable: ModuleNotFoundError"
+      },
+      "privacy": {
+        "framesOk": 20,
+        "framesWithheld": 0,
+        "withheld": [],
+        "headsBlurredTotal": 948,
+        "facesBlurredTotal": 5,
+        "vehicleCabsBlurredTotal": 0,
+        "framesWithEstimatedVehicle": 0,
+        "framesWithDetectedVehicle": 0,
+        "framesWithNoPersonCandidate": 0,
+        "failClosedSelfTest": "pass",
+        "auditFramesSaved": [],
+        "trackCrops": 6,
+        "forcedFailureFrames": [],
+        "approval": "NOT APPROVED by this script: requires human review of filtered frames; an empty detection list is not a pass."
+      },
+      "encoder_exit": {
+        "h264": 0,
+        "vp9": 0,
+        "poster": 0,
+        "filtered": 0
+      }
+    }
+  ],
+  "comparisons": [
+    {
+      "label": "layout-cool",
+      "reference": "baseline-cool",
+      "clip": "screen-002",
+      "repeat": 0,
+      "detections": {
+        "equal_within_tolerance": true,
+        "tolerance": 0.001,
+        "max_numeric_delta": 0.0,
+        "changed_fields": 0,
+        "examples": [],
+        "reference_sha256": "81306176c2bcc79d45214f18172dcd65206d4597b256d82dcde203f7af7a6832",
+        "candidate_sha256": "81306176c2bcc79d45214f18172dcd65206d4597b256d82dcde203f7af7a6832"
+      },
+      "privacy-regions": {
+        "equal_within_tolerance": false,
+        "tolerance": 0.001,
+        "max_numeric_delta": 0.09999999999990905,
+        "changed_fields": 1,
+        "examples": [
+          "/10/heads/30/0"
+        ],
+        "reference_sha256": "df77178a5d7f73f2a056593da2115aebc3e6314c180bf823f4af2a3c9d3865d8",
+        "candidate_sha256": "0717be0039b498651cd1000cbac5363b860eb23ad286e7093a9c755af16c486c"
+      }
+    },
+    {
+      "label": "parallel-cool",
+      "reference": "baseline-cool",
+      "clip": "screen-002",
+      "repeat": 0,
+      "detections": {
+        "equal_within_tolerance": true,
+        "tolerance": 0.001,
+        "max_numeric_delta": 0.0,
+        "changed_fields": 0,
+        "examples": [],
+        "reference_sha256": "81306176c2bcc79d45214f18172dcd65206d4597b256d82dcde203f7af7a6832",
+        "candidate_sha256": "81306176c2bcc79d45214f18172dcd65206d4597b256d82dcde203f7af7a6832"
+      },
+      "privacy-regions": {
+        "equal_within_tolerance": false,
+        "tolerance": 0.001,
+        "max_numeric_delta": 0.09999999999990905,
+        "changed_fields": 1,
+        "examples": [
+          "/10/heads/30/0"
+        ],
+        "reference_sha256": "df77178a5d7f73f2a056593da2115aebc3e6314c180bf823f4af2a3c9d3865d8",
+        "candidate_sha256": "0717be0039b498651cd1000cbac5363b860eb23ad286e7093a9c755af16c486c"
+      }
+    }
+  ],
+  "median_process_wall_s": {
+    "baseline-cool": 99.35656849599991,
+    "layout-cool": 97.30724319900003,
+    "parallel-cool": 98.72491836199993
+  },
+  "completed_utc": "2026-10-27T04:29:13.646564+00:00"
+}
