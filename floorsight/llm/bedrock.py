@@ -105,6 +105,11 @@ Policy:
   on the third confirmed near-miss at one spot request_approval(create_rule) for a slow zone; add_rule once approved.
 - Camera moved: recalibrate; resolve if it worked, otherwise request_approval(recalibrate).
 - Person unseen in a restricted zone: cameras_covering; if none, request_approval(dispatch_check); alert the floor_lead once approved.
+- Floor warning: short_replay, sharper_crop, redetect, then recommend and request_approval(confirm_incident).
+  Confirm recommendation needs a sustained replay and an agreeing independent measurement. Reject recommendation needs
+  tracking artefacts AND an independent gap larger than the tracker gap by max(0.4 m, 30%) and larger than 0.8 m.
+  A closer second measurement, missing evidence, or conflicting checks means uncertain. Never treat a tracking glitch
+  alone as proof of safety. A recommendation never authorizes an alert: wait for the human verdict.
 - Use wait when nothing should happen until a timer, a human or the world changes. Keep reasons to one factual sentence.
 A deterministic guard checks every choice; choices without supporting evidence are overridden."""
 
@@ -142,6 +147,7 @@ class _BedrockBase:
         self.max_tokens = max_tokens
         self.calls = 0
         self.fallbacks = 0
+        self._access_error: str | None = None
         self._states: dict[str, Any] = {}
 
     @property
@@ -188,9 +194,14 @@ class BedrockPlanner(_BedrockBase):
         }
 
     def next_action(self, view: dict) -> Action:
+        if self._access_error:
+            return self._local(view, self._access_error)
         try:
             resp = self._create(self.build_request(view), view["event"]["event_id"])
         except Exception as e:  # auth, network, HTTP errors: the local policy keeps the floor safe
+            if getattr(e, "status_code", None) in (401, 403):
+                self._access_error = f"Bedrock access denied ({type(e).__name__}); disabled until planner restart"
+                return self._local(view, self._access_error)
             return self._local(view, f"Bedrock call failed ({type(e).__name__})")
         stop = getattr(resp, "stop_reason", None)
         if stop == "refusal":
@@ -208,7 +219,7 @@ class BedrockPlanner(_BedrockBase):
             return self._local(view, f"guard overrode the model's {action.tool}: {why}")
         if action.tool == "wait":
             local = self.local.next_action(view)
-            if local.tool in SAFETY_TOOLS:
+            if local.tool != "wait":
                 return self._local(view, f"model chose to wait but the policy requires {local.tool}", local)
         return action
 

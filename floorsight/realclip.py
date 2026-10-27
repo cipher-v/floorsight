@@ -519,7 +519,12 @@ class ReplayVision:
         if out.get("error") or out.get("clearance_m") is None:
             return Evidence(kind="redetect", t=t, supports=None, image_ref=self.evidence.put(ann, f"redetect-t{t:.2f}") if ann is not None else None,
                             note=f"second detector pass ({where}) inconclusive: {out.get('error') or out.get('note', 'no measurement')}")
-        c = float(out["clearance_m"])
+        try:
+            c = float(out["clearance_m"])
+        except (TypeError, ValueError):
+            c = math.nan
+        if not math.isfinite(c) or c < 0:
+            return Evidence(kind="redetect", t=t, supports=None, note="second detector returned an invalid clearance")
         if track_clear is None:
             supports, why = None, "no tracker clearance to compare"
         else:

@@ -499,11 +499,21 @@ def main() -> int:
     parser.add_argument("--vocab-every", type=int, default=1, help="run the open-vocabulary model every N frames")
     parser.add_argument("--track-person-conf", type=float, default=None, help="score floor for person tracks (default TRACK_PERSON_CONF)")
     parser.add_argument("--privacy-extra", default=None, help="YOLOX ONNX name (e.g. yolox_s) used as a second, blur-only person source via cv2.dnn")
+    parser.add_argument("--detector-workers", type=int, choices=[1, 2], default=1, help="independent detector tasks per frame; privacy checks still run on every frame")
+    parser.add_argument("--torch-layout", choices=["contiguous", "channels-last"], default="contiguous", help="model/input memory layout; same weights and precision")
+    parser.add_argument("--cpu-threads", type=int, default=None, help="threads per model/OpenCV operation; benchmark 1 and 2 on a 4-core Graviton before increasing")
     parser.add_argument("--hf-index", type=Path, default=None, help="hf-models.json (local snapshot paths)")
     parser.add_argument("--save-detections", type=Path, default=None, help="write every frame's detector output (boxes and outlines, no pixels) to this pickle")
     parser.add_argument("--load-detections", type=Path, default=None, help="replay a pickle written by --save-detections instead of running the detectors")
     parser.add_argument("--no-smoothing", action="store_true", help="v8 behaviour: no Kalman filtering, raw outlines, flickering turn and seated calls")
     args = parser.parse_args()
+    if args.cpu_threads is not None:
+        if args.cpu_threads < 1:
+            parser.error("--cpu-threads must be positive")
+        cv2.setNumThreads(args.cpu_threads)
+        if args.load_detections is None and args.detector == "open":
+            import torch
+            torch.set_num_threads(args.cpu_threads)
     if int(cv2.__version__.split(".")[0]) != REQUIRED_OPENCV_MAJOR:
         raise SystemExit(f"OpenCV {REQUIRED_OPENCV_MAJOR}.x required, found {cv2.__version__}")
     args.output.mkdir(parents=True, exist_ok=False)
@@ -528,7 +538,8 @@ def main() -> int:
             consts["TRACK_PERSON_CONF"] = args.track_person_conf
         det = odm.OpenDetectors(args.models, loads=args.calibration is not None, consts=consts, person_onnx=args.person_model,
                                 tiles=args.person_tiles, vocab=args.vocab, segmenter=args.segmenter, hf_index=args.hf_index,
-                                vehicle_source=args.vehicle_source, vocab_every=args.vocab_every, privacy_extra=args.privacy_extra)
+                                vehicle_source=args.vehicle_source, vocab_every=args.vocab_every, privacy_extra=args.privacy_extra,
+                                workers=args.detector_workers, torch_layout=args.torch_layout)
     else:
         det = Detectors(args.models, loads=args.calibration is not None)
     det_s = 0.0
@@ -1040,7 +1051,8 @@ def main() -> int:
                                                     "nonFinitePointsReplaced": getattr(dz, "nonfinite_points", 0)},
         "timing": {"detector_s": round(det_s, 2), "detector_stages_s": {k: round(v, 2) if isinstance(v, float) else v for k, v in getattr(det, "timing", {}).items()},
                    "opencv_build": cv2.getBuildInformation().split("Custom HAL:")[-1].split("\n")[0].strip() if "Custom HAL:" in cv2.getBuildInformation() else "none",
-                   "cv2_file": cv2.__file__},
+                   "cv2_file": cv2.__file__, "opencv_threads": cv2.getNumThreads(),
+                   "cpu_threads_requested": args.cpu_threads, "detector_workers": args.detector_workers},
         "thresholds": {"privacyPersonConf": PRIVACY_PERSON_CONF, "displayPersonConf": DISPLAY_PERSON_CONF, "trackPersonConf": TRACK_PERSON_CONF,
                        "forkliftConf": FORKLIFT_CONF, "forkliftPrompts": FORKLIFT_PROMPTS, "motionMaxFrames": MOTION_MAX_FRAMES,
                        "movingFraction": MOVING_FRACTION, "movingMemoryFrames": MOVING_MEMORY, "staticShowConf": STATIC_SHOW_CONF, "motionWarmupFrames": MOTION_WARMUP,
@@ -1079,6 +1091,9 @@ def main() -> int:
         args.save_detections.write_bytes(pickle.dumps({"frames": saved_detections, "notes": det.notes, "timing": dict(getattr(det, "timing", {})),
                                                        "run": str(out), "clipSha256": result["clipSha256"]}))
     (out / f"{args.name}-result.json").write_text(json.dumps(result, indent=2, default=str))
+    close = getattr(det, "close", None)
+    if close is not None:
+        close()
     print(json.dumps({k: result[k] for k in ("name", "frames", "seconds", "detectors", "walkway", "events", "encoderExit")}, default=str))
     print(json.dumps(result["privacy"], default=str))
     return 0 if encoder_exit == 0 and self_test else 1

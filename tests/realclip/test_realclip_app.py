@@ -140,7 +140,7 @@ def test_agent_second_look_then_waits_for_human(rig):
     assert case.event.status.value == "verifying"
     ap = next(iter(agent.approvals.values()))
     assert ap.action == "confirm_incident" and ap.status.value == "pending"
-    assert "Agent recommends CONFIRM" in ap.summary
+    assert "Agent is UNCERTAIN" in ap.summary  # no independent detector configured
     assert not agent.alerts  # nothing is sent before a human decides
 
 
@@ -189,7 +189,7 @@ def test_tracking_jump_is_flagged_by_replay(tmp_path, monkeypatch):
     rep = next(e for e in case.event.evidence if e.kind == "replay")
     assert rep.supports is False and "heading jumped" in rep.note
     ap = next(iter(agent.approvals.values()))
-    assert "Agent recommends REJECT" in ap.summary  # the human still decides
+    assert "Agent is UNCERTAIN" in ap.summary  # a glitch alone does not establish safety
 
 
 def test_a_forklift_pulling_away_in_a_new_direction_is_not_a_tracking_glitch(tmp_path, monkeypatch):
@@ -231,19 +231,19 @@ def test_decision_card_has_verdict_line_and_three_numbers(rig):
     run_all(vision, agent)
     ap = next(iter(agent.approvals.values()))
     card = ap.payload["card"]
-    assert card["verdict"] == "confirm" and card["headline"].startswith("Agent recommends CONFIRM")
+    assert card["verdict"] == "uncertain" and card["headline"].startswith("Agent is UNCERTAIN")
     assert [n["label"] for n in card["numbers"]] == ["Floor gap at the warning", "Within 0.8 m", "Closest predicted pass"]
     assert [n["value"] for n in card["numbers"]] == ["1.1 m", "in 1.0 s", "0.30 m (0.10-0.50)"]
 
 
-def test_rejected_card_names_the_glitch(tmp_path, monkeypatch):
+def test_glitch_without_second_measurement_stays_uncertain(tmp_path, monkeypatch):
     monkeypatch.delenv("FLOORSIGHT_REDETECT_CMD", raising=False)
     d = make_replay(tmp_path, jump=True)
     site = load_site(str(d / "site.json"))
     agent = FloorsightAgent(site, ReplayVision(site, LocalEvidenceStore(str(tmp_path / "ev"), retention_s=3600), str(d)))
     run_all(agent.vision, agent)
     card = next(iter(agent.approvals.values())).payload["card"]
-    assert card["verdict"] == "reject" and "tracking glitch (heading jumped" in card["headline"]
+    assert card["verdict"] == "uncertain"
 
 
 def test_zero_time_to_contact_reads_now(tmp_path, monkeypatch):
@@ -265,7 +265,7 @@ def test_second_detector_label_is_not_repeated():
     view = {"event": {"evidence": [{"kind": "replay", "supports": True, "score": 3.0, "note": "condition held 3 frame(s) in a row (0.12 s)"},
                                    {"kind": "redetect", "supports": None, "note": note}]}}
     verdict, why = floor_recommendation(view)
-    assert verdict == "confirm" and why.count("second detector pass") == 1 and why.count("inconclusive") == 1
+    assert verdict == "uncertain" and why.count("second detector pass") == 1 and why.count("inconclusive") == 1
     view["event"]["evidence"][1] = {"kind": "redetect", "supports": True, "note": "re-detected 1 person(s), 1 forklift(s); re-measured floor gap 1.05 m"}
     assert "second detector pass agrees: re-detected" in floor_recommendation(view)[1]
 

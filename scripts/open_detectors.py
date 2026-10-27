@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import json
 import time
+from concurrent.futures import ThreadPoolExecutor, wait
 from pathlib import Path
 
 import cv2
@@ -23,6 +24,15 @@ import numpy as np
 
 COCO_PERSON, COCO_CAR, COCO_TRUCK = 0, 2, 7
 CONFIRM_SCORE, CONFIRM_IOU = 0.30, 0.50  # open-vocabulary confirmation of a COCO truck/car box as a forklift
+
+
+def _forward(owner, inputs, **kwargs):
+    if getattr(owner, "channels_last", False):
+        inputs = dict(inputs)
+        pixels = inputs.get("pixel_values")
+        if pixels is not None and pixels.ndim == 4:
+            inputs["pixel_values"] = pixels.to(memory_format=owner.torch.channels_last)
+    return owner.model(**inputs, **kwargs)
 
 
 def _iou(a, b) -> float:
@@ -124,7 +134,7 @@ class RTDetrCoco:
         kw = {"size": {"height": self.size, "width": self.size}} if self.size else {}
         with self.torch.inference_mode():
             inp = self.proc(images=pil, return_tensors="pt", **kw)
-            res = self.proc.post_process_object_detection(self.model(**inp), target_sizes=self.torch.tensor([(h, w)]), threshold=self.conf)[0]
+            res = self.proc.post_process_object_detection(_forward(self, inp), target_sizes=self.torch.tensor([(h, w)]), threshold=self.conf)[0]
         out = {COCO_PERSON: [], COCO_CAR: [], COCO_TRUCK: []}
         for b, s, lab in zip(res["boxes"].cpu().numpy(), res["scores"].cpu().numpy(), res["labels"].cpu().numpy()):
             if int(lab) in out:
@@ -169,19 +179,19 @@ class OpenVocab:
         with torch.inference_mode():
             if self.kind == "omdet":
                 inp = self.proc(images=pil, text=prompts, return_tensors="pt")
-                res = self.proc.post_process_grounded_object_detection(self.model(**inp), text_labels=[prompts], target_sizes=[(h, w)],
+                res = self.proc.post_process_grounded_object_detection(_forward(self, inp), text_labels=[prompts], target_sizes=[(h, w)],
                                                                        threshold=threshold, nms_threshold=0.3)[0]
                 names = list(res.get("text_labels", res.get("classes", [])))
             elif self.kind == "gdino":
                 inp = self.proc(images=pil, text=". ".join(prompts) + ".", return_tensors="pt")
-                res = self.proc.post_process_grounded_object_detection(self.model(**inp), inp.input_ids, threshold=threshold,
+                res = self.proc.post_process_grounded_object_detection(_forward(self, inp), inp.input_ids, threshold=threshold,
                                                                        text_threshold=threshold, target_sizes=[(h, w)])[0]
                 names = list(res.get("text_labels", res.get("labels", [])))
             else:
                 texts = [[f"a photo of a {p}" for p in prompts]]
                 inp = self.proc(text=texts, images=pil, return_tensors="pt")
                 s = max(h, w)
-                res = self.proc.post_process_grounded_object_detection(outputs=self.model(**inp), threshold=threshold,
+                res = self.proc.post_process_grounded_object_detection(outputs=_forward(self, inp), threshold=threshold,
                                                                        target_sizes=torch.tensor([[s, s]]), text_labels=texts)[0]
                 names = [str(x).replace("a photo of a ", "") for x in res.get("text_labels", [])]
         out = []
@@ -209,7 +219,7 @@ class BoxSegmenter:
         pil = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
         with self.torch.inference_mode():
             inp = self.proc(pil, input_boxes=[[[float(v) for v in b] for b in boxes]], return_tensors="pt")
-            out = self.model(**inp, multimask_output=False)
+            out = _forward(self, inp, multimask_output=False)
             masks = self.proc.image_processor.post_process_masks(out.pred_masks, inp["original_sizes"], inp["reshaped_input_sizes"])[0]
         polys = []
         for m in masks:
@@ -225,7 +235,11 @@ class OpenDetectors:
 
     def __init__(self, models: Path, loads: bool, consts: dict, person_onnx: str = "yolox_l", tiles: int = 3,
                  vocab: str = "omdet", segmenter: str = "sam-vit-base", hf_index: Path | None = None,
-                 vehicle_source: str = "vocab", vocab_every: int = 1, privacy_extra: str | None = None):
+                 vehicle_source: str = "vocab", vocab_every: int = 1, privacy_extra: str | None = None,
+                 workers: int = 1, torch_layout: str = "contiguous"):
+        if workers not in (1, 2):
+            raise ValueError("detector workers must be 1 or 2")
+        self._pool = ThreadPoolExecutor(max_workers=workers, thread_name_prefix="perception") if workers > 1 else None
         self.c = consts
         self.vehicle_source, self.vocab_every, self._n, self._loads_prev, self._fork_regions = vehicle_source, max(1, vocab_every), 0, [], []
         hf_index = hf_index or (models / "hf-models.json")
@@ -241,11 +255,18 @@ class OpenDetectors:
         self.privacy_extra = YoloxDnn(models / "onnx" / f"{privacy_extra}.onnx", tiles=3, conf=consts["PRIVACY_PERSON_CONF"]) if privacy_extra else None
         self.vocab = OpenVocab(vocab, hf[vocab_ids[vocab]])
         self.seg = BoxSegmenter(hf[seg_ids[segmenter]], segmenter)
+        if torch_layout not in ("contiguous", "channels-last"):
+            raise ValueError("unknown torch memory layout")
+        if torch_layout == "channels-last":
+            for detector in (self.person, self.vocab, self.seg):
+                if hasattr(detector, "torch"):
+                    detector.model.to(memory_format=detector.torch.channels_last)
+                    detector.channels_last = True
         self.faces = cv2.FaceDetectorYN.create(str(models / "onnx" / "face_detection_yunet_2023mar.onnx"), "", (320, 320), 0.6, 0.3, 5000)
         self.loads = loads
         backend = "cv2.dnn" if isinstance(self.person, YoloxDnn) else "torch"
         self.timing = {"person_s": 0.0, "person_backend": backend, "privacy_extra_cv2dnn_s": 0.0, "vocab_torch_s": 0.0, "segment_torch_s": 0.0,
-                       "faces_cv2dnn_s": 0.0, "frames": 0}
+                       "faces_cv2dnn_s": 0.0, "frames": 0, "workers": workers, "torch_layout": torch_layout}
         every = "every frame" if self.vocab_every == 1 else f"every {self.vocab_every}th frame (loads carried with their forklift in between)"
         fk = {"coco": f"{self.person.name} COCO truck/car boxes",
               "confirmed": f"{self.person.name} COCO truck/car boxes kept only where {self.vocab.name} confirms 'forklift' "
@@ -272,14 +293,23 @@ class OpenDetectors:
     def run(self, frame: np.ndarray) -> dict:
         c = self.c
         h, w = frame.shape[:2]
-        t0 = time.perf_counter()
-        coco = self.person.detect(frame)
-        t1 = time.perf_counter()
-        extra_people = self.privacy_extra.detect(frame)[COCO_PERSON] if self.privacy_extra is not None else []
-        self.timing["privacy_extra_cv2dnn_s"] += time.perf_counter() - t1
-        t1 = time.perf_counter()
         vocab_frame = self.vocab_every <= 1 or self._n % self.vocab_every == 0
         self._n += 1
+        want_forks = self.vehicle_source in ("vocab", "confirmed")
+        prompts = ["person"] + (list(c["FORKLIFT_PROMPTS"]) if want_forks else []) + (list(c["LOAD_PROMPTS"]) if self.loads else [])
+        # Start the longest task first so short privacy tasks cannot delay it.
+        tasks = {}
+        if vocab_frame:
+            tasks["vocab_torch_s"] = (self.vocab.detect, (frame, prompts, min(c["PRIVACY_PERSON_CONF"], c["FORKLIFT_CONF"])))
+        tasks["person_s"] = (self.person.detect, (frame,))
+        if self.privacy_extra is not None:
+            tasks["privacy_extra_cv2dnn_s"] = (self.privacy_extra.detect, (frame,))
+        tasks["faces_cv2dnn_s"] = (self._faces, (frame,))
+        results = self._run_tasks(tasks)
+        coco = results["person_s"]
+        extra_people = results.get("privacy_extra_cv2dnn_s", {}).get(COCO_PERSON, [])
+        found = results.get("vocab_torch_s", [])
+        faces = results["faces_cv2dnn_s"]
         persons = list(coco[COCO_PERSON])
         vboxes, loads_raw = [], []
         coco_v = []
@@ -288,12 +318,6 @@ class OpenDetectors:
             coco_v = [(b, s, "forklift") for k in (COCO_TRUCK, COCO_CAR) for b, s in coco[k] if s >= vc]
             if self.vehicle_source == "coco":
                 vboxes = coco_v
-        found = []
-        if vocab_frame:
-            want_forks = self.vehicle_source in ("vocab", "confirmed")
-            prompts = ["person"] + (list(c["FORKLIFT_PROMPTS"]) if want_forks else []) + (list(c["LOAD_PROMPTS"]) if self.loads else [])
-            found = self.vocab.detect(frame, prompts, min(c["PRIVACY_PERSON_CONF"], c["FORKLIFT_CONF"]))
-        t2 = time.perf_counter()
         vocab_forks = []
         for b, s, n in found:
             kind = label_kind(n)
@@ -325,8 +349,9 @@ class OpenDetectors:
             vboxes = keep
         keep = _nms([v[0].tolist() for v in vboxes], [v[1] for v in vboxes], 0.4)
         vboxes = [vboxes[i] for i in keep]
+        ts = time.perf_counter()
         polys = self.seg.polygons(frame, [v[0] for v in vboxes] + [l[0] for l in loads_raw])
-        t3 = time.perf_counter()
+        self.timing["segment_torch_s"] += time.perf_counter() - ts
         vehicles = [(b, s, p, kind) for (b, s, kind), p in zip(vboxes, polys[: len(vboxes)])]  # one polygon per box, like masks.xy
         if vocab_frame:
             loads = [(b, s, p) for (b, s), p in zip(loads_raw, polys[len(vboxes):]) if p is not None and len(p) >= 3]
@@ -337,14 +362,41 @@ class OpenDetectors:
                     self._loads_prev.append((v[0].copy(), b.copy(), p.copy(), s))
         else:
             loads = self._carry_loads(vboxes) if self.loads else []
-        self.faces.setInputSize((w, h))
-        _, fz = self.faces.detect(frame)
-        faces = [] if fz is None else [(f[0], f[1], f[0] + f[2], f[1] + f[3]) for f in fz]
-        t4 = time.perf_counter()
         tm = self.timing
-        tm["person_s"] += t1 - t0; tm["vocab_torch_s"] += t2 - t1; tm["segment_torch_s"] += t3 - t2; tm["faces_cv2dnn_s"] += t4 - t3
         tm["frames"] += 1
         tp = [(b, s) for b, s in persons if s >= c["TRACK_PERSON_CONF"]]
         keep = _nms([b.tolist() for b, _ in tp], [s for _, s in tp], 0.5)
         persons = persons + list(extra_people)  # blur list only (after the track candidates were taken)
         return {"persons": persons, "vehicles": vehicles, "faces": faces, "track_persons": [tp[i] for i in keep], "loads": loads}
+
+    def _faces(self, frame):
+        h, w = frame.shape[:2]
+        self.faces.setInputSize((w, h))
+        _, found = self.faces.detect(frame)
+        return [] if found is None else [(f[0], f[1], f[0] + f[2], f[1] + f[3]) for f in found]
+
+    @staticmethod
+    def _timed(fn, args):
+        start = time.perf_counter()
+        result = fn(*args)
+        return result, time.perf_counter() - start
+
+    def _run_tasks(self, tasks):
+        # Each model is called once per frame. Drain ALL workers even if one fails:
+        # the caller then withholds this frame, and the next frame cannot race a
+        # previous call on the same OpenCV DNN net. No privacy stage is skipped.
+        if self._pool is None:
+            measured = {name: self._timed(fn, args) for name, (fn, args) in tasks.items()}
+        else:
+            pending = {name: self._pool.submit(self._timed, fn, args) for name, (fn, args) in tasks.items()}
+            try:
+                measured = {name: future.result() for name, future in pending.items()}
+            finally:
+                wait(pending.values())
+        for name, (_, elapsed) in measured.items():
+            self.timing[name] += elapsed
+        return {name: result for name, (result, _) in measured.items()}
+
+    def close(self):
+        if self._pool is not None:
+            self._pool.shutdown(wait=True)

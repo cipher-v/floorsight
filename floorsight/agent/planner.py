@@ -142,15 +142,20 @@ def floor_recommendation(view: dict) -> tuple[str, str]:
     red = evidence(view, "redetect")
     r = rep[-1] if rep else None
     d = red[-1] if red else None
-    if r is not None and r["supports"] is False:
-        return "reject", "short replay: " + r["note"]
-    if d is not None and d["supports"] is False:
-        return "reject", _detector_text(d, "disagrees")
-    if r is not None and r["supports"] is True and (d is None or d["supports"] is not False):
-        extra = ("; " + _detector_text(d, "agrees" if d["supports"] is True else "inconclusive")) if d is not None else ""
-        return "confirm", "short replay: " + r["note"] + extra
+    # A tracking glitch does not establish safety. A second measurement may
+    # disagree because the person is CLOSER than the tracker said. Reject only
+    # when both checks contradict the warning and the independent gap is larger.
+    tracked = view.get("facts", {}).get("min_clearance_m")
+    measured = d.get("score") if d else None
+    larger_gap = (isinstance(tracked, (int, float)) and isinstance(measured, (int, float))
+                  and measured > max(.8, tracked + max(.4, .3 * tracked)))
+    if r is not None and d is not None:
+        if r["supports"] is False and d["supports"] is False and larger_gap:
+            return "reject", "short replay: " + r["note"] + "; " + _detector_text(d, "disagrees with a larger gap")
+        if r["supports"] is True and d["supports"] is True:
+            return "confirm", "short replay: " + r["note"] + "; " + _detector_text(d, "agrees")
     parts = ["short replay: " + r["note"] if r else "no replay", _detector_text(d, "") if d else "no second detector pass"]
-    return "uncertain", "; ".join(parts)
+    return "uncertain", "Evidence is incomplete or conflicting; keep for human review. " + "; ".join(parts)
 
 
 def floor_headline(view: dict, verdict: str) -> str:
@@ -449,6 +454,10 @@ def guard(view: dict, action: Action, known_cameras: list[str] | None = None) ->
         return False, f"{tool} is only for floor warnings"
     if tool == "recommend" and inp.get("verdict") not in ("confirm", "reject", "uncertain"):
         return False, "recommend verdict must be confirm, reject or uncertain"
+    if tool == "recommend" and inp.get("verdict") != "uncertain":
+        supported, _ = floor_recommendation(view)
+        if inp["verdict"] != supported:
+            return False, "recommendation is not supported by both checks; ask for human review"
     if tool == "confirm_event":
         if st not in OPEN_VERIFY:
             return False, f"cannot confirm an event that is {st}"
