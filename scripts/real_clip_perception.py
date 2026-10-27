@@ -118,17 +118,17 @@ def background_samples(cap, total: int, count: int = 25, mode: str = "seek"):
 
 
 def temporal_median(samples, mode: str = "compact"):
-    """Exact uint8 median with contiguous sample rows and no float64 image.
+    """Exact uint8 median without a second stack or float64 output image.
 
     The usual 25 samples have an odd count, so the median is an existing value.
     Keep NumPy's averaging semantics if a damaged clip yields an even count.
     """
     if mode == "numpy" or len(samples) % 2 == 0:
         return np.median(np.stack(samples), axis=0).astype(np.uint8)
-    pixels = np.stack(samples, axis=-1)
+    pixels = np.stack(samples)
     middle = len(samples) // 2
-    pixels.partition(middle, axis=-1)
-    return pixels[..., middle].copy()
+    pixels.partition(middle, axis=0)
+    return pixels[middle].copy()
 
 
 def iou_matrix(a: np.ndarray, b: np.ndarray) -> np.ndarray:
