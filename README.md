@@ -8,6 +8,12 @@ Floorsight maps people and forklifts onto the floor, predicts close passes, and 
 
 [Submission links and concise project description](docs/SUBMISSION.md)
 
+[Open the running judge simulator](https://dz0itcb127dm1.cloudfront.net/) — use the
+access token in the private submission instructions. Generated cameras feed the
+real vision pipeline and local agent on AWS Graviton with COOL. The scenario
+repeats; brake commands affect only the simulated truck. Judge alerts stay in the
+dashboard, with external SNS delivery disabled.
+
 > **Prototype:** six recorded factory clips and a simulated warehouse. Real clips are processed offline; braking commands are applied only in simulation. No field safety validation has been completed.
 
 ## The problem and solution

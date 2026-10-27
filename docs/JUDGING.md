@@ -34,7 +34,7 @@ The [competition page](https://opencv26.devpost.com/) calls for substantive Open
 | Judge-accessible code | This public repository |
 | Dependencies/build/tests | [Application pins](../requirements.txt), [run guide](DEVELOPMENT.md), recovered [perception packages](receipts/perception-historical-environment-20261023.txt) and [model revisions](receipts/perception-models-20261023.json) |
 | Architecture | [System diagram](diagrams/floorsight-architecture-20261026.png) |
-| Working app access | **Owner to confirm later:** arrange a live screen-share or supply a tested endpoint and access instructions |
+| Working app access | [Live AWS simulator](https://dz0itcb127dm1.cloudfront.net/), verified 27 October; access token supplied privately in submission testing instructions |
 | Video | [3:41 submission video](https://tonystark101-debug.github.io/floorsight/#demo), updated 27 October; introduces Team Floorsight. Owner must confirm registered member details; individual footage was not supplied. |
 | Evaluation and failures | [Results](TECHNICAL_REPORT.md#results-and-limits), [receipts](receipts/) |
 | COOL evidence | Version/path, Graviton configuration and stock comparison linked above |

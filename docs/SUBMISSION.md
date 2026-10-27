@@ -8,6 +8,7 @@ vision tools, and give a supervisor the evidence before sending an alert.
 | Material | Public link |
 |---|---|
 | Code and setup | [GitHub repository](https://github.com/tonystark101-debug/floorsight) |
+| Running judge simulator | [Protected HTTPS demo](https://dz0itcb127dm1.cloudfront.net/) — token supplied privately in testing instructions |
 | Submission video | [Watch the 3:41 video](https://tonystark101-debug.github.io/floorsight/#demo) |
 | Direct MP4 | [Download or play](https://tonystark101-debug.github.io/floorsight/videos/floorsight-demo.mp4) |
 | Technical report | [Problem, implementation, results and limits](TECHNICAL_REPORT.md) |
@@ -51,9 +52,10 @@ skips. We publish the failures and tradeoffs alongside the successful results.
 ## Before pressing Submit
 
 - Select both special awards if pursuing them, and attach their evidence above.
-- Supply a working app endpoint or arrange a live screen-share. The video gallery
-  is not a running app; neither access route has been confirmed by the owner.
-- Confirm the registered team details. The new video uses **Team Floorsight**;
+- Put the judge access token in Devpost's private testing instructions. The
+  [running simulator](https://dz0itcb127dm1.cloudfront.net/) was verified on 27 October;
+  the video gallery remains a separate recording page.
+- Confirm the registered team details. The owner accepted **Team Floorsight**;
   individual names or team footage were not provided for this edit.
 - Save the entry and complete Devpost's submission action. Publishing GitHub
   code and a video does not submit an entry automatically.
